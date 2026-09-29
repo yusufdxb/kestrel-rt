@@ -14,10 +14,13 @@ LDFLAGS := $(CPU) -nostdlib -nostartfiles -Wl,--gc-sections -Wl,-Map=$(BUILD)/im
   -Wl,--print-memory-usage -Wl,--no-warn-rwx-segments -T linker/kestrel_ra4m1.ld
 COMMON := startup/startup.c startup/clock.c kernel/memory/kstring.c drivers/icu/icu.c drivers/uart/sci_uart.c \
   drivers/gpio/gpio.c drivers/adc/adc.c trace/frame.c trace/crc16.c apps/common/workload.c baselines/common/bench.c
-ifeq ($(BASE),freertos)
 FR := build/ext/FreeRTOS-Kernel
-SRC := $(COMMON) baselines/freertos/main.c $(FR)/tasks.c $(FR)/list.c $(FR)/queue.c \
-  $(FR)/portable/GCC/ARM_CM4F/port.c
+FRSRC := $(FR)/tasks.c $(FR)/list.c $(FR)/queue.c $(FR)/portable/GCC/ARM_CM4F/port.c
+ifeq ($(BASE),freertos)
+SRC := $(COMMON) baselines/freertos/main.c $(FRSRC)
+CFLAGS += -Ibaselines/freertos -I$(FR)/include -I$(FR)/portable/GCC/ARM_CM4F
+else ifeq ($(BASE),freertos_ctx)
+SRC := $(COMMON) baselines/freertos/ctx_main.c $(FRSRC)
 CFLAGS += -Ibaselines/freertos -I$(FR)/include -I$(FR)/portable/GCC/ARM_CM4F
 else
 SRC := $(COMMON) baselines/superloop/main.c

@@ -11,7 +11,7 @@ SIZE    := $(TOOLCHAIN)size
 NM      := $(TOOLCHAIN)nm
 
 APP   ?= benchmark
-BUILD := build/$(APP)
+BUILD := build/$(APP)$(VARIANT)
 ELF   := $(BUILD)/kestrel.elf
 
 CPUFLAGS := -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard

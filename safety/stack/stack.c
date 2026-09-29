@@ -1,9 +1,7 @@
 /* Task stack engineering: fill pattern for high-water measurement, a canary word just above the
- * 32-byte MPU guard block, and the measurement itself.
- *
- *   stack_base                                                     stack_base + size
- *   | guard 32 B (MPU no-access) | canary | fill ... used <- sp  | initial frame |
- */
+ * 32-byte MPU guard block, and the measurement itself. From stack_base upwards: the guard block
+ * (MPU no-access), the canary word, the fill pattern, and the live frames growing down from the
+ * top (docs/figures/task_stack.svg). */
 #include "kernel/kernel_priv.h"
 
 void kstack_prepare(ktcb_t *t)

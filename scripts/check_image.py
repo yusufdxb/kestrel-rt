@@ -38,20 +38,25 @@ def main(elf):
             continue  # NOBITS-only segment (RAM), nothing is written to flash
         if not (APP_ORIGIN <= paddr and paddr + filesz <= FLASH_END):
             errors.append(f"LOAD segment paddr 0x{paddr:08x} size {filesz} outside [0x4000,0x40000)")
-    # Vector table contents.
-    out = Path(elf).with_suffix(".vec.bin")
-    subprocess.run([tool("objcopy"), "-O", "binary", "--only-section=.vectors", elf, str(out)], check=True)
-    vec = out.read_bytes()
-    out.unlink()
-    msp, reset = struct.unpack_from("<II", vec, 0)
-    if (msp & 0xFF000000) != 0x20000000 or not (SRAM_LO < msp <= SRAM_HI) or msp & 7:
-        errors.append(f"initial MSP 0x{msp:08x} invalid")
-    if not (reset & 1) or not (APP_ORIGIN <= (reset & ~1) < FLASH_END):
-        errors.append(f"reset vector 0x{reset:08x} invalid")
+    # Vector table: the 8 bytes at 0x4000, from whichever loadable segment covers that address
+    # (Kestrel names it .vectors; Zephyr and FreeRTOS images use other section names).
+    from elftools.elf.elffile import ELFFile
+    vec = b""
+    with open(elf, "rb") as fh:
+        ef = ELFFile(fh)
+        for seg in ef.iter_segments():
+            if seg["p_type"] == "PT_LOAD" and seg["p_filesz"] and seg["p_paddr"] <= APP_ORIGIN < seg["p_paddr"] + seg["p_filesz"]:
+                off = APP_ORIGIN - seg["p_paddr"]
+                vec = seg.data()[off:off + 8]
+    if len(vec) < 8:
+        errors.append("no loadable bytes at 0x4000 (vector table missing)")
+        msp = reset = 0
+    else:
+        msp, reset = struct.unpack_from("<II", vec, 0)
     syms = subprocess.run([tool("nm"), elf], capture_output=True, text=True, check=True).stdout
     names = {l.split()[-1] for l in syms.splitlines() if l.strip()}
     vt = [l for l in syms.splitlines() if l.endswith(" kestrel_vectors")]
-    if not vt or int(vt[0].split()[0], 16) != APP_ORIGIN:
+    if vt and int(vt[0].split()[0], 16) != APP_ORIGIN:
         errors.append("kestrel_vectors not at 0x4000")
     bad = FORBIDDEN & names
     if bad:

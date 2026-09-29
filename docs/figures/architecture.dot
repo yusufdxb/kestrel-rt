@@ -1,0 +1,18 @@
+digraph arch {
+  graph [rankdir=TB, fontname="Helvetica", bgcolor="white", compound=true, nodesep=0.25, ranksep=0.35, pad=0.2];
+  node [shape=box, style="rounded,filled", fillcolor="#f4f1ec", color="#3b3b3b", fontname="Helvetica", fontsize=10];
+  edge [color="#3b3b3b", arrowsize=0.6];
+  boot [label="Arduino bootloader 0x0000-0x3FFF (never written)\nboot5(): VTOR=0x4000, MSP=vector[0], jump to vector[1]", fillcolor="#e6e6e6"];
+  start [label="Kestrel startup: vector table @0x4000, reset handler,\n.data/.bss/.app_shared init, FPU, clocks (HOCO 48 MHz), FCACHE"];
+  subgraph cluster_k { label="kernel (privileged)"; fontsize=10; color="#8a3b12"; style="rounded";
+    sch [label="scheduler\nfixed priority, O(1) CLZ"]; tim [label="timebase + tickless\nrelease timer (GPT320)"]; ipc [label="IPC: SPSC, mailbox,\nflags, IPCP mutex"];
+    sup [label="supervisor + WDT"]; flt [label="fault capture\n+ crash log (VBTBKR)"]; mpu [label="MPU policy"]; trc [label="flight recorder\n+ job records"]; }
+  subgraph cluster_d { label="drivers (register level)"; fontsize=10; color="#3b3b3b"; style="rounded";
+    icu [label="ICU dispatch"]; uart [label="SCI9 UART\n+ DMAC0 TX"]; adc [label="ADC14 + GPT2"]; wdt [label="WDT"]; gpio [label="GPIO"]; }
+  subgraph cluster_a { label="application tasks"; fontsize=10; color="#3b3b3b"; style="rounded";
+    ctl [label="control 1 ms\n(critical)"]; saf [label="safety 2 ms\n(critical)"]; sen [label="sensor 2 ms\n(critical)"]; com [label="comms 10 ms\n(privileged service)"]; hea [label="health 100 ms"]; log [label="logger (background)"]; }
+  boot -> start;
+  start -> sch [lhead=cluster_k];
+  sch -> ctl [lhead=cluster_a, ltail=cluster_k, label=" SVC / PendSV", fontsize=9];
+  uart -> com [ltail=cluster_d, lhead=cluster_a, style=dashed];
+}

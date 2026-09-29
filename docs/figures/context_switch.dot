@@ -1,0 +1,15 @@
+digraph ctx {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=11, bgcolor="white", nodesep=0.3, ranksep=0.28, pad=0.2];
+  node  [shape=box, style="rounded,filled", fillcolor="#f4f1ec", color="#3b3b3b", fontname="Helvetica", fontsize=10, margin="0.14,0.06"];
+  edge  [color="#3b3b3b", arrowsize=0.7, fontname="Helvetica", fontsize=9];
+  task  [label="Task A running (thread mode, PSP, unprivileged)"];
+  irq   [label="GPT320 compare match  ->  ICU  ->  NVIC line 0\nhardware stacks R0-R3, R12, LR, PC, xPSR (+S0-S15, FPSCR lazily) on PSP"];
+  sched [label="Kernel timer ISR (priority 1, MSP)\nrelease due jobs, flag deadlines, program next compare\nhighest ready level != current  ->  set PENDSVSET"];
+  pend  [label="PendSV (priority 15): tail-chains once no other exception is active", fillcolor="#efe3d6", color="#8a3b12"];
+  save  [label="save: if EXC_RETURN[4]==0 push S16-S31\npush EXC_RETURN, CONTROL, R4-R11 onto PSP"];
+  sel   [label="kestrel_sched_switch(): store A's PSP, account CPU time,\nCLZ over ready_levels -> task B, retarget MPU regions 4/5 to B's stack"];
+  rest  [label="restore: pop EXC_RETURN, CONTROL, R4-R11 from B's stack\nif EXC_RETURN[4]==0 pop S16-S31; PSP = B's stack pointer"];
+  ret   [label="bx EXC_RETURN: hardware unstacks B's frame"];
+  next  [label="Task B running", fillcolor="#efe3d6", color="#8a3b12"];
+  task -> irq -> sched -> pend -> save -> sel -> rest -> ret -> next;
+}

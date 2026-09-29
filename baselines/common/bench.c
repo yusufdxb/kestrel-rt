@@ -203,6 +203,18 @@ static void hist(uint8_t which)
     }
 }
 
+__attribute__((weak)) void bench_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
+{
+    (void)cmd;
+    (void)p;
+    (void)len;
+}
+
+void bench_send(uint8_t type, const uint8_t *p, uint16_t len)
+{
+    send(type, p, len);
+}
+
 static void command(const kframe_decoder_t *d)
 {
     if (d->type != KF_CMD || d->len == 0u) {
@@ -234,6 +246,7 @@ static void command(const kframe_decoder_t *d)
     case 0x04: /* set_trace: job mask only (0 pauses the job stream) */
         break;
     default:
+        bench_app_command(d->payload[0], a, (uint16_t)(d->len - 1u));
         break;
     }
     send(KF_ACK, ack, sizeof(ack));

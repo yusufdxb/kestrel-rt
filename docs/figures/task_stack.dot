@@ -1,0 +1,5 @@
+digraph st {
+  graph [rankdir=TB, fontname="Helvetica", bgcolor="white", pad=0.2, nodesep=0.4];
+  node [shape=record, fontname="Helvetica", fontsize=10, style="filled", fillcolor="#f4f1ec", color="#3b3b3b"];
+  stack [label="{stack_base + size (top, high address)|older frames of the task|xPSR, PC, LR, R12, R3, R2, R1, R0 (hardware frame; R0 = syscall result slot)\n+ S0..S15, FPSCR, reserved when the frame is an FP frame|S16..S31 (saved by PendSV only for FP frames)|R11 .. R4|CONTROL (nPRIV)|EXC_RETURN  ← TCB.sp (saved PSP)|free space, filled 0xA5A5A5A5 (high-water scan)|canary word 0x4B535443|guard 32 B, MPU no-access (stack_base, low address)}"];
+}

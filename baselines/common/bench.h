@@ -35,6 +35,9 @@ void bench_service(void);
 void bench_switched_in(uint32_t task);
 void bench_switched_out(uint32_t task);
 uint32_t bench_task_cycles(uint32_t task); /* call from the running task itself */
+/* Application hooks: extra host commands, raw frame send (low-priority context only). */
+void bench_app_command(uint8_t cmd, const uint8_t *p, uint16_t len);
+void bench_send(uint8_t type, const uint8_t *p, uint16_t len);
 /* Hardware ISR latency sample (compare target -> handler), same histogram as Kestrel's. */
 void bench_irq_latency(uint32_t ticks);
 static inline uint32_t bench_now32(void)

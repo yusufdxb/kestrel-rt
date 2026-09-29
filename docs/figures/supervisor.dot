@@ -1,0 +1,14 @@
+digraph sup {
+  graph [rankdir=LR, fontname="Helvetica", bgcolor="white", pad=0.2, nodesep=0.25];
+  node [shape=box, style="rounded,filled", fillcolor="#f4f1ec", color="#3b3b3b", fontname="Helvetica", fontsize=10];
+  edge [color="#3b3b3b", arrowsize=0.6, fontsize=9, fontname="Helvetica"];
+  c [label="control\n(critical)"]; s [label="safety\n(critical)"]; n [label="sensor\n(critical)"];
+  m [label="comms / logger\n(monitored only)", fillcolor="#e6e6e6"];
+  v [label="health votes\nlast_vote[t]"];
+  sv [label="supervisor\n(kernel timer path, every 5 ms)", fillcolor="#efe3d6", color="#8a3b12"];
+  w [label="WDT refresh\n(349.5 ms timeout)"];
+  d [label="degraded flag\n(traced, no reset)", fillcolor="#e6e6e6"];
+  r [label="stall record -> stop feeding\n-> WDT reset", fillcolor="#efe3d6", color="#8a3b12"];
+  c -> v; s -> v; n -> v; m -> v [style=dashed];
+  v -> sv; sv -> w [label="all critical votes fresh"]; sv -> r [label="a critical vote is stale"]; sv -> d [label="noncritical stale"];
+}

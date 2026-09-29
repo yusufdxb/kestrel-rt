@@ -1,0 +1,11 @@
+/* Free the NVIC lines the default board configuration assigns to peripherals the benchmark does
+ * not use, so the shared register-level drivers can use the same lines as in Kestrel. */
+&sci2 { status = "disabled"; };
+&iic0 { status = "disabled"; };
+&iic1 { status = "disabled"; };
+&spi0 { status = "disabled"; };
+&pwm7 { status = "disabled"; };
+&port_irq0 { status = "disabled"; };
+&port_irq1 { status = "disabled"; };
+&adc0 { status = "disabled"; };
+&trng { status = "disabled"; };

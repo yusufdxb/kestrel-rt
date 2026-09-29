@@ -40,7 +40,9 @@ typedef struct {
     static uint32_t name[(bytes) / 4u] __attribute__((aligned(bytes), section(".task_stacks")))
 
 /* Data an unprivileged task may touch must live in the shared application region. */
+#ifndef KESTREL_SHARED
 #define KESTREL_SHARED __attribute__((section(".app_shared")))
+#endif
 
 /* ---- application entry points (replaces Arduino setup()/loop()) ---- */
 void kestrel_main(void);

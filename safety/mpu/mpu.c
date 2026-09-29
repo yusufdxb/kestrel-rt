@@ -43,8 +43,16 @@ static void region(uint32_t n, uint32_t base, uint32_t bytes, uint32_t attrs)
     MPU->RASR = attrs | size_field(bytes) | MPU_RASR_ENABLE_Msk;
 }
 
+#ifndef KESTREL_CFG_MPU
+#define KESTREL_CFG_MPU 1
+#endif
+
 void kmpu_init(void)
 {
+    if (KESTREL_CFG_MPU == 0) {
+        s_enabled = false; /* like-for-like comparisons with non-MPU kernels */
+        return;
+    }
     uint32_t shared = (uint32_t)(uintptr_t)&__app_shared_start;
     uint32_t shared_size =
         (uint32_t)((uintptr_t)&__app_shared_end - (uintptr_t)&__app_shared_start);
