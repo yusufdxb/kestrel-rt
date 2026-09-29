@@ -56,7 +56,10 @@ static void control_task(void *arg)
 {
     (void)arg;
     for (;;) {
-        inject_check(T_CONTROL);
+        uint32_t t_start = kestrel_time32();
+        if (inject_check(T_CONTROL) == INJ_RETURN) {
+            return;
+        }
         sensor_msg_t m;
         uint32_t seq;
         kmb_status_t st = kmb_read(&mb_sensor, &m, &seq);
@@ -69,7 +72,7 @@ static void control_task(void *arg)
         } else {
             g_app.mb_busy++;
         }
-        kestrel_wait_period();
+        kestrel_wait_period_ts(t_start);
     }
 }
 
@@ -78,7 +81,10 @@ static void safety_task(void *arg)
     (void)arg;
     uint32_t last_seq = 0u;
     for (;;) {
-        inject_check(T_SAFETY);
+        uint32_t t_start = kestrel_time32();
+        if (inject_check(T_SAFETY) == INJ_RETURN) {
+            return;
+        }
         ctrl_state_t c;
         sensor_msg_t m;
         uint32_t cs, ms;
@@ -90,7 +96,7 @@ static void safety_task(void *arg)
             g_app.violations += work_safety(&c, &m, g_app.units[T_SAFETY]);
         }
         kestrel_health_vote();
-        kestrel_wait_period();
+        kestrel_wait_period_ts(t_start);
     }
 }
 
@@ -99,7 +105,10 @@ static void sensor_task(void *arg)
     (void)arg;
     uint32_t synthetic = 0u;
     for (;;) {
-        inject_check(T_SENSOR);
+        uint32_t t_start = kestrel_time32();
+        if (inject_check(T_SENSOR) == INJ_RETURN) {
+            return;
+        }
         uint32_t sample;
         adc_sample_t s;
         if (adc_take_latest(&s)) {
@@ -111,7 +120,7 @@ static void sensor_task(void *arg)
         work_sensor(&g_sensor_state, sample, g_app.units[T_SENSOR]);
         kmb_write(&mb_sensor, &g_sensor_state);
         kestrel_health_vote();
-        kestrel_wait_period();
+        kestrel_wait_period_ts(t_start);
     }
 }
 
@@ -119,9 +128,13 @@ static void comms_task(void *arg)
 {
     (void)arg;
     for (;;) {
+        uint32_t t_start = kestrel_time32();
+        if (inject_check(T_COMMS) == INJ_RETURN) {
+            return;
+        }
         telemetry_service();
         kestrel_health_vote(); /* monitored only: comms is noncritical */
-        kestrel_wait_period();
+        kestrel_wait_period_ts(t_start);
     }
 }
 
@@ -130,7 +143,10 @@ static void health_task(void *arg)
     (void)arg;
     uint32_t last_sensor = 0u;
     for (;;) {
-        inject_check(T_HEALTH);
+        uint32_t t_start = kestrel_time32();
+        if (inject_check(T_HEALTH) == INJ_RETURN) {
+            return;
+        }
         sensor_msg_t m;
         uint32_t seq;
         if (kmb_read(&mb_sensor, &m, &seq) == KMB_OK) {
@@ -142,7 +158,7 @@ static void health_task(void *arg)
         (void)work_background(g_app.units[T_HEALTH]);
         g_app.health_runs++;
         kestrel_health_vote();
-        kestrel_wait_period();
+        kestrel_wait_period_ts(t_start);
     }
 }
 
@@ -150,7 +166,9 @@ static void logger_task(void *arg)
 {
     (void)arg;
     for (;;) {
-        inject_check(T_LOGGER);
+        if (inject_check(T_LOGGER) == INJ_RETURN) {
+            return;
+        }
         (void)work_background(g_app.units[T_LOGGER]);
         g_app.logger_loops++;
         kestrel_health_vote();

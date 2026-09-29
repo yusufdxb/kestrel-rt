@@ -40,9 +40,10 @@ enum trace_type {
     TE_CMD = 18,      /* data: command id applied at a safe point */
 };
 
-#define JR_FLAG_MISS      0x01u
-#define JR_FLAG_OVERRUN   0x02u
-#define JR_FLAG_SATURATED 0x04u
+#define JR_FLAG_MISS          0x01u
+#define JR_FLAG_OVERRUN       0x02u
+#define JR_FLAG_SATURATED     0x04u
+#define JR_FLAG_TASK_OBSERVED 0x08u /* start_lat measured by the task (else at kernel dispatch) */
 
 typedef struct {
     uint8_t task;
@@ -79,6 +80,14 @@ void trace_job_locked(const job_record_t *jr);
 /* Which event types are recorded (bit per type). Job records have their own per-task mask. */
 void trace_set_mask(uint32_t type_mask, uint8_t job_task_mask);
 uint8_t trace_job_mask(void);
+
+/* Flight-recorder capture: while ARMED the event ring is circular (oldest overwritten, nothing
+ * drained); an event whose type is in trigger_mask starts a post-trigger countdown; after `post`
+ * more events the ring FREEZES (no new records) and the telemetry service drains it. */
+typedef enum { TRACE_STREAM = 0, TRACE_ARMED = 1, TRACE_FROZEN = 2 } trace_mode_t;
+void trace_arm(uint32_t record_mask, uint32_t trigger_mask, uint16_t post);
+trace_mode_t trace_mode(void);
+void trace_stream(void); /* back to streaming with the default mask */
 
 /* Consumer side (telemetry service only). */
 kq_spsc_t *trace_event_ring(void);

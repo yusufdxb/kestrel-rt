@@ -42,7 +42,16 @@ enum {
 
 void kestrel_wait_period(void)
 {
-    SVC0(SVC_WAIT_PERIOD);
+    uint32_t o[2];
+    (void)o;
+    SVC_CALL(SVC_WAIT_PERIOD, 0u, 0u, 0u, 0u, o);
+}
+
+void kestrel_wait_period_ts(uint32_t job_start_ts)
+{
+    uint32_t o[2];
+    (void)o;
+    SVC_CALL(SVC_WAIT_PERIOD, job_start_ts, 1u, 0u, 0u, o);
 }
 
 void kestrel_sleep_us(uint32_t us)
@@ -142,6 +151,10 @@ void k_svc_dispatch(uint32_t *frame, uint32_t svc_num, uint32_t exc_return)
     uint64_t now = kt_now();
     switch (svc_num) {
     case SVC_WAIT_PERIOD:
+        if (frame[1] == 1u && t->job_active) {
+            t->start_lat = frame[0] - (uint32_t)t->release_ideal; /* task-observed */
+            t->start_observed = true;
+        }
         k_job_end_locked(t, now);
         k_events_changed(t);
         k_reschedule();

@@ -8,7 +8,8 @@ KESTREL_SHARED volatile uint32_t g_inject_sink;
 extern uint32_t __bss_start; /* start of kernel .bss: privileged-only memory */
 
 /* Bad addresses come from a volatile so the compiler cannot prove (and reject) the fault. */
-static volatile uintptr_t s_bad_addr[3] = {0x0u, 0x10u, 0x70000000u};
+static const volatile uintptr_t s_bad_addr[3] = {0x0u, 0x10u,
+                                                 0x70000000u}; /* flash: readable by all */
 KESTREL_SHARED static volatile uint32_t s_keep_going = 1u;
 
 static uint32_t __attribute__((noinline)) recurse(uint32_t depth)
@@ -22,10 +23,10 @@ static uint32_t __attribute__((noinline)) recurse(uint32_t depth)
     return recurse(depth + 1u) + pad[0] + pad[15];
 }
 
-void inject_check(uint8_t task_id)
+uint8_t inject_check(uint8_t task_id)
 {
     if (g_inject.kind == INJ_NONE || g_inject.task != task_id) {
-        return;
+        return INJ_NONE;
     }
     uint8_t kind = g_inject.kind;
     uint16_t arg = g_inject.arg;
@@ -33,6 +34,8 @@ void inject_check(uint8_t task_id)
     kestrel_trace((uint16_t)(0xF000u | kind));
     switch (kind) {
     case INJ_NULL_READ:
+        /* Deliberate: the MPU NULL-page trap (region 1) is the point of this case. */
+        // cppcheck-suppress nullPointer
         g_inject_sink = *(volatile uint32_t *)s_bad_addr[0];
         break;
     case INJ_NULL_WRITE:
@@ -75,7 +78,10 @@ void inject_check(uint8_t task_id)
         }
         break;
     }
+    case INJ_RETURN:
+        return INJ_RETURN;
     default:
         break;
     }
+    return INJ_NONE;
 }

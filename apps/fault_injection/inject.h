@@ -27,6 +27,7 @@ typedef struct {
 } inject_req_t;
 
 extern inject_req_t g_inject;
-/* Called by a task at job start; performs the injection if it targets `task_id`. */
-void inject_check(uint8_t task_id);
+/* Called by a task at job start; performs the injection if it targets `task_id`. Returns
+ * INJ_RETURN when the task must return from its entry function (that case needs the caller). */
+uint8_t inject_check(uint8_t task_id);
 #endif

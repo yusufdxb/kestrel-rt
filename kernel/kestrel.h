@@ -66,6 +66,16 @@ bool kestrel_dwt_ok(void);
 
 /* ---- task-callable services (system calls) ---- */
 void kestrel_wait_period(void); /* end of the current job; block until next release */
+/* Same, reporting the task-observed job start (kestrel_time32() read as the job's first action):
+ * the job record then carries start latency as the task saw it, the metric every baseline
+ * (superloop, FreeRTOS, Zephyr) can measure identically. */
+void kestrel_wait_period_ts(uint32_t job_start_ts);
+/* 32-bit timebase (48 MHz ticks) readable from unprivileged tasks: MPU region 7 exposes GPT320
+ * read-only, so this is a single load, no system call. */
+static inline uint32_t kestrel_time32(void)
+{
+    return *(const volatile uint32_t *)0x40078048u;
+}
 void kestrel_sleep_us(uint32_t us);
 void kestrel_yield(void);
 uint64_t kestrel_now(void);         /* 64-bit timebase ticks (48 MHz) */

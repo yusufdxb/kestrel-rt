@@ -168,6 +168,10 @@ void k_job_end_locked(ktcb_t *t, uint64_t now)
     if (e16 > 0xFFFFu || r16 > 0xFFFFu || t->release_lat > 0xFFFFu || t->start_lat > 0xFFFFu) {
         flags |= JR_FLAG_SATURATED;
     }
+    if (t->start_observed) {
+        flags |= JR_FLAG_TASK_OBSERVED;
+        t->start_observed = false;
+    }
     job_record_t jr = {
         t->id,      flags,     (uint16_t)t->jobs, sat16(t->release_lat), sat16(t->start_lat),
         sat16(e16), sat16(r16)};

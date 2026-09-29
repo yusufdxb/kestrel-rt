@@ -60,7 +60,15 @@ typedef struct {
 
 void crashlog_boot(void); /* read reset cause + stored record, count boot */
 const kcrash_boot_info_t *crashlog_info(void);
-void crashlog_store(kcrash_record_t *r); /* finalize (CRC) and write */
+/* Finalize (CRC) and store. VBTBKR writes cost ~9 us per byte on this part (measured), so a full
+ * record takes ~1.1 ms. durable_now = true (reset paths: control is already lost) writes the
+ * backup registers immediately. durable_now = false (contained faults: the system keeps running)
+ * updates the RAM copy at once (retrievable immediately) and defers the backup-register write to
+ * crashlog_persist(), which the comms task calls at low priority. */
+void crashlog_store(kcrash_record_t *r, bool durable_now);
+/* Low-priority persistence of a deferred record; returns true if it wrote one. */
+bool crashlog_persist(void);
+uint32_t crashlog_pending(void);
 void crashlog_clear(void);
 uint32_t crc32_ieee(const uint8_t *p, uint32_t n); /* portable */
 #endif

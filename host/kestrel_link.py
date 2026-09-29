@@ -22,7 +22,7 @@ KF = {0x01: "HELLO", 0x02: "STATUS", 0x03: "JOBS", 0x04: "TRACE", 0x05: "CRASH",
       0x07: "TASKS", 0x08: "RESULT", 0x40: "CMD"}
 CMD = {"ping": 0x01, "get_crash": 0x02, "clear_crash": 0x03, "set_trace": 0x04, "get_tasks": 0x05,
        "tx_stall": 0x06, "time_sync": 0x07, "reset": 0x08, "get_hist": 0x09, "reset_stats": 0x0A,
-       "set_work": 0x10, "inject": 0x20, "app_stats": 0x21, "storm": 0x22, "mpu": 0x23,
+       "trace_arm": 0x0B, "trace_stream": 0x0C, "set_work": 0x10, "inject": 0x20, "app_stats": 0x21, "storm": 0x22, "mpu": 0x23,
        "mutex_demo": 0x24}
 TE = {1: "RELEASE", 2: "START", 3: "END", 4: "SWITCH", 5: "ISR_ENTER", 6: "ISR_EXIT",
       7: "DEADLINE_MISS", 8: "OVERRUN", 9: "QUEUE_OVERFLOW", 10: "WD_WARNING", 11: "FAULT",

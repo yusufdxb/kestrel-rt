@@ -7,6 +7,9 @@
 #define VB_BOOT_MAGIC 0x4B424F54u /* "KBOT" */
 
 static kcrash_boot_info_t s_info;
+static kcrash_record_t s_pending;
+static volatile uint32_t s_pending_seq; /* incremented per deferred store */
+static uint32_t s_persisted_seq;
 
 static void vb_read(uint32_t off, void *dst, uint32_t n)
 {
@@ -97,14 +100,41 @@ const kcrash_boot_info_t *crashlog_info(void)
     return &s_info;
 }
 
-void crashlog_store(kcrash_record_t *r)
+void crashlog_store(kcrash_record_t *r, bool durable_now)
 {
     r->magic = KCRASH_MAGIC;
     r->version = KCRASH_VERSION;
     r->size = (uint16_t)sizeof(kcrash_record_t);
     r->boot_count = s_info.boot_count;
     r->crc = crc32_ieee((const uint8_t *)r, (uint32_t)(sizeof(kcrash_record_t) - 4u));
-    vb_write(VB_RECORD, r, sizeof(*r));
+    s_info.last = *r; /* retrievable immediately, without a reboot */
+    s_info.crash_present = true;
+    if (durable_now) {
+        vb_write(VB_RECORD, r, sizeof(*r));
+    } else {
+        s_pending = *r;
+        s_pending_seq++;
+    }
+}
+
+bool crashlog_persist(void)
+{
+    uint32_t seq = s_pending_seq;
+    if (seq == s_persisted_seq) {
+        return false;
+    }
+    kcrash_record_t copy;
+    kcrit_t s = kcrit_enter();
+    copy = s_pending; /* short: 124-byte RAM copy */
+    kcrit_exit(s);
+    vb_write(VB_RECORD, &copy, sizeof(copy)); /* ~1.1 ms, preemptible */
+    s_persisted_seq = seq;
+    return true;
+}
+
+uint32_t crashlog_pending(void)
+{
+    return s_pending_seq - s_persisted_seq;
 }
 
 void crashlog_clear(void)

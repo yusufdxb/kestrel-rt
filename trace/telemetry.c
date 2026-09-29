@@ -28,6 +28,8 @@ enum {
     CMD_RESET = 0x08,
     CMD_GET_HIST = 0x09,
     CMD_RESET_STATS = 0x0A,
+    CMD_TRACE_ARM = 0x0B, /* u32 record mask, u32 trigger mask, u16 post-trigger events */
+    CMD_TRACE_STREAM = 0x0C,
     CMD_APP_FIRST = 0x10,
 };
 
@@ -321,6 +323,16 @@ static void handle_command(const kframe_decoder_t *d, uint64_t now)
     case CMD_RESET:
         NVIC_SystemReset();
         break;
+    case CMD_TRACE_ARM:
+        if (alen >= 10u) {
+            trace_arm(kget32(arg), kget32(&arg[4]), kget16(&arg[8]));
+        }
+        ack(cmd, 0u, 0u);
+        break;
+    case CMD_TRACE_STREAM:
+        trace_stream();
+        ack(cmd, 0u, 0u);
+        break;
     case CMD_GET_HIST:
         send_hist(alen >= 1u ? arg[0] : 0u);
         break;
@@ -377,14 +389,18 @@ void telemetry_service(void)
         uart_set_tx_stall(false);
     }
     s_stats.stall_until_lo = s_stalled ? (uint32_t)s_stall_until : 0u;
-    /* 2. status once per second */
+    /* 2. deferred crash-record persistence (preemptible, low priority) */
+    (void)crashlog_persist();
+    /* 3. status once per second */
     if (now >= s_next_status) {
         send_status(now);
         s_next_status = now + kt_us_to_ticks(STATUS_PERIOD_US);
     }
     /* 3. records */
     drain_ring(trace_job_ring(), KF_JOBS, sizeof(job_record_t), MAX_JOBS_PER_FRAME);
-    drain_ring(trace_event_ring(), KF_TRACE, sizeof(trace_event_t), MAX_EVENTS_PER_FRAME);
+    if (trace_mode() != TRACE_ARMED) {
+        drain_ring(trace_event_ring(), KF_TRACE, sizeof(trace_event_t), MAX_EVENTS_PER_FRAME);
+    }
     /* 4. transmit */
     kcrit_t s = kcrit_enter();
     kick_locked();

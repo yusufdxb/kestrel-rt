@@ -44,6 +44,7 @@ typedef struct ktcb {
     bool job_active;
     bool job_started;
     bool deadline_flagged;
+    bool start_observed; /* start_lat of this job was reported by the task itself */
     void *wait_obj;
     uint32_t *wait_frame; /* caller's stacked r0..: result is written here at wakeup */
     uint32_t wait_mask;

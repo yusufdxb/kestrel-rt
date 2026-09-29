@@ -21,6 +21,13 @@
 void kfault_dispatch(uint32_t *frame, uint32_t exc_return, uint32_t ipsr, uint32_t entry_cycles);
 
 static uint32_t s_faults;
+static uint32_t s_last_capture_total;
+
+uint32_t kfault_last_capture_total(void);
+uint32_t kfault_last_capture_total(void)
+{
+    return s_last_capture_total;
+}
 static uint64_t s_scratch_psp[32] __attribute__((aligned(8)));
 
 void kfault_init(void)
@@ -129,9 +136,13 @@ void kfault_dispatch(uint32_t *frame, uint32_t exc_return, uint32_t ipsr, uint32
     if (!contain) {
         r.flags |= KCF_RESET;
     }
+    /* capture latency = fault entry to "record durable in VBTBKR"; the stored value is the time
+     * up to the CRC (the record cannot contain its own final timestamp), the full value including
+     * the backup-register write is kept in s_last_capture_total for the status report. */
     uint32_t dt = kcycles() - entry_cycles;
     r.capture_cycles = (uint16_t)(dt > 0xFFFFu ? 0xFFFFu : dt);
-    crashlog_store(&r);
+    crashlog_store(&r, !contain);
+    s_last_capture_total = kcycles() - entry_cycles;
     clear_cfsr();
 
     if (!contain) {
@@ -140,8 +151,7 @@ void kfault_dispatch(uint32_t *frame, uint32_t exc_return, uint32_t ipsr, uint32
     /* Contain: park the faulted task, give PendSV a harmless PSP to save into, switch away. */
     kcrit_t s = kcrit_enter();
     t->faults++;
-    trace_emit_locked(TE_FAULT, t->id, r.kind);
-    k_task_fault(t, r.kind);
+    k_task_fault(t, r.kind); /* emits TE_FAULT */
     __set_PSP((uint32_t)(uintptr_t)&s_scratch_psp[32]);
     SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
     kcrit_exit(s);
@@ -168,7 +178,7 @@ void kfault_record_software(ktcb_t *t, const uint32_t *frame, uint16_t kind, uin
     }
     uint32_t dt = kcycles() - c0;
     r.capture_cycles = (uint16_t)(dt > 0xFFFFu ? 0xFFFFu : dt);
-    crashlog_store(&r);
+    crashlog_store(&r, (r.flags & KCF_RESET) != 0u);
     s_faults++;
 }
 
@@ -195,7 +205,7 @@ void kfault_record_stall(ktcb_t *t, uint32_t mask)
     }
     r.stack_used = (uint16_t)kstack_high_water(t);
     r.flags |= KCF_RESET;
-    crashlog_store(&r);
+    crashlog_store(&r, true);
 }
 
 void k_task_fault(ktcb_t *t, uint16_t kind)
@@ -220,7 +230,7 @@ void kestrel_panic(uint32_t code)
     r.task = 0xFFu;
     r.detail = code;
     fill_system(&r);
-    crashlog_store(&r);
+    crashlog_store(&r, true);
     for (;;) {
         __WFI();
     }
