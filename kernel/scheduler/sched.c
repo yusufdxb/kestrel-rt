@@ -16,6 +16,12 @@
 #include "trace/trace.h"
 
 kernel_t g_k;
+volatile uint32_t g_kprof[8]; /* diagnostic stage stamps of the last timer ISR */
+#ifdef KESTREL_PROFILE
+#define KPROF(i) (g_kprof[(i)] = kcycles())
+#else
+#define KPROF(i) ((void)0)
+#endif
 static uint32_t s_prev_pendsv_entry;
 
 static inline uint32_t highest_level(void)
@@ -23,10 +29,10 @@ static inline uint32_t highest_level(void)
     return 31u - __CLZ(g_k.ready_levels);
 }
 
-static void record_start(ktcb_t *t, uint64_t now)
+static void record_start(ktcb_t *t, uint32_t now32)
 {
     t->job_started = true;
-    uint32_t lat = (uint32_t)(now - t->release_ideal);
+    uint32_t lat = now32 - (uint32_t)t->release_ideal; /* modulo-2^32 delta, valid < 89 s */
     t->start_lat = lat;
     if (lat > t->max_start_lat) {
         t->max_start_lat = lat;
@@ -171,10 +177,42 @@ void k_job_end_locked(ktcb_t *t, uint64_t now)
     if (now >= t->next_release) {
         k_release_locked(t, now); /* next job already due: continue without blocking */
         if (t->job_active) {
-            record_start(t, now);
+            record_start(t, (uint32_t)now);
         }
     } else {
         k_block(t, KW_PERIOD);
+    }
+}
+
+static uint64_t task_next_event(const ktcb_t *t)
+{
+    uint64_t ne = KNO_TIME;
+    if (t->state == KS_UNUSED || t->state == KS_FAULTED) {
+        return ne;
+    }
+    if (t->period != 0u) {
+        ne = t->next_release;
+    }
+    if (t->job_active && !t->deadline_flagged && t->abs_deadline < ne) {
+        ne = t->abs_deadline;
+    }
+    if (t->state == KS_BLOCKED && t->wake_at < ne) {
+        ne = t->wake_at;
+    }
+    return ne;
+}
+
+static void program_alarm(uint64_t when)
+{
+    g_k.alarm_at = when;
+    kt_alarm_set(when);
+}
+
+void k_events_changed(ktcb_t *t)
+{
+    t->next_event = task_next_event(t);
+    if (g_k.started && t->next_event < g_k.alarm_at) {
+        program_alarm(t->next_event);
     }
 }
 
@@ -184,60 +222,70 @@ void k_recompute_alarm(uint64_t now)
     uint64_t next = g_k.next_supervisor;
     for (uint32_t i = 0; i < KNUM_TCB; i++) {
         ktcb_t *t = &g_k.tcb[i];
-        if (t->state == KS_UNUSED || t->state == KS_FAULTED) {
-            continue;
-        }
-        if (t->period != 0u && t->next_release < next) {
-            next = t->next_release;
-        }
-        if (t->job_active && !t->deadline_flagged && t->abs_deadline < next) {
-            next = t->abs_deadline;
-        }
-        if (t->state == KS_BLOCKED && t->wake_at < next) {
-            next = t->wake_at;
+        t->next_event = task_next_event(t);
+        if (t->next_event < next) {
+            next = t->next_event;
         }
     }
-    kt_alarm_set(next);
+    program_alarm(next);
 }
 
 void k_alarm_isr(void)
 {
     uint32_t c0 = kcycles();
     kcrit_t s = kcrit_enter();
-    k_dwt_guard();
+    KPROF(0);
     uint64_t now = kt_now();
+    KPROF(1);
     g_k.alarm_count++;
     if (g_k.started) {
+        /* One pass: process due tasks and compute the next alarm. Tasks whose cached next_event is
+         * in the future cost one 64-bit compare. */
+        uint64_t next = g_k.next_supervisor;
         for (uint32_t i = 0; i < KNUM_TCB; i++) {
             ktcb_t *t = &g_k.tcb[i];
-            if (t->state == KS_UNUSED || t->state == KS_FAULTED) {
-                continue;
+            if (now >= t->next_event) {
+                if (t->state != KS_UNUSED && t->state != KS_FAULTED) {
+                    if (t->period != 0u && now >= t->next_release) {
+                        k_release_locked(t, now);
+                    }
+                    if (t->job_active && !t->deadline_flagged && now >= t->abs_deadline) {
+                        t->deadline_flagged = true;
+                        t->deadline_misses++;
+                        trace_emit_locked(TE_DEADLINE_MISS, t->id, (uint16_t)t->jobs);
+                    }
+                    if (t->state == KS_BLOCKED && now >= t->wake_at) {
+                        k_wake(t, 0u); /* timeout (sleep ends the same way) */
+                    }
+                }
+                t->next_event = task_next_event(t);
             }
-            if (t->period != 0u && now >= t->next_release) {
-                k_release_locked(t, now);
-            }
-            if (t->job_active && !t->deadline_flagged && now >= t->abs_deadline) {
-                t->deadline_flagged = true;
-                t->deadline_misses++;
-                trace_emit_locked(TE_DEADLINE_MISS, t->id, (uint16_t)t->jobs);
-            }
-            if (t->state == KS_BLOCKED && now >= t->wake_at) {
-                k_wake(t, 0u); /* timeout (sleep ends the same way) */
+            if (t->next_event < next) {
+                next = t->next_event;
             }
         }
+        KPROF(2);
         if (now >= g_k.next_supervisor) {
+            k_dwt_guard();
             k_supervisor_tick(now);
             uint64_t p = kt_us_to_ticks(KSUPERVISOR_PERIOD_US);
             g_k.next_supervisor += p;
             if (g_k.next_supervisor <= now) {
                 g_k.next_supervisor = now + p;
             }
+            if (g_k.next_supervisor < next) {
+                next = g_k.next_supervisor;
+            }
         }
-        k_recompute_alarm(now);
+        KPROF(3);
+        program_alarm(next);
+        KPROF(4);
         k_reschedule();
+        KPROF(5);
     }
     kcrit_exit(s);
     uint32_t dt = kcycles() - c0;
+    KPROF(6);
     khist_add(&g_hist_alarm, dt);
     if (dt > g_k.max_alarm_cycles) {
         g_k.max_alarm_cycles = dt;
@@ -254,8 +302,8 @@ uint32_t *kestrel_sched_switch(uint32_t *old_sp)
     uint32_t ran = c0 - cur->switched_in;
     cur->job_exec += ran;
     cur->run_cycles += ran;
-    if (cur->state != KS_UNUSED && cur->state != KS_FAULTED && cur->cfg != 0 &&
-        !kstack_canary_ok(cur)) {
+    if (cur->cfg != 0 && cur->cfg->stack_base[KSTACK_CANARY_WORD] != KSTACK_CANARY &&
+        cur->state != KS_FAULTED) {
         cur->canary_hits++;
         const uint32_t *hw = old_sp + 10u + (((old_sp[0] & 0x10u) == 0u) ? 16u : 0u);
         kfault_record_software(cur, hw, KFAULT_STACK_CANARY, 0u);
@@ -274,7 +322,7 @@ uint32_t *kestrel_sched_switch(uint32_t *old_sp)
     }
     next->switched_in = c0;
     if (next->job_active && !next->job_started) {
-        record_start(next, kt_now());
+        record_start(next, kt_now32());
     }
     kmpu_switch(next);
     g_k.current = next;

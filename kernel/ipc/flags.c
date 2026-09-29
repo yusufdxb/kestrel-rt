@@ -41,7 +41,7 @@ uint32_t k_flags_wait(ktcb_t *t, uint32_t *frame, kflags_t *f, uint32_t mask, ui
     t->wait_frame = frame;
     k_block(t, KW_FLAGS);
     t->wake_at = (timeout_us == KWAIT_FOREVER) ? KNO_TIME : now + kt_us_to_ticks(timeout_us);
-    k_recompute_alarm(now);
+    k_events_changed(t);
     k_reschedule();
     return 0u; /* overwritten at wakeup via the saved frame pointer */
 }

@@ -172,7 +172,10 @@ class Link:
         self.raw = bytearray()
 
     def send(self, cmd, payload=b""):
-        code = CMD[cmd] if isinstance(cmd, str) else cmd
+        if isinstance(cmd, str):
+            code = CMD[cmd] if cmd in CMD else int(cmd, 0)
+        else:
+            code = cmd
         self.ser.write(encode(0x40, bytes([code]) + payload, self.seq))
         self.seq += 1
 

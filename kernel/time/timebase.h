@@ -29,6 +29,8 @@ void kt_alarm_set(uint64_t when);
 /* Test hooks for the rollover campaign (stop, preload the counter, restart). */
 void kt_test_preload(uint32_t counter_low, uint32_t high);
 uint32_t kt_overflow_count(void);
+void kt_diag_compare(uint32_t out[4]);
+void kt_diag_cpu(uint32_t out[4]);
 
 /* Pure helper (host-tested): extend a 32-bit counter sample with a software high word, given
  * whether an overflow was pending when the sample was taken. */

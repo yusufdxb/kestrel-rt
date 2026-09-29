@@ -66,7 +66,15 @@ typedef struct {
 void trace_init(void);
 /* Kernel contexts only (privileged, IRQs may be enabled; takes the critical section itself). */
 void trace_emit(uint8_t type, uint8_t id, uint16_t data);
-void trace_emit_locked(uint8_t type, uint8_t id, uint16_t data); /* caller holds kcrit */
+void trace_emit_slow(uint8_t type, uint8_t id, uint16_t data);
+extern uint32_t g_trace_mask;
+/* Caller holds kcrit. Disabled types cost one load + test (no call). */
+static inline void trace_emit_locked(uint8_t type, uint8_t id, uint16_t data)
+{
+    if ((g_trace_mask & (1u << type)) != 0u) {
+        trace_emit_slow(type, id, data);
+    }
+}
 void trace_job_locked(const job_record_t *jr);
 /* Which event types are recorded (bit per type). Job records have their own per-task mask. */
 void trace_set_mask(uint32_t type_mask, uint8_t job_task_mask);

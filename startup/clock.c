@@ -11,6 +11,8 @@
 #include "arch/armv7m/cpu.h"
 #include "startup/startup.h"
 
+void kestrel_fcache(uint32_t on);
+
 #define SCKDIVCR_FCK_DIV2  (1u << 28)
 #define SCKDIVCR_ICK_DIV1  (0u << 24)
 #define SCKDIVCR_PCKA_DIV1 (0u << 12)
@@ -46,6 +48,7 @@ void kestrel_clock_init(void)
     R_SYSTEM->SCKSCR = SCKSCR_HOCO;
 
     ra_prcr_lock();
+    kestrel_fcache(1u);
 }
 
 void kestrel_clock_read(kestrel_clock_state_t *out)
@@ -55,4 +58,17 @@ void kestrel_clock_read(kestrel_clock_state_t *out)
     out->memwait = R_SYSTEM->MEMWAIT;
     out->opccr = R_SYSTEM->OPCCR;
     out->hocosf = (uint8_t)(R_SYSTEM->OSCSF & 1u);
+}
+
+/* Flash cache: enabled by Kestrel itself (never relies on the bootloader having done it).
+ * Invalidate first so no stale lines survive a reprogram. */
+void kestrel_fcache(uint32_t on)
+{
+    R_FCACHE->FCACHEE = 0u;
+    if (on != 0u) {
+        R_FCACHE->FCACHEIV = 1u;
+        while (R_FCACHE->FCACHEIV != 0u) {
+        }
+        R_FCACHE->FCACHEE = 1u;
+    }
 }

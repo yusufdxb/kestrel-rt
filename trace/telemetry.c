@@ -44,7 +44,7 @@ static telemetry_stats_t s_stats;
 static uint8_t s_frame[KFRAME_MAX_PAYLOAD + KFRAME_OVERHEAD];
 static uint8_t s_payload[KFRAME_MAX_PAYLOAD];
 
-extern khist_t g_hist_pendsv, g_hist_alarm, g_hist_svc;
+
 uint32_t kestrel_idle_loops(void);
 uint32_t k_supervisor_warnings(void);
 
@@ -143,7 +143,14 @@ static void send_status(uint64_t now)
     const kcrash_boot_info_t *ci = crashlog_info();
     uint8_t *p = s_payload;
     uint32_t o = 0u;
-    kcrit_t s = kcrit_enter();
+    /* Stack scans walk up to 2 KB each: done outside the critical section (values are monotonic
+     * high-water marks, so a slightly stale read is still a valid lower bound). */
+    uint16_t hw[KNUM_TCB];
+    for (uint32_t i = 0; i < KNUM_TCB; i++) {
+        hw[i] = (g_k.tcb[i].cfg != 0) ? (uint16_t)kstack_high_water(&g_k.tcb[i]) : 0u;
+    }
+    /* Counters are copied field by field with interrupts enabled; each 32-bit read is atomic and
+     * the status frame is a monitoring snapshot, not a consistent cut. */
     o = put_u32(p, o, (uint32_t)now);
     o = put_u32(p, o, (uint32_t)(now >> 32));
     o = put_u32(p, o, ci->boot_count);
@@ -179,7 +186,7 @@ static void send_status(uint64_t now)
         }
         p[o++] = t->id;
         p[o++] = t->state;
-        kput16(&p[o], (uint16_t)kstack_high_water(t));
+        kput16(&p[o], hw[i]);
         o += 2u;
         o = put_u32(p, o, t->jobs);
         o = put_u32(p, o, t->deadline_misses);
@@ -188,10 +195,12 @@ static void send_status(uint64_t now)
         o = put_u32(p, o, t->max_response);
         o = put_u32(p, o, t->max_start_lat);
         o = put_u32(p, o, t->faults);
-        o = put_u32(p, o, (uint32_t)t->run_cycles);
-        o = put_u32(p, o, (uint32_t)(t->run_cycles >> 32));
+        kcrit_t s = kcrit_enter(); /* 64-bit counter: read both halves consistently */
+        uint64_t rc = t->run_cycles;
+        kcrit_exit(s);
+        o = put_u32(p, o, (uint32_t)rc);
+        o = put_u32(p, o, (uint32_t)(rc >> 32));
     }
-    kcrit_exit(s);
     (void)telemetry_send(KF_STATUS, p, (uint16_t)o);
 }
 
@@ -239,7 +248,10 @@ static void send_tasks(void)
 
 static void send_hist(uint8_t which)
 {
-    const khist_t *h = which == 0u ? &g_hist_pendsv : which == 1u ? &g_hist_alarm : &g_hist_svc;
+    const khist_t *h = which == 0u   ? &g_hist_pendsv
+                       : which == 1u ? &g_hist_alarm
+                       : which == 2u ? &g_hist_svc
+                                     : &g_hist_irqlat;
     /* bins are sent in 4 frames of 32 bins to stay under the payload limit */
     for (uint32_t part = 0; part < 4u; part++) {
         uint8_t *p = s_payload;
@@ -318,6 +330,7 @@ static void handle_command(const kframe_decoder_t *d, uint64_t now)
         khist_reset(&g_hist_pendsv);
         khist_reset(&g_hist_alarm);
         khist_reset(&g_hist_svc);
+        khist_reset(&g_hist_irqlat);
         for (uint32_t i = 0; i < KNUM_TCB; i++) {
             ktcb_t *t = &g_k.tcb[i];
             t->wcet = 0u;

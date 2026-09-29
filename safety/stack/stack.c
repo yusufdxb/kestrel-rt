@@ -6,9 +6,6 @@
  */
 #include "kernel/kernel_priv.h"
 
-#define KSTACK_FILL   0xA5A5A5A5u
-#define KSTACK_CANARY 0x4B535443u /* "KSTC" */
-#define KSTACK_GUARD_WORDS 8u
 
 void kstack_prepare(ktcb_t *t)
 {

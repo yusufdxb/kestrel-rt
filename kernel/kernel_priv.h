@@ -49,6 +49,7 @@ typedef struct ktcb {
     uint32_t wait_mask;
     uint32_t wait_result;
     uint64_t wake_at;       /* sleep/timeout wakeup, KNO_TIME if none */
+    uint64_t next_event;    /* earliest of release/deadline/wake; may be early, never late */
     uint64_t period;        /* ticks, 0 = aperiodic */
     uint64_t deadline;      /* relative, ticks */
     uint64_t next_release;  /* ideal time of the next release */
@@ -84,6 +85,7 @@ typedef struct {
     bool started;
     uint64_t t0;            /* synchronous first release */
     uint64_t next_supervisor;
+    uint64_t alarm_at;      /* currently programmed timer event */
     /* kernel counters */
     uint32_t context_switches;
     uint32_t pendsv_count;
@@ -114,6 +116,7 @@ void k_release_locked(ktcb_t *t, uint64_t now);
 void k_job_end_locked(ktcb_t *t, uint64_t now);
 void k_alarm_isr(void);
 void k_recompute_alarm(uint64_t now);
+void k_events_changed(ktcb_t *t); /* refresh t->next_event; pull the alarm in if earlier */
 void k_set_level(ktcb_t *t, uint8_t level);
 void k_task_fault(ktcb_t *t, uint16_t kind);
 
@@ -123,6 +126,10 @@ void k_supervisor_tick(uint64_t now);
 #define KSUPERVISOR_PERIOD_US 5000u
 
 /* stack (safety/stack) */
+#define KSTACK_FILL        0xA5A5A5A5u
+#define KSTACK_CANARY      0x4B535443u /* "KSTC" */
+#define KSTACK_GUARD_WORDS 8u           /* 32 B MPU guard block at the stack bottom */
+#define KSTACK_CANARY_WORD KSTACK_GUARD_WORDS
 void kstack_prepare(ktcb_t *t);
 uint32_t kstack_high_water(const ktcb_t *t); /* bytes ever used */
 bool kstack_canary_ok(const ktcb_t *t);
@@ -131,6 +138,7 @@ bool kstack_canary_ok(const ktcb_t *t);
 void kmpu_init(void);
 void kmpu_switch(const ktcb_t *t);
 bool kmpu_enabled(void);
+void kmpu_set_enabled(bool on); /* experiments only */
 
 /* pointer validation for system calls from unprivileged tasks */
 bool k_user_ptr_ok(const ktcb_t *caller, const void *p, uint32_t size);

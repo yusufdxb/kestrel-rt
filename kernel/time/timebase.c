@@ -2,6 +2,7 @@
 
 #include "arch/armv7m/cpu.h"
 #include "drivers/icu/icu.h"
+#include "kernel/khist.h"
 
 #define MSTPD5_GPT32 (1u << 5)
 #define GTCR_CST     1u
@@ -12,6 +13,8 @@
 static volatile uint32_t s_high;
 static volatile uint32_t s_overflows;
 static kt_alarm_fn s_alarm;
+static volatile uint32_t s_alarm_target;
+static volatile bool s_alarm_hw; /* armed in hardware (not software-pended) */
 
 static void ovf_isr(void)
 {
@@ -21,6 +24,13 @@ static void ovf_isr(void)
 
 static void cmp_isr(void)
 {
+    /* ISR latency: compare-match instant (the programmed target) to this line, in timer ticks.
+     * Includes NVIC entry, the ICU dispatcher and any interrupt-masked section in the way. */
+    uint32_t cnt = R_GPT0->GTCNT;
+    if (s_alarm_hw) {
+        s_alarm_hw = false;
+        khist_add(&g_hist_irqlat, cnt - s_alarm_target);
+    }
     if (s_alarm != 0) {
         s_alarm();
     }
@@ -68,12 +78,16 @@ void kt_alarm_set(uint64_t when)
         lead = 0x7FFFFFFF;
     }
     if (lead < (int64_t)KT_MIN_LEAD_TICKS) {
+        s_alarm_hw = false;
         NVIC_SetPendingIRQ((IRQn_Type)IRQ_LINE_TIMER_CMP);
     } else {
         R_GPT0->GTCCR[0] = (uint32_t)when;
+        s_alarm_target = (uint32_t)when;
+        s_alarm_hw = true;
         /* Re-check: if the counter passed the target while writing, the match was missed. */
         uint32_t after = R_GPT0->GTCNT;
         if ((int32_t)((uint32_t)when - after) <= 0) {
+            s_alarm_hw = false;
             NVIC_SetPendingIRQ((IRQn_Type)IRQ_LINE_TIMER_CMP);
         }
     }
@@ -93,4 +107,63 @@ void kt_test_preload(uint32_t counter_low, uint32_t high)
 uint32_t kt_overflow_count(void)
 {
     return s_overflows;
+}
+
+/* Diagnostic (privileged, masks interrupts ~25 us): time from compare target to (a) the GPT
+ * compare flag GTST.TCFA and (b) the ICU latch IELSR.IR, both polled. Restores the alarm. */
+void kt_diag_compare(uint32_t out[4])
+{
+    kcrit_t s = kcrit_enter();
+    uint32_t saved = R_GPT0->GTCCR[0];
+    uint32_t target = R_GPT0->GTCNT + 1000u;
+    R_GPT0->GTST = 0u;
+    R_GPT0->GTCCR[0] = target;
+    uint32_t t_flag = 0u, t_ir = 0u;
+    for (uint32_t i = 0; i < 100000u && (t_flag == 0u || t_ir == 0u); i++) {
+        uint32_t now = R_GPT0->GTCNT;
+        if (t_flag == 0u && (R_GPT0->GTST & 1u) != 0u) {
+            t_flag = now;
+        }
+        if (t_ir == 0u && icu_is_pending(IRQ_LINE_TIMER_CMP) != 0) {
+            t_ir = now;
+        }
+    }
+    out[0] = t_flag - target;
+    out[1] = t_ir - target;
+    out[2] = R_GPT0->GTCR;
+    out[3] = R_GPT0->GTIOR;
+    R_ICU->IELSR[IRQ_LINE_TIMER_CMP] &= ~(1u << 16);
+    NVIC_ClearPendingIRQ((IRQn_Type)IRQ_LINE_TIMER_CMP);
+    R_GPT0->GTCCR[0] = saved;
+    kcrit_exit(s);
+    NVIC_SetPendingIRQ((IRQn_Type)IRQ_LINE_TIMER_CMP); /* re-evaluate kernel alarms */
+}
+
+/* Diagnostic: DWT cycles for 1000 iterations of (a) a register-only loop, (b) an SRAM load loop,
+ * (c) a GPT register read loop, (d) an ICU register read loop. Interrupts masked. */
+void kt_diag_cpu(uint32_t out[4])
+{
+    static volatile uint32_t ram_word;
+    kcrit_t s = kcrit_enter();
+    uint32_t c0 = kcycles();
+    __asm volatile("mov r0, #1000\n1: subs r0, #1\n bne 1b" ::: "r0", "cc");
+    uint32_t c1 = kcycles();
+    for (uint32_t i = 0; i < 1000u; i++) {
+        (void)ram_word;
+    }
+    uint32_t c2 = kcycles();
+    for (uint32_t i = 0; i < 1000u; i++) {
+        (void)R_GPT0->GTCNT;
+    }
+    uint32_t c3 = kcycles();
+    for (uint32_t i = 0; i < 1000u; i++) {
+        (void)R_ICU->IELSR[0];
+    }
+    uint32_t c4 = kcycles();
+    kcrit_exit(s);
+    (void)c4;
+    out[0] = c1 - c0;
+    out[1] = c2 - c1;
+    out[2] = c3 - c2;
+    out[3] = c4 - c3;
 }

@@ -14,8 +14,11 @@
 #include "apps/common/workload.h"
 #include "apps/fault_injection/inject.h"
 #include "drivers/adc/adc.h"
+#include "drivers/timer/gpt.h"
 #include "kernel/ipc/mailbox.h"
+#include "kernel/kernel_priv.h"
 #include "kernel/kestrel.h"
+#include "kernel/time/timebase.h"
 #include "trace/frame.h"
 #include "trace/telemetry.h"
 
@@ -170,6 +173,32 @@ void kestrel_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
         g_inject.task = p[1];
         g_inject.arg = kget16(&p[2]);
         g_inject.kind = p[0];
+    } else if (cmd == 0x22u && len >= 4u) {             /* STORM hz (0 = off) */
+        storm_set_rate(kget32(p));
+    } else if (cmd == 0x30u || cmd == 0x31u) {          /* DIAG timer compare / CPU speed */
+        uint32_t d[4];
+        if (cmd == 0x30u) {
+            kt_diag_compare(d);
+        } else {
+            kt_diag_cpu(d);
+        }
+        uint8_t out[16];
+        for (uint32_t i = 0; i < 4u; i++) {
+            kput32(&out[4u * i], d[i]);
+        }
+        (void)telemetry_send(KF_RESULT, out, 16u);
+    } else if (cmd == 0x32u) {                          /* DIAG timer ISR stage stamps */
+        extern volatile uint32_t g_kprof[8];
+        uint8_t out[32];
+        for (uint32_t i = 0; i < 8u; i++) {
+            kput32(&out[4u * i], g_kprof[i] - g_kprof[0]);
+        }
+        (void)telemetry_send(KF_RESULT, out, 32u);
+    } else if (cmd == 0x23u && len >= 1u) {             /* MPU on/off (experiments) */
+        kmpu_set_enabled(p[0] != 0u);
+    } else if (cmd == 0x33u && len >= 1u) {             /* FCACHE on/off (experiments) */
+        extern void kestrel_fcache(uint32_t on);
+        kestrel_fcache(p[0]);
     } else if (cmd == 0x21u) {                          /* APP_STATS */
         uint8_t out[40];
         uint32_t o = 0u;

@@ -11,14 +11,14 @@ static job_record_t s_job_storage[TRACE_JOBS];
 static kq_spsc_t s_ev = {0, 0, TRACE_EVENTS - 1u, sizeof(trace_event_t), (uint8_t *)s_ev_storage, 0, 0};
 static kq_spsc_t s_jobs = {0, 0, TRACE_JOBS - 1u, sizeof(job_record_t), (uint8_t *)s_job_storage, 0, 0};
 static trace_stats_t s_stats;
-static uint32_t s_type_mask;
+uint32_t g_trace_mask;
 static uint8_t s_job_mask;
 
 void trace_init(void)
 {
     /* Default: rare/diagnostic events only. High-rate events (per job, per switch) are enabled by
      * the host for timeline captures; per-job timing always flows through job records. */
-    s_type_mask = 0xFFFFFFFFu & ~((1u << TE_SWITCH) | (1u << TE_ISR_ENTER) | (1u << TE_ISR_EXIT) |
+    g_trace_mask = 0xFFFFFFFFu & ~((1u << TE_SWITCH) | (1u << TE_ISR_ENTER) | (1u << TE_ISR_EXIT) |
                                   (1u << TE_RELEASE) | (1u << TE_START) | (1u << TE_END) |
                                   (1u << TE_BLOCK) | (1u << TE_WAKE) | (1u << TE_MUTEX));
     s_job_mask = 0xFFu;
@@ -26,7 +26,7 @@ void trace_init(void)
 
 void trace_set_mask(uint32_t type_mask, uint8_t job_task_mask)
 {
-    s_type_mask = type_mask;
+    g_trace_mask = type_mask;
     s_job_mask = job_task_mask;
 }
 
@@ -35,11 +35,8 @@ uint8_t trace_job_mask(void)
     return s_job_mask;
 }
 
-void trace_emit_locked(uint8_t type, uint8_t id, uint16_t data)
+void trace_emit_slow(uint8_t type, uint8_t id, uint16_t data)
 {
-    if ((s_type_mask & (1u << type)) == 0u) {
-        return;
-    }
     trace_event_t e = {kt_now32(), (uint16_t)(((uint16_t)type << 8) | id), data};
     if (kq_spsc_push(&s_ev, &e)) {
         s_stats.events++;

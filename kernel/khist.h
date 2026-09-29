@@ -7,8 +7,9 @@
 #define KHIST_BINS 128u
 
 typedef struct {
+    uint8_t shift;   /* bin width = 1 << shift */
+    uint8_t id;
     uint16_t width;
-    uint16_t id;
     uint32_t count;
     uint32_t max;
     uint32_t overflow;
@@ -21,7 +22,7 @@ static inline void khist_add(khist_t *h, uint32_t v)
     if (v > h->max) {
         h->max = v;
     }
-    uint32_t b = v / h->width;
+    uint32_t b = v >> h->shift;
     if (b < KHIST_BINS) {
         h->bins[b]++;
     } else {
@@ -39,7 +40,8 @@ static inline void khist_reset(khist_t *h)
     }
 }
 /* Kernel instrumentation histograms (kernel/stats.c): DWT cycles. */
-extern khist_t g_hist_pendsv; /* PendSV entry -> exception return, width 2 */
+extern khist_t g_hist_pendsv; /* PendSV entry -> exception return, width 4 */
 extern khist_t g_hist_alarm;  /* kernel timer ISR body, width 8 */
 extern khist_t g_hist_svc;    /* SVC dispatch body, width 4 */
+extern khist_t g_hist_irqlat; /* timer compare match -> ISR, GPT ticks (20.8 ns), width 2 */
 #endif

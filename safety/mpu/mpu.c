@@ -84,3 +84,17 @@ void kmpu_switch(const ktcb_t *t)
     MPU->RASR = AP_NONE | XN | MEM_SRAM | size_field(STACK_GUARD_BYTES) | MPU_RASR_ENABLE_Msk;
     /* No barrier needed here: the exception return that follows is context synchronizing. */
 }
+
+void kmpu_set_enabled(bool on)
+{
+    __disable_irq();
+    if (on) {
+        MPU->CTRL = MPU_CTRL_PRIVDEFENA_Msk | MPU_CTRL_ENABLE_Msk;
+    } else {
+        MPU->CTRL = 0u;
+    }
+    s_enabled = on;
+    __DSB();
+    __ISB();
+    __enable_irq();
+}

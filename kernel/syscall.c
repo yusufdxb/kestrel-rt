@@ -147,15 +147,13 @@ void k_svc_dispatch(uint32_t *frame, uint32_t svc_num, uint32_t exc_return)
     switch (svc_num) {
     case SVC_WAIT_PERIOD:
         k_job_end_locked(t, now);
-        if (t->state == KS_BLOCKED) {
-            k_recompute_alarm(now);
-        }
+        k_events_changed(t);
         k_reschedule();
         break;
     case SVC_SLEEP:
         k_block(t, KW_SLEEP);
         t->wake_at = now + kt_us_to_ticks(frame[0]);
-        k_recompute_alarm(now);
+        k_events_changed(t);
         k_reschedule();
         break;
     case SVC_YIELD:
