@@ -1,15 +1,16 @@
 /* Kestrel startup: vector table and reset handler.
  *
  * Entry contract from the Arduino bootloader (arduino-renesas-bootloader src/main.c, boot5()):
- * PRIMASK = 1, SysTick stopped, VTOR = 0x4000, MSP = vector[0], jump to vector[1]. Clocks are left as
- * the bootloader configured them. Kestrel does not rely on any of that: it re-establishes VTOR,
+ * PRIMASK = 1, SysTick stopped, VTOR = 0x4000, MSP = vector[0], jump to vector[1]. Clocks are left
+ * as the bootloader configured them. Kestrel does not rely on any of that: it re-establishes VTOR,
  * interrupt state, FPU access and clocks itself before running C code that touches .data/.bss.
  */
-#include <stdint.h>
+#include "startup/startup.h"
 
 #include "arch/armv7m/cpu.h"
 #include "kernel/kestrel.h"
-#include "startup/startup.h"
+
+#include <stdint.h>
 
 extern uint32_t __data_load, __data_start, __data_end;
 extern uint32_t __bss_start, __bss_end;
@@ -47,26 +48,22 @@ __attribute__((section(".vectors"), used)) const kvector_table_t kestrel_vectors
     .initial_msp = &__main_stack_top,
     .system =
         {
-            kestrel_reset_handler, /* 1  Reset */
-            NMI_Handler,           /* 2  NMI */
-            HardFault_Handler,     /* 3  HardFault */
-            MemManage_Handler,     /* 4  MemManage */
-            BusFault_Handler,      /* 5  BusFault */
-            UsageFault_Handler,    /* 6  UsageFault */
-            0,
-            0,
-            0,
-            0,
-            SVC_Handler,      /* 11 SVCall */
-            DebugMon_Handler, /* 12 DebugMonitor */
-            0,
-            PendSV_Handler,  /* 14 PendSV */
-            SysTick_Handler, /* 15 SysTick */
+            kestrel_reset_handler,   /* 1  Reset */
+            NMI_Handler,             /* 2  NMI */
+            HardFault_Handler,       /* 3  HardFault */
+            MemManage_Handler,       /* 4  MemManage */
+            BusFault_Handler,        /* 5  BusFault */
+            UsageFault_Handler,      /* 6  UsageFault */
+            0, 0, 0, 0, SVC_Handler, /* 11 SVCall */
+            DebugMon_Handler,        /* 12 DebugMonitor */
+            0, PendSV_Handler,       /* 14 PendSV */
+            SysTick_Handler,         /* 15 SysTick */
         },
     .irq =
         {
-#define D8 kestrel_irq_dispatch, kestrel_irq_dispatch, kestrel_irq_dispatch, kestrel_irq_dispatch, \
-           kestrel_irq_dispatch, kestrel_irq_dispatch, kestrel_irq_dispatch, kestrel_irq_dispatch
+#define D8                                                                                         \
+    kestrel_irq_dispatch, kestrel_irq_dispatch, kestrel_irq_dispatch, kestrel_irq_dispatch,        \
+        kestrel_irq_dispatch, kestrel_irq_dispatch, kestrel_irq_dispatch, kestrel_irq_dispatch
             D8, D8, D8, D8, /* all 32 ICU lines share one dispatcher (drivers/icu) */
 #undef D8
         },
@@ -79,6 +76,28 @@ void kestrel_default_handler(void)
     __disable_irq();
     for (;;) {
         __BKPT(0);
+    }
+}
+
+/* Linker symbols are distinct objects to the C abstract machine, so section extents are computed
+ * from their addresses as integers instead of comparing pointers to different objects. These
+ * helpers must not touch .data/.bss themselves (they run before either is initialized). */
+static uint32_t span_words(const uint32_t *start, const uint32_t *end)
+{
+    return (uint32_t)(((uintptr_t)end - (uintptr_t)start) / 4u);
+}
+
+static void copy_words(uint32_t *dst, const uint32_t *src, uint32_t n)
+{
+    for (uint32_t i = 0; i < n; i++) {
+        dst[i] = src[i];
+    }
+}
+
+static void zero_words(uint32_t *dst, uint32_t n)
+{
+    for (uint32_t i = 0; i < n; i++) {
+        dst[i] = 0u;
     }
 }
 
@@ -110,20 +129,11 @@ void kestrel_reset_handler(void)
     __DSB();
     __ISB();
 
-    uint32_t *src = &__data_load;
-    for (uint32_t *dst = &__data_start; dst < &__data_end;) {
-        *dst++ = *src++;
-    }
-    for (uint32_t *dst = &__bss_start; dst < &__bss_end;) {
-        *dst++ = 0u;
-    }
-    for (uint32_t *dst = &__task_stacks_start; dst < &__task_stacks_end;) {
-        *dst++ = 0u;
-    }
-    src = &__app_shared_load;
-    for (uint32_t *dst = &__app_shared_start; dst < &__app_shared_used_end;) {
-        *dst++ = *src++;
-    }
+    copy_words(&__data_start, &__data_load, span_words(&__data_start, &__data_end));
+    zero_words(&__bss_start, span_words(&__bss_start, &__bss_end));
+    zero_words(&__task_stacks_start, span_words(&__task_stacks_start, &__task_stacks_end));
+    copy_words(&__app_shared_start, &__app_shared_load,
+               span_words(&__app_shared_start, &__app_shared_used_end));
 
     clear_interrupt_state();
     kestrel_clock_init();

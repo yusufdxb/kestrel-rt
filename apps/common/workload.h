@@ -6,16 +6,16 @@
 #include <stdint.h>
 
 typedef struct {
-    float x[4];      /* state estimate */
-    float u[2];      /* actuator command */
+    float x[4]; /* state estimate */
+    float u[2]; /* actuator command */
     float integ[2];
     uint32_t seq;
 } ctrl_state_t;
 
 typedef struct {
-    float y[4];      /* filtered measurement */
+    float y[4]; /* filtered measurement */
     uint32_t seq;
-    uint32_t raw;    /* last raw ADC code (or synthetic) */
+    uint32_t raw; /* last raw ADC code (or synthetic) */
 } sensor_msg_t;
 
 /* One unit = one 4x4 matrix-vector product + PID update (about 0.1-0.2k cycles). */

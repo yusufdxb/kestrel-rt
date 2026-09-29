@@ -1,9 +1,9 @@
 /* Freestanding memory primitives. GCC may emit calls to memcpy/memset/memmove for struct copies
  * and zeroing even with -ffreestanding, so the runtime provides them. No libc is linked. */
+#include "kernel/memory/kstring.h"
+
 #include <stddef.h>
 #include <stdint.h>
-
-#include "kernel/memory/kstring.h"
 
 void *memcpy(void *restrict dst, const void *restrict src, size_t n)
 {

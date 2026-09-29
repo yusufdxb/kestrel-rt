@@ -28,17 +28,13 @@ enum {
 /* ---------- task side ---------- */
 #define SVC0(n) __asm volatile("svc %0" ::"I"(n) : "memory")
 
-
 #define SVC_CALL(num, a0, a1, a2, a3, out)                                                         \
     do {                                                                                           \
         register uint32_t r0_ __asm("r0") = (a0);                                                  \
         register uint32_t r1_ __asm("r1") = (a1);                                                  \
         register uint32_t r2_ __asm("r2") = (a2);                                                  \
         register uint32_t r3_ __asm("r3") = (a3);                                                  \
-        __asm volatile("svc %4"                                                                    \
-                       : "+r"(r0_), "+r"(r1_)                                                      \
-                       : "r"(r2_), "r"(r3_), "I"(num)                                              \
-                       : "memory");                                                                \
+        __asm volatile("svc %4" : "+r"(r0_), "+r"(r1_) : "r"(r2_), "r"(r3_), "I"(num) : "memory"); \
         (out)[0] = r0_;                                                                            \
         (out)[1] = r1_;                                                                            \
         (void)(out)[0];                                                                            \
@@ -198,13 +194,13 @@ void k_svc_dispatch(uint32_t *frame, uint32_t svc_num, uint32_t exc_return)
     case SVC_MUTEX_LOCK: {
         kmutex_t *m = (kmutex_t *)(uintptr_t)frame[0];
         frame[0] = k_user_ptr_ok(t, m, sizeof(*m)) ? (uint32_t)k_mutex_lock(t, frame, m)
-                                                    : (uint32_t)KE_PERM;
+                                                   : (uint32_t)KE_PERM;
         break;
     }
     case SVC_MUTEX_UNLOCK: {
         kmutex_t *m = (kmutex_t *)(uintptr_t)frame[0];
-        frame[0] = k_user_ptr_ok(t, m, sizeof(*m)) ? (uint32_t)k_mutex_unlock(t, m)
-                                                    : (uint32_t)KE_PERM;
+        frame[0] =
+            k_user_ptr_ok(t, m, sizeof(*m)) ? (uint32_t)k_mutex_unlock(t, m) : (uint32_t)KE_PERM;
         break;
     }
     default:

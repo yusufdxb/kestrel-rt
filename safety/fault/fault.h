@@ -1,8 +1,8 @@
 #ifndef KESTREL_FAULT_H
 #define KESTREL_FAULT_H
-#include <stdint.h>
-
 #include "kernel/kernel_priv.h"
+
+#include <stdint.h>
 
 enum kfault_kind {
     KFAULT_HARD = 1,

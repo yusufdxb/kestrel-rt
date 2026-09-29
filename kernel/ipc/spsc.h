@@ -22,15 +22,15 @@ typedef struct {
     _Atomic uint32_t tail; /* consumer-owned */
     uint32_t mask;         /* capacity - 1 */
     uint32_t elem_size;
-    uint8_t *storage;      /* capacity * elem_size bytes */
+    uint8_t *storage; /* capacity * elem_size bytes */
     _Atomic uint32_t rejected;
     _Atomic uint32_t high_water;
 } kq_spsc_t;
 
 #define KQ_SPSC_DEFINE(name, type, capacity)                                                       \
-    _Static_assert(((capacity) & ((capacity) - 1u)) == 0u, "capacity must be a power of two");      \
+    _Static_assert(((capacity) & ((capacity)-1u)) == 0u, "capacity must be a power of two");       \
     static type name##_storage[(capacity)];                                                        \
-    static kq_spsc_t name = {0, 0, (capacity) - 1u, sizeof(type), (uint8_t *)name##_storage, 0, 0}
+    static kq_spsc_t name = {0, 0, (capacity)-1u, sizeof(type), (uint8_t *)name##_storage, 0, 0}
 
 static inline uint32_t kq_spsc_count(kq_spsc_t *q)
 {

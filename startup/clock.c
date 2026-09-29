@@ -3,7 +3,8 @@
  * Order matters (RA4M1 User's Manual, clock generation circuit and operating power control mode):
  *   1. high-speed operating power mode (required for ICLK > 12 MHz range limits),
  *   2. HOCO running and stable (frequency 48 MHz is selected by OFS1.HOCOFRQ1, programmed by the
- *      factory/bootloader option bytes; Kestrel verifies the result by measurement, not assumption),
+ *      factory/bootloader option bytes; Kestrel verifies the result by measurement, not
+ * assumption),
  *   3. one flash wait state (MEMWAIT = 1) before ICLK exceeds 32 MHz,
  *   4. dividers, then 5. clock source switch.
  * Re-applying this on top of the bootloader's identical configuration is harmless.

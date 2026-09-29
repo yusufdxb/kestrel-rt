@@ -6,7 +6,6 @@
  */
 #include "kernel/kernel_priv.h"
 
-
 void kstack_prepare(ktcb_t *t)
 {
     uint32_t *base = t->cfg->stack_base;

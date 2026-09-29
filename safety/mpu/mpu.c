@@ -17,15 +17,15 @@
 
 extern uint32_t __app_shared_start, __app_shared_end, __main_stack_bottom;
 
-#define AP_NONE     (0u << MPU_RASR_AP_Pos)
-#define AP_PRIV_RW  (1u << MPU_RASR_AP_Pos)
-#define AP_URO      (2u << MPU_RASR_AP_Pos) /* priv RW, unpriv RO */
-#define AP_FULL     (3u << MPU_RASR_AP_Pos)
-#define AP_RO       (6u << MPU_RASR_AP_Pos) /* priv RO, unpriv RO */
-#define XN          MPU_RASR_XN_Msk
-#define MEM_NORMAL  ((1u << MPU_RASR_C_Pos))                     /* TEX 0, C 1, B 0 */
-#define MEM_SRAM    ((1u << MPU_RASR_C_Pos) | (1u << MPU_RASR_S_Pos))
-#define MEM_DEVICE  ((1u << MPU_RASR_B_Pos) | (1u << MPU_RASR_S_Pos))
+#define AP_NONE           (0u << MPU_RASR_AP_Pos)
+#define AP_PRIV_RW        (1u << MPU_RASR_AP_Pos)
+#define AP_URO            (2u << MPU_RASR_AP_Pos) /* priv RW, unpriv RO */
+#define AP_FULL           (3u << MPU_RASR_AP_Pos)
+#define AP_RO             (6u << MPU_RASR_AP_Pos) /* priv RO, unpriv RO */
+#define XN                MPU_RASR_XN_Msk
+#define MEM_NORMAL        ((1u << MPU_RASR_C_Pos)) /* TEX 0, C 1, B 0 */
+#define MEM_SRAM          ((1u << MPU_RASR_C_Pos) | (1u << MPU_RASR_S_Pos))
+#define MEM_DEVICE        ((1u << MPU_RASR_B_Pos) | (1u << MPU_RASR_S_Pos))
 #define STACK_GUARD_BYTES 32u
 
 static bool s_enabled;
@@ -46,13 +46,15 @@ static void region(uint32_t n, uint32_t base, uint32_t bytes, uint32_t attrs)
 void kmpu_init(void)
 {
     uint32_t shared = (uint32_t)(uintptr_t)&__app_shared_start;
-    uint32_t shared_size = (uint32_t)((uintptr_t)&__app_shared_end - (uintptr_t)&__app_shared_start);
+    uint32_t shared_size =
+        (uint32_t)((uintptr_t)&__app_shared_end - (uintptr_t)&__app_shared_start);
     MPU->CTRL = 0u;
     region(0u, 0x00000000u, 256u * 1024u, AP_RO | MEM_NORMAL);
     region(1u, 0x00000000u, 16u * 1024u, AP_NONE | XN | MEM_NORMAL);
     region(2u, 0x20000000u, 32u * 1024u, AP_PRIV_RW | XN | MEM_SRAM);
     region(3u, shared, shared_size, AP_FULL | XN | MEM_SRAM);
-    region(6u, (uint32_t)(uintptr_t)&__main_stack_bottom, STACK_GUARD_BYTES, AP_NONE | XN | MEM_SRAM);
+    region(6u, (uint32_t)(uintptr_t)&__main_stack_bottom, STACK_GUARD_BYTES,
+           AP_NONE | XN | MEM_SRAM);
     region(7u, 0x40078000u, 256u, AP_URO | XN | MEM_DEVICE);
     /* regions 4/5 are programmed per task by kmpu_switch */
     MPU->RNR = 4u;

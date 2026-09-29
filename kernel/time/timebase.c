@@ -42,9 +42,9 @@ void kt_init(kt_alarm_fn on_alarm)
     R_MSTP->MSTPCRD &= ~MSTPD5_GPT32;
     (void)R_MSTP->MSTPCRD;
 
-    R_GPT0->GTCR = 0u;           /* stopped, saw-wave, PCLKD/1 */
-    R_GPT0->GTUDDTYC = 1u;       /* count up */
-    R_GPT0->GTPR = 0xFFFFFFFFu;  /* full 32-bit period */
+    R_GPT0->GTCR = 0u;          /* stopped, saw-wave, PCLKD/1 */
+    R_GPT0->GTUDDTYC = 1u;      /* count up */
+    R_GPT0->GTPR = 0xFFFFFFFFu; /* full 32-bit period */
     R_GPT0->GTCNT = 0u;
     R_GPT0->GTCCR[0] = 0xFFFFFFFFu;
     R_GPT0->GTST = 0u;

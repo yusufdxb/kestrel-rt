@@ -43,6 +43,8 @@ void inject_check(uint8_t task_id)
         break;
     case INJ_DIV_ZERO: {
         volatile uint32_t zero = 0u;
+        /* Deliberate: the UsageFault DIVBYZERO trap (CCR.DIV_0_TRP) is the point of this case. */
+        // cppcheck-suppress zerodiv
         g_inject_sink = 100u / zero;
         break;
     }

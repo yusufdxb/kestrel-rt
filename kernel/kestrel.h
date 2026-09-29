@@ -13,8 +13,8 @@
 #define KESTREL_VERSION "0.1.0"
 
 /* ---- configuration limits (docs/SPEC.md section 3) ---- */
-#define KESTREL_MAX_TASKS 8u  /* application tasks; the kernel idle task is extra */
-#define KESTREL_MAX_PRIO  7u  /* application priorities 1..7, unique; 0 is idle */
+#define KESTREL_MAX_TASKS 8u /* application tasks; the kernel idle task is extra */
+#define KESTREL_MAX_PRIO  7u /* application priorities 1..7, unique; 0 is idle */
 
 /* ---- task definition ---- */
 #define KTASK_PRIVILEGED 0x01u /* runs privileged (system service); default is unprivileged */
@@ -36,7 +36,7 @@ typedef struct {
 
 /* Stack storage: power-of-two size, naturally aligned so one MPU region covers it exactly. */
 #define KESTREL_STACK(name, bytes)                                                                 \
-    _Static_assert(((bytes) & ((bytes) - 1)) == 0 && (bytes) >= 256, "stack size: power of two"); \
+    _Static_assert(((bytes) & ((bytes)-1)) == 0 && (bytes) >= 256, "stack size: power of two");    \
     static uint32_t name[(bytes) / 4u] __attribute__((aligned(bytes), section(".task_stacks")))
 
 /* Data an unprivileged task may touch must live in the shared application region. */
@@ -57,16 +57,20 @@ typedef enum {
 } kstatus_t;
 
 kstatus_t kestrel_task_create(const kestrel_task_cfg_t *cfg);
+/* Boot-time configuration failure (before kestrel_start): record a crash record and halt. The
+ * watchdog is not running yet, so the board stays halted for inspection instead of reset-looping.
+ */
+void kestrel_panic(uint32_t code) __attribute__((noreturn));
 void kestrel_start(void) __attribute__((noreturn));
 bool kestrel_dwt_ok(void);
 
 /* ---- task-callable services (system calls) ---- */
-void kestrel_wait_period(void);            /* end of the current job; block until next release */
+void kestrel_wait_period(void); /* end of the current job; block until next release */
 void kestrel_sleep_us(uint32_t us);
 void kestrel_yield(void);
-uint64_t kestrel_now(void);                /* 64-bit timebase ticks (48 MHz) */
-void kestrel_health_vote(void);            /* critical tasks: "this job completed and checked" */
-void kestrel_trace(uint16_t value);        /* TE_USER event from a task */
+uint64_t kestrel_now(void);         /* 64-bit timebase ticks (48 MHz) */
+void kestrel_health_vote(void);     /* critical tasks: "this job completed and checked" */
+void kestrel_trace(uint16_t value); /* TE_USER event from a task */
 void kestrel_assert_fail(uint32_t line) __attribute__((noreturn));
 #define KESTREL_ASSERT(c)                                                                          \
     do {                                                                                           \
@@ -79,13 +83,13 @@ void kestrel_assert_fail(uint32_t line) __attribute__((noreturn));
 typedef struct {
     volatile uint32_t bits;
 } kflags_t;
-#define KFLAGS_ANY   0x0u
-#define KFLAGS_ALL   0x1u
-#define KFLAGS_CLEAR 0x2u /* clear the matched bits on successful wait */
+#define KFLAGS_ANY    0x0u
+#define KFLAGS_ALL    0x1u
+#define KFLAGS_CLEAR  0x2u /* clear the matched bits on successful wait */
 #define KWAIT_FOREVER 0xFFFFFFFFu
 /* Returns matched bits (nonzero) or 0 on timeout. */
 uint32_t kestrel_flags_wait(kflags_t *f, uint32_t mask, uint32_t mode, uint32_t timeout_us);
-void kestrel_flags_set(kflags_t *f, uint32_t bits);   /* tasks */
+void kestrel_flags_set(kflags_t *f, uint32_t bits);     /* tasks */
 void kestrel_flags_set_isr(kflags_t *f, uint32_t bits); /* ISRs (privileged) */
 
 /* Mutex. Protocol chosen per object:
@@ -93,7 +97,7 @@ void kestrel_flags_set_isr(kflags_t *f, uint32_t bits); /* ISRs (privileged) */
  *   KMUTEX_CEILING : immediate priority ceiling protocol; ceiling = highest user priority */
 typedef struct {
     uint8_t protocol;
-    uint8_t ceiling;     /* KMUTEX_CEILING: max priority of any task that locks it */
+    uint8_t ceiling;        /* KMUTEX_CEILING: max priority of any task that locks it */
     volatile uint8_t owner; /* task id + 1; 0 = free */
     uint8_t reserved;
     uint32_t contentions;

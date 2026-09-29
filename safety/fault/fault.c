@@ -13,8 +13,8 @@
 #include "safety/crashlog/crashlog.h"
 #include "trace/trace.h"
 
-#define CFSR_MSTKERR (1u << 4)
-#define CFSR_STKERR  (1u << 12)
+#define CFSR_MSTKERR   (1u << 4)
+#define CFSR_STKERR    (1u << 12)
 #define CFSR_MMARVALID (1u << 7)
 #define CFSR_BFARVALID (1u << 15)
 
@@ -100,7 +100,7 @@ void kfault_dispatch(uint32_t *frame, uint32_t exc_return, uint32_t ipsr, uint32
         ((uint32_t *)&r)[i] = 0u;
     }
     uint32_t exc = ipsr & 0x1FFu;
-    r.kind = (uint16_t)(exc == 2u ? KFAULT_NMI
+    r.kind = (uint16_t)(exc == 2u   ? KFAULT_NMI
                         : exc == 3u ? KFAULT_HARD
                         : exc == 4u ? KFAULT_MEMMANAGE
                         : exc == 5u ? KFAULT_BUS
@@ -207,4 +207,21 @@ void k_task_fault(ktcb_t *t, uint16_t kind)
     t->job_active = false;
     g_k.ready_levels &= ~(1u << t->level);
     trace_emit_locked(TE_FAULT, t->id, kind);
+}
+
+void kestrel_panic(uint32_t code)
+{
+    __disable_irq();
+    kcrash_record_t r;
+    for (uint32_t i = 0; i < sizeof(r) / 4u; i++) {
+        ((uint32_t *)&r)[i] = 0u;
+    }
+    r.kind = KFAULT_KERNEL;
+    r.task = 0xFFu;
+    r.detail = code;
+    fill_system(&r);
+    crashlog_store(&r);
+    for (;;) {
+        __WFI();
+    }
 }

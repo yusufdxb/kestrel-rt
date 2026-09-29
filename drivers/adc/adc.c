@@ -14,7 +14,8 @@
 
 #define ADC_QCAP 16u
 KESTREL_SHARED static adc_sample_t s_q_storage[ADC_QCAP];
-KESTREL_SHARED static kq_spsc_t s_q = {0, 0, ADC_QCAP - 1u, sizeof(adc_sample_t), (uint8_t *)s_q_storage, 0, 0};
+KESTREL_SHARED static kq_spsc_t s_q = {
+    0, 0, ADC_QCAP - 1u, sizeof(adc_sample_t), (uint8_t *)s_q_storage, 0, 0};
 KESTREL_SHARED static uint32_t s_last_seq;
 KESTREL_SHARED static uint32_t s_gaps;
 
@@ -47,7 +48,7 @@ adc_status_t adc_init(void)
     R_PMISC->PWPR = 0u;
     R_PMISC->PWPR = 0x80u;
 
-    R_ADC0->ADCSR = 0u;             /* single scan, software start */
+    R_ADC0->ADCSR = 0u; /* single scan, software start */
     R_ADC0->ADCER = ADCER_14BIT;
     R_ADC0->ADANSA[0] = (uint16_t)(1u << ADC_CH);
     R_ADC0->ADANSA[1] = 0u;

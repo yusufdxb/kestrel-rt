@@ -4,24 +4,24 @@
 #include "drivers/gpio/gpio.h"
 #include "drivers/icu/icu.h"
 
-#define SCR_TIE  (1u << 7)
-#define SCR_RIE  (1u << 6)
-#define SCR_TE   (1u << 5)
-#define SCR_RE   (1u << 4)
-#define SCR_TEIE (1u << 2)
-#define SSR_TDRE (1u << 7)
-#define SSR_RDRF (1u << 6)
-#define SSR_ORER (1u << 5)
-#define SSR_FER  (1u << 4)
-#define SSR_PER  (1u << 3)
-#define SSR_TEND (1u << 2)
-#define SEMR_BGDM (1u << 6)
-#define SEMR_ABCS (1u << 4)
-#define SPTR_SPB2IO (1u << 2)
-#define SPTR_SPB2DT (1u << 1)
+#define SCR_TIE           (1u << 7)
+#define SCR_RIE           (1u << 6)
+#define SCR_TE            (1u << 5)
+#define SCR_RE            (1u << 4)
+#define SCR_TEIE          (1u << 2)
+#define SSR_TDRE          (1u << 7)
+#define SSR_RDRF          (1u << 6)
+#define SSR_ORER          (1u << 5)
+#define SSR_FER           (1u << 4)
+#define SSR_PER           (1u << 3)
+#define SSR_TEND          (1u << 2)
+#define SEMR_BGDM         (1u << 6)
+#define SEMR_ABCS         (1u << 4)
+#define SPTR_SPB2IO       (1u << 2)
+#define SPTR_SPB2DT       (1u << 1)
 #define PSEL_SCI1_3_5_7_9 0x05u
-#define MSTPB22_SCI9 (1u << 22)
-#define MSTPA22_DMAC (1u << 22)
+#define MSTPB22_SCI9      (1u << 22)
+#define MSTPA22_DMAC      (1u << 22)
 
 #define UART_RX_CAPACITY 256u
 static uint8_t s_rx_storage[UART_RX_CAPACITY];
@@ -50,7 +50,8 @@ static void eri_isr(void)
         s_stats.rx_framing++;
     }
     (void)R_SCI9->RDR;
-    /* Error flags clear by writing 0 after reading them as 1; keep TDRE/TEND untouched (write 1). */
+    /* Error flags clear by writing 0 after reading them as 1; keep TDRE/TEND untouched (write 1).
+     */
     R_SCI9->SSR = (uint8_t)(ssr & (uint8_t) ~(SSR_ORER | SSR_FER | SSR_PER));
 }
 
@@ -97,7 +98,7 @@ uart_status_t uart_init(uint32_t baud, uart_tx_done_fn on_tx_done)
     R_SCI9->SPTR = (uint8_t)(SPTR_SPB2IO | SPTR_SPB2DT); /* TXD idles high while TE = 0 */
     (void)gpio_set_peripheral(GPIO_PIN(1u, 9u), PSEL_SCI1_3_5_7_9);
     (void)gpio_set_peripheral(GPIO_PIN(1u, 10u), PSEL_SCI1_3_5_7_9);
-    R_SCI9->SMR = 0u;    /* async, 8 data bits, no parity, 1 stop, PCLKA/1 */
+    R_SCI9->SMR = 0u;     /* async, 8 data bits, no parity, 1 stop, PCLKA/1 */
     R_SCI9->SCMR = 0xF2u; /* reset value: LSB first, no invert, CHR1 = 1 (8-bit with CHR = 0) */
     R_SCI9->SEMR = (uint8_t)(SEMR_BGDM | SEMR_ABCS);
     R_SCI9->BRR = (uint8_t)(div - 1u);
@@ -111,10 +112,11 @@ uart_status_t uart_init(uint32_t baud, uart_tx_done_fn on_tx_done)
     /* DMAC0: byte transfers from an incrementing source to the fixed TDR, one per TXI. */
     R_DMA->DMAST = 1u;
     R_DMAC0->DMCNT = 0u;
-    R_DMAC0->DMTMD = (uint16_t)(0u << 14 | 0u << 8 | 1u); /* normal mode, byte, peripheral trigger */
-    R_DMAC0->DMAMD = (uint16_t)(2u << 14 | 0u << 6);    /* src increment, dst fixed */
+    R_DMAC0->DMTMD =
+        (uint16_t)(0u << 14 | 0u << 8 | 1u);         /* normal mode, byte, peripheral trigger */
+    R_DMAC0->DMAMD = (uint16_t)(2u << 14 | 0u << 6); /* src increment, dst fixed */
     R_DMAC0->DMDAR = (uint32_t)&R_SCI9->TDR;
-    R_DMAC0->DMINT = (uint8_t)(1u << 4);                 /* DTIE */
+    R_DMAC0->DMINT = (uint8_t)(1u << 4); /* DTIE */
     R_ICU->DELSR[0] = EVT_SCI9_TXI;
 
     icu_route(IRQ_LINE_UART_RXI, EVT_SCI9_RXI, rxi_isr, KPRIO_DEVICE);

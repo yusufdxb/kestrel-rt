@@ -18,33 +18,33 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define KFRAME_MAGIC0 0x4Bu
-#define KFRAME_MAGIC1 0x52u
-#define KFRAME_VERSION 1u
-#define KFRAME_HEADER 8u
-#define KFRAME_OVERHEAD 10u
+#define KFRAME_MAGIC0      0x4Bu
+#define KFRAME_MAGIC1      0x52u
+#define KFRAME_VERSION     1u
+#define KFRAME_HEADER      8u
+#define KFRAME_OVERHEAD    10u
 #define KFRAME_MAX_PAYLOAD 480u
 
 /* Target -> host */
-#define KF_HELLO   0x01u
-#define KF_STATUS  0x02u
-#define KF_JOBS    0x03u
-#define KF_TRACE   0x04u
-#define KF_CRASH   0x05u
-#define KF_ACK     0x06u
-#define KF_TASKS   0x07u
-#define KF_RESULT  0x08u
+#define KF_HELLO  0x01u
+#define KF_STATUS 0x02u
+#define KF_JOBS   0x03u
+#define KF_TRACE  0x04u
+#define KF_CRASH  0x05u
+#define KF_ACK    0x06u
+#define KF_TASKS  0x07u
+#define KF_RESULT 0x08u
 /* Host -> target */
-#define KF_CMD     0x40u
+#define KF_CMD 0x40u
 
 /* Encode into out (capacity cap). Returns bytes written, 0 if it does not fit or len too big. */
 size_t kframe_encode(uint8_t *out, size_t cap, uint8_t type, uint16_t seq, const uint8_t *payload,
                      uint16_t len);
 
 typedef enum {
-    KFD_NONE = 0,     /* need more bytes */
-    KFD_FRAME = 1,    /* complete, valid frame available in the decoder */
-    KFD_ERROR = 2,    /* frame discarded (see counters); decoder already resynchronizing */
+    KFD_NONE = 0,  /* need more bytes */
+    KFD_FRAME = 1, /* complete, valid frame available in the decoder */
+    KFD_ERROR = 2, /* frame discarded (see counters); decoder already resynchronizing */
 } kframe_result_t;
 
 typedef struct {

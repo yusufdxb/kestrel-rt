@@ -3,10 +3,10 @@
  * and the fault path, where interrupts may be unusable. RX: RXI ISR -> SPSC byte queue. */
 #ifndef KESTREL_SCI_UART_H
 #define KESTREL_SCI_UART_H
+#include "kernel/ipc/spsc.h"
+
 #include <stdbool.h>
 #include <stdint.h>
-
-#include "kernel/ipc/spsc.h"
 
 typedef enum {
     UART_OK = 0,
@@ -16,8 +16,8 @@ typedef enum {
 
 typedef struct {
     uint32_t rx_bytes;
-    uint32_t rx_overrun;   /* SSR.ORER */
-    uint32_t rx_framing;   /* SSR.FER */
+    uint32_t rx_overrun; /* SSR.ORER */
+    uint32_t rx_framing; /* SSR.FER */
     uint32_t tx_bytes;
     uint32_t tx_dma_chunks;
     uint32_t tx_rejected_busy;

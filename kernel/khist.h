@@ -7,7 +7,7 @@
 #define KHIST_BINS 128u
 
 typedef struct {
-    uint8_t shift;   /* bin width = 1 << shift */
+    uint8_t shift; /* bin width = 1 << shift */
     uint8_t id;
     uint16_t width;
     uint32_t count;

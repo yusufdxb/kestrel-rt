@@ -14,10 +14,10 @@ enum inject_kind {
     INJ_KERNEL_WRITE = 6,   /* write into kernel data: MPU must stop an unprivileged task */
     INJ_STACK_OVERFLOW = 7, /* unbounded recursion into the stack guard */
     INJ_ASSERT = 8,
-    INJ_HANG = 9,           /* infinite loop: no votes, no job completion */
-    INJ_EXEC_RAM = 10,      /* jump into SRAM: XN must stop it */
-    INJ_RETURN = 11,        /* task entry returns */
-    INJ_SPIN_MS = 12,       /* busy-wait arg ms inside one job (overload one job) */
+    INJ_HANG = 9,      /* infinite loop: no votes, no job completion */
+    INJ_EXEC_RAM = 10, /* jump into SRAM: XN must stop it */
+    INJ_RETURN = 11,   /* task entry returns */
+    INJ_SPIN_MS = 12,  /* busy-wait arg ms inside one job (overload one job) */
 };
 
 typedef struct {

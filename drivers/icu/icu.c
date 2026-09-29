@@ -2,6 +2,7 @@
 
 #include "arch/armv7m/cpu.h"
 #include "startup/startup.h"
+
 #include <stdbool.h>
 
 #define IELSR_IR (1u << 16)

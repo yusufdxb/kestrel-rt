@@ -1,5 +1,5 @@
-/* Board/MCU access for Kestrel: pulls in the CMSIS-Core + SVD register definitions and nothing else.
- * No FSP BSP code is used; the header only provides register layouts. */
+/* Board/MCU access for Kestrel: pulls in the CMSIS-Core + SVD register definitions and nothing
+ * else. No FSP BSP code is used; the header only provides register layouts. */
 #ifndef KESTREL_BOARD_RA4M1_H
 #define KESTREL_BOARD_RA4M1_H
 

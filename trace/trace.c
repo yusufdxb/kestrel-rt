@@ -8,8 +8,10 @@
 
 static trace_event_t s_ev_storage[TRACE_EVENTS];
 static job_record_t s_job_storage[TRACE_JOBS];
-static kq_spsc_t s_ev = {0, 0, TRACE_EVENTS - 1u, sizeof(trace_event_t), (uint8_t *)s_ev_storage, 0, 0};
-static kq_spsc_t s_jobs = {0, 0, TRACE_JOBS - 1u, sizeof(job_record_t), (uint8_t *)s_job_storage, 0, 0};
+static kq_spsc_t s_ev = {0, 0, TRACE_EVENTS - 1u, sizeof(trace_event_t), (uint8_t *)s_ev_storage,
+                         0, 0};
+static kq_spsc_t s_jobs = {0, 0, TRACE_JOBS - 1u, sizeof(job_record_t), (uint8_t *)s_job_storage,
+                           0, 0};
 static trace_stats_t s_stats;
 uint32_t g_trace_mask;
 static uint8_t s_job_mask;
@@ -19,8 +21,8 @@ void trace_init(void)
     /* Default: rare/diagnostic events only. High-rate events (per job, per switch) are enabled by
      * the host for timeline captures; per-job timing always flows through job records. */
     g_trace_mask = 0xFFFFFFFFu & ~((1u << TE_SWITCH) | (1u << TE_ISR_ENTER) | (1u << TE_ISR_EXIT) |
-                                  (1u << TE_RELEASE) | (1u << TE_START) | (1u << TE_END) |
-                                  (1u << TE_BLOCK) | (1u << TE_WAKE) | (1u << TE_MUTEX));
+                                   (1u << TE_RELEASE) | (1u << TE_START) | (1u << TE_END) |
+                                   (1u << TE_BLOCK) | (1u << TE_WAKE) | (1u << TE_MUTEX));
     s_job_mask = 0xFFu;
 }
 

@@ -2,12 +2,13 @@
  *
  *   critical tasks --kestrel_health_vote()--> last_vote[t]
  *   supervisor (kernel timer path, every 5 ms): all critical votes fresh? --yes--> wdt_feed()
- *                                                                        --no---> record + stop feeding
- * A task that hangs, starves, or detects its own failure stops voting; the watchdog then resets the
- * MCU ~350 ms later. Noncritical tasks (comms, logger) that set a wd_window are only monitored:
- * a stall sets a degraded bit (traced and reported) but never causes a reset. The supervisor runs
- * at timer-interrupt priority, so it keeps running even when every task is starved; only a stuck
- * interrupt-disabled section or a handler-mode hang stops it, and then the WDT bites unaided. */
+ *                                                                        --no---> record + stop
+ * feeding A task that hangs, starves, or detects its own failure stops voting; the watchdog then
+ * resets the MCU ~350 ms later. Noncritical tasks (comms, logger) that set a wd_window are only
+ * monitored: a stall sets a degraded bit (traced and reported) but never causes a reset. The
+ * supervisor runs at timer-interrupt priority, so it keeps running even when every task is starved;
+ * only a stuck interrupt-disabled section or a handler-mode hang stops it, and then the WDT bites
+ * unaided. */
 #include "arch/armv7m/cpu.h"
 #include "drivers/wdt/wdt.h"
 #include "kernel/kernel_priv.h"

@@ -2,11 +2,11 @@
 
 #include "arch/armv7m/cpu.h"
 
-#define WDTCR_RPSS_100 (3u << 12)
-#define WDTCR_RPES_0   (3u << 8)
-#define WDTCR_CKS_8192 (8u << 4)
+#define WDTCR_RPSS_100  (3u << 12)
+#define WDTCR_RPES_0    (3u << 8)
+#define WDTCR_CKS_8192  (8u << 4)
 #define WDTCR_TOPS_1024 (0u << 0)
-#define WDTRCR_RESET   0x80u
+#define WDTRCR_RESET    0x80u
 
 static bool s_running;
 static uint32_t s_feeds;

@@ -1,17 +1,17 @@
 /* Fixed-priority preemptive scheduler with tickless release timing.
  *
  * Ready set: one bit per priority level in g_k.ready_levels; the highest set bit (CLZ) selects the
- * task in O(1). Level = 2 * priority; odd levels are used only while a task holds a priority-ceiling
- * mutex (level 2*ceiling + 1), so the holder outranks every user of that mutex without sharing a
- * level with any of them. Level 0 is the idle task, which is always ready.
+ * task in O(1). Level = 2 * priority; odd levels are used only while a task holds a
+ * priority-ceiling mutex (level 2*ceiling + 1), so the holder outranks every user of that mutex
+ * without sharing a level with any of them. Level 0 is the idle task, which is always ready.
  *
  * All kernel state changes happen inside one short PRIMASK critical section per kernel entry
  * (timer ISR, SVC, PendSV selection); the longest one is measured (g_k.max_*_cycles).
  */
 #include "arch/armv7m/cpu.h"
 #include "kernel/kernel_priv.h"
-#include "kernel/time/timebase.h"
 #include "kernel/khist.h"
+#include "kernel/time/timebase.h"
 #include "safety/fault/fault.h"
 #include "trace/trace.h"
 
@@ -168,8 +168,9 @@ void k_job_end_locked(ktcb_t *t, uint64_t now)
     if (e16 > 0xFFFFu || r16 > 0xFFFFu || t->release_lat > 0xFFFFu || t->start_lat > 0xFFFFu) {
         flags |= JR_FLAG_SATURATED;
     }
-    job_record_t jr = {t->id, flags, (uint16_t)t->jobs, sat16(t->release_lat), sat16(t->start_lat),
-                       sat16(e16), sat16(r16)};
+    job_record_t jr = {
+        t->id,      flags,     (uint16_t)t->jobs, sat16(t->release_lat), sat16(t->start_lat),
+        sat16(e16), sat16(r16)};
     trace_job_locked(&jr);
     trace_emit_locked(TE_END, t->id, sat16(e16));
     t->job_active = false;

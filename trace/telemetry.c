@@ -10,11 +10,11 @@
 #include "safety/fault/fault.h"
 #include "trace/trace.h"
 
-#define TX_RING 2048u
-#define STATUS_PERIOD_US 1000000u
-#define MAX_JOBS_PER_FRAME 40u   /* 40 * 12 = 480 B */
+#define TX_RING              2048u
+#define STATUS_PERIOD_US     1000000u
+#define MAX_JOBS_PER_FRAME   40u /* 40 * 12 = 480 B */
 #define MAX_EVENTS_PER_FRAME 60u /* 60 * 8 = 480 B */
-#define MAX_DMA_CHUNK 1024u
+#define MAX_DMA_CHUNK        1024u
 
 /* host commands */
 enum {
@@ -43,7 +43,6 @@ static kframe_decoder_t s_dec;
 static telemetry_stats_t s_stats;
 static uint8_t s_frame[KFRAME_MAX_PAYLOAD + KFRAME_OVERHEAD];
 static uint8_t s_payload[KFRAME_MAX_PAYLOAD];
-
 
 uint32_t kestrel_idle_loops(void);
 uint32_t k_supervisor_warnings(void);

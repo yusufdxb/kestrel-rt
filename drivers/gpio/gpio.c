@@ -2,10 +2,10 @@
 
 #include "arch/armv7m/cpu.h"
 
-#define PFS_PMR   (1u << 16)
-#define PFS_PDR   (1u << 2)
-#define PFS_PCR   (1u << 4)
-#define PFS_PODR  (1u << 0)
+#define PFS_PMR        (1u << 16)
+#define PFS_PDR        (1u << 2)
+#define PFS_PCR        (1u << 4)
+#define PFS_PODR       (1u << 0)
 #define PFS_PSEL_SHIFT 24u
 
 static R_PORT0_Type *port_regs(uint32_t port)
@@ -28,11 +28,11 @@ static bool valid(uint16_t pin)
 static void pfs_write(uint16_t pin, uint32_t value)
 {
     kcrit_t s = kcrit_enter();
-    R_PMISC->PWPR = 0u;          /* B0WI = 0 */
-    R_PMISC->PWPR = 0x40u;       /* PFSWE = 1 */
+    R_PMISC->PWPR = 0u;    /* B0WI = 0 */
+    R_PMISC->PWPR = 0x40u; /* PFSWE = 1 */
     *pfs_reg(pin) = value;
     R_PMISC->PWPR = 0u;
-    R_PMISC->PWPR = 0x80u;       /* B0WI = 1 */
+    R_PMISC->PWPR = 0x80u; /* B0WI = 1 */
     kcrit_exit(s);
 }
 
@@ -74,7 +74,8 @@ gpio_status_t gpio_set_peripheral(uint16_t pin, uint32_t psel)
 void gpio_write(uint16_t pin, bool level)
 {
     uint32_t bit = 1u << ((uint32_t)pin & 0xFFu);
-    /* PCNTR3: lower half POSR (set), upper half PORR (reset); single write, no read-modify-write. */
+    /* PCNTR3: lower half POSR (set), upper half PORR (reset); single write, no read-modify-write.
+     */
     port_regs((uint32_t)pin >> 8)->PCNTR3 = level ? bit : (bit << 16);
 }
 

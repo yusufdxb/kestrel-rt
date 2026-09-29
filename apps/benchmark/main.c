@@ -39,9 +39,11 @@ KESTREL_SHARED static app_shared_t g_app = {.units = {20u, 10u, 10u, 0u, 50u, 20
 KESTREL_SHARED static ctrl_state_t g_ctrl_state;
 KESTREL_SHARED static sensor_msg_t g_sensor_state;
 KESTREL_SHARED static sensor_msg_t mb_sensor_data;
-KESTREL_SHARED static kmailbox_t mb_sensor = {0, sizeof(sensor_msg_t), (volatile uint8_t *)&mb_sensor_data, 0, 0};
+KESTREL_SHARED static kmailbox_t mb_sensor = {0, sizeof(sensor_msg_t),
+                                              (volatile uint8_t *)&mb_sensor_data, 0, 0};
 KESTREL_SHARED static ctrl_state_t mb_ctrl_data;
-KESTREL_SHARED static kmailbox_t mb_ctrl = {0, sizeof(ctrl_state_t), (volatile uint8_t *)&mb_ctrl_data, 0, 0};
+KESTREL_SHARED static kmailbox_t mb_ctrl = {0, sizeof(ctrl_state_t),
+                                            (volatile uint8_t *)&mb_ctrl_data, 0, 0};
 
 KESTREL_STACK(stk_control, 1024);
 KESTREL_STACK(stk_safety, 1024);
@@ -156,10 +158,14 @@ static void logger_task(void *arg)
 }
 
 static const kestrel_task_cfg_t k_tasks[T_COUNT] = {
-    {"control", control_task, 0, 1000u, 1000u, 7u, KTASK_CRITICAL, stk_control, sizeof(stk_control), 10000u},
-    {"safety", safety_task, 0, 2000u, 2000u, 6u, KTASK_CRITICAL, stk_safety, sizeof(stk_safety), 20000u},
-    {"sensor", sensor_task, 0, 2000u, 2000u, 5u, KTASK_CRITICAL, stk_sensor, sizeof(stk_sensor), 20000u},
-    {"comms", comms_task, 0, 10000u, 10000u, 3u, KTASK_PRIVILEGED, stk_comms, sizeof(stk_comms), 500000u},
+    {"control", control_task, 0, 1000u, 1000u, 7u, KTASK_CRITICAL, stk_control, sizeof(stk_control),
+     10000u},
+    {"safety", safety_task, 0, 2000u, 2000u, 6u, KTASK_CRITICAL, stk_safety, sizeof(stk_safety),
+     20000u},
+    {"sensor", sensor_task, 0, 2000u, 2000u, 5u, KTASK_CRITICAL, stk_sensor, sizeof(stk_sensor),
+     20000u},
+    {"comms", comms_task, 0, 10000u, 10000u, 3u, KTASK_PRIVILEGED, stk_comms, sizeof(stk_comms),
+     500000u},
     {"health", health_task, 0, 100000u, 100000u, 2u, 0u, stk_health, sizeof(stk_health), 1000000u},
     {"logger", logger_task, 0, 0u, 0u, 1u, 0u, stk_logger, sizeof(stk_logger), 2000000u},
 };
@@ -169,13 +175,13 @@ void kestrel_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
 {
     if (cmd == 0x10u && len >= 3u && p[0] < T_COUNT) { /* SET_WORK task, units */
         g_app.units[p[0]] = kget16(&p[1]);
-    } else if (cmd == 0x20u && len >= 4u) {             /* INJECT kind, task, arg */
+    } else if (cmd == 0x20u && len >= 4u) { /* INJECT kind, task, arg */
         g_inject.task = p[1];
         g_inject.arg = kget16(&p[2]);
         g_inject.kind = p[0];
-    } else if (cmd == 0x22u && len >= 4u) {             /* STORM hz (0 = off) */
+    } else if (cmd == 0x22u && len >= 4u) { /* STORM hz (0 = off) */
         storm_set_rate(kget32(p));
-    } else if (cmd == 0x30u || cmd == 0x31u) {          /* DIAG timer compare / CPU speed */
+    } else if (cmd == 0x30u || cmd == 0x31u) { /* DIAG timer compare / CPU speed */
         uint32_t d[4];
         if (cmd == 0x30u) {
             kt_diag_compare(d);
@@ -187,24 +193,25 @@ void kestrel_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
             kput32(&out[4u * i], d[i]);
         }
         (void)telemetry_send(KF_RESULT, out, 16u);
-    } else if (cmd == 0x32u) {                          /* DIAG timer ISR stage stamps */
+    } else if (cmd == 0x32u) { /* DIAG timer ISR stage stamps */
         extern volatile uint32_t g_kprof[8];
         uint8_t out[32];
         for (uint32_t i = 0; i < 8u; i++) {
             kput32(&out[4u * i], g_kprof[i] - g_kprof[0]);
         }
         (void)telemetry_send(KF_RESULT, out, 32u);
-    } else if (cmd == 0x23u && len >= 1u) {             /* MPU on/off (experiments) */
+    } else if (cmd == 0x23u && len >= 1u) { /* MPU on/off (experiments) */
         kmpu_set_enabled(p[0] != 0u);
-    } else if (cmd == 0x33u && len >= 1u) {             /* FCACHE on/off (experiments) */
+    } else if (cmd == 0x33u && len >= 1u) { /* FCACHE on/off (experiments) */
         extern void kestrel_fcache(uint32_t on);
         kestrel_fcache(p[0]);
-    } else if (cmd == 0x21u) {                          /* APP_STATS */
+    } else if (cmd == 0x21u) { /* APP_STATS */
         uint8_t out[40];
         uint32_t o = 0u;
-        const uint32_t v[] = {g_app.violations, g_app.stale_sensor, g_app.stale_control,
-                              g_app.mb_busy, g_app.health_runs, g_app.logger_loops, g_app.adc_gaps,
-                              mb_sensor.read_retries, mb_ctrl.read_retries, adc_isr_count()};
+        const uint32_t v[] = {g_app.violations, g_app.stale_sensor,     g_app.stale_control,
+                              g_app.mb_busy,    g_app.health_runs,      g_app.logger_loops,
+                              g_app.adc_gaps,   mb_sensor.read_retries, mb_ctrl.read_retries,
+                              adc_isr_count()};
         for (uint32_t i = 0; i < 10u; i++) {
             kput32(&out[o], v[i]);
             o += 4u;
@@ -218,7 +225,7 @@ void kestrel_main(void)
     (void)adc_init();
     for (uint32_t i = 0; i < T_COUNT; i++) {
         if (kestrel_task_create(&k_tasks[i]) != KOK) {
-            KESTREL_ASSERT(0);
+            kestrel_panic(0x7A5C0000u | i);
         }
     }
     kestrel_start();

@@ -2,23 +2,11 @@
 
 #include "arch/armv7m/cpu.h"
 
-#define VB_RECORD 128u
-#define VB_BOOT   256u /* u32 magic, u32 boot count */
+#define VB_RECORD     128u
+#define VB_BOOT       256u        /* u32 magic, u32 boot count */
 #define VB_BOOT_MAGIC 0x4B424F54u /* "KBOT" */
 
 static kcrash_boot_info_t s_info;
-
-uint32_t crc32_ieee(const uint8_t *p, uint32_t n)
-{
-    uint32_t c = 0xFFFFFFFFu;
-    for (uint32_t i = 0; i < n; i++) {
-        c ^= p[i];
-        for (uint32_t k = 0; k < 8u; k++) {
-            c = (c >> 1) ^ (0xEDB88320u & (0u - (c & 1u)));
-        }
-    }
-    return ~c;
-}
 
 static void vb_read(uint32_t off, void *dst, uint32_t n)
 {
@@ -97,11 +85,11 @@ void crashlog_boot(void)
     s_info.boot_count = hdr[1];
 
     vb_read(VB_RECORD, &s_info.last, sizeof(s_info.last));
-    s_info.crash_present =
-        s_info.last.magic == KCRASH_MAGIC && s_info.last.version == KCRASH_VERSION &&
-        s_info.last.size == sizeof(kcrash_record_t) &&
-        s_info.last.crc == crc32_ieee((const uint8_t *)&s_info.last,
-                                      (uint32_t)(sizeof(kcrash_record_t) - 4u));
+    s_info.crash_present = s_info.last.magic == KCRASH_MAGIC &&
+                           s_info.last.version == KCRASH_VERSION &&
+                           s_info.last.size == sizeof(kcrash_record_t) &&
+                           s_info.last.crc == crc32_ieee((const uint8_t *)&s_info.last,
+                                                         (uint32_t)(sizeof(kcrash_record_t) - 4u));
 }
 
 const kcrash_boot_info_t *crashlog_info(void)
