@@ -43,4 +43,22 @@
 
 ## Not implemented
 CAN (controller present, no transceiver on the board; loopback driver not written), native USB, low-power modes,
-DTC, and Phase 2 (ESP32-S3 split architecture; docs/SPLIT_ARCHITECTURE.md).
+DTC.
+
+## Phase 2 (ESP32-S3 split architecture)
+- **Fault isolation, not security.** The ESP32-S3 holds hardware authority over the RA4M1 by board design:
+  RESET (GPIO4), MD (GPIO9) and SWD through CMSIS-DAP. A malicious ESP firmware can reset, halt or reprogram
+  the RA4; nothing in software can prevent that. The defended boundary is the UART mailbox only.
+- The RA4's host path (commands, telemetry, uploads) still runs through the ESP's USB bridge. ESP reboots
+  interrupt it (job records lost in transit, counters on the RA4 intact); once, after an ESP task-watchdog
+  reboot, the bridge's CDC data path stayed silent while enumerated.
+- The ESP task watchdog (2 s, panic) is inherited configuration plus the mailbox task's subscription; the
+  Wi-Fi/network stack itself is not individually supervised beyond the core idle-task check.
+- A fixed +3.3 us shift of the control start-latency p99 appears whenever the link task exists (B0/N1 44.54
+  -> B1 47.88 us), independent of traffic; the cause is assumed, not isolated (timer-ISR coincidence).
+- The RA4 accepts at most 400 ESP frames/s by policy and drops excess at the DMA ring; the ESP gets no
+  back-pressure signal other than the acknowledged sequence in HEARTBEAT.
+- The SoftAP password is a local secret (esp/secrets.env), WPA2-PSK; UDP control is unauthenticated on that
+  network (fault-injection commands are a test feature and would be compiled out in a product).
+- One board, one ESP firmware base (Arduino bridge 0.5.2 / arduino-esp32 2.0.9); Wi-Fi throughput numbers
+  are from a single SoftAP client at an unmeasured distance.
