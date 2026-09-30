@@ -55,8 +55,22 @@ tradeoffs measured.
 - Soak: 10,429,500 control periods (2.9 h) with 0 misses, 0 overruns, 0 faults; control start latency max 50.5 us.
 - Final fault campaign: 17/17 cases pass on the final firmware.
 
-Known weaknesses: [docs/LIMITATIONS.md](docs/LIMITATIONS.md). Phase 2 (ESP32-S3 split architecture) is planned,
-not started: [docs/SPLIT_ARCHITECTURE.md](docs/SPLIT_ARCHITECTURE.md).
+Known weaknesses: [docs/LIMITATIONS.md](docs/LIMITATIONS.md).
+
+## Phase 2: split criticality with the board's ESP32-S3 (GO, 2026-09-30)
+The ESP32-S3 (Wi-Fi, a fork of the official Arduino USB bridge that keeps CMSIS-DAP and the serial bridge)
+talks to Kestrel over a 1 Mbaud DMA-backed mailbox with a sequenced, CRC-checked protocol; the RA4M1 treats
+it as untrusted and serves it from a budgeted priority-4 task. Measured on the board
+([docs/PHASE2_RESULTS.md](docs/PHASE2_RESULTS.md)):
+- Wi-Fi flood, ESP CPU saturation, heap exhaustion, 15,000 malformed frames, a UART-saturating mailbox flood,
+  a held-low line, reboot loops, panics and watchdog hangs: **0 RA4 critical deadline misses, 0 RA4 resets**;
+  control start p99 47.88 us in every case (44.54 us with the link compiled out: a fixed 3.3 us cost).
+- Soak: 10,003,440 control periods with 11 forced ESP crashes: 0 misses, 0 RA4 resets, 0 desyncs; each ESP
+  crash is a ~0.4 s link outage followed by a clean new session.
+- Fault isolation / trust-boundary design, not security: the ESP still owns the RA4 RESET line and SWD.
+Docs: [ARCHITECTURE](docs/PHASE2_ARCHITECTURE.md) · [INTERCONNECT](docs/PHASE2_INTERCONNECT.md) ·
+[PROTOCOL](docs/PHASE2_PROTOCOL.md) · [FAULT_MODEL](docs/PHASE2_FAULT_MODEL.md) · [RECOVERY](docs/PHASE2_RECOVERY.md) ·
+[RESULTS](docs/PHASE2_RESULTS.md)
 
 ## Build, flash, measure
 ```bash
