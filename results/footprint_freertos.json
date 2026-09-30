@@ -1,0 +1,20 @@
+{
+ "flash": {
+  "app": 920,
+  "baseline-app": 1262,
+  "bench-shim": 2352,
+  "drivers": 2080,
+  "freertos-kernel": 2832,
+  "kestrel-kernel": 40,
+  "startup": 596,
+  "trace+telemetry": 992
+ },
+ "ram": {
+  "baseline-app": 7852,
+  "bench-shim": 5936,
+  "drivers": 974,
+  "freertos-kernel": 897
+ },
+ "flash_total": 11074,
+ "ram_total": 15659
+}

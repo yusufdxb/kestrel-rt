@@ -51,6 +51,7 @@ static void init_tcb(ktcb_t *t, const kestrel_task_cfg_t *cfg, uint8_t id, uint8
     t->min_start_lat = 0xFFFFFFFFu;
 
     kstack_prepare(t);
+    t->canary = &cfg->stack_base[KSTACK_CANARY_WORD];
     kmpu_prepare(t);
     uint32_t *top = (uint32_t *)((uintptr_t)cfg->stack_base + cfg->stack_size);
     uint32_t *sp = top - 18;

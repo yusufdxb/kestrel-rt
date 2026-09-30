@@ -76,6 +76,7 @@ typedef struct ktcb {
     uint64_t run_cycles; /* lifetime CPU time, cycles */
     uint32_t canary_hits;
     uint32_t mpu_rbar4, mpu_rasr4, mpu_rbar5, mpu_rasr5; /* precomputed by kmpu_prepare() */
+    const volatile uint32_t *canary;                     /* &stack_base[KSTACK_CANARY_WORD] */
 } ktcb_t;
 
 typedef struct {

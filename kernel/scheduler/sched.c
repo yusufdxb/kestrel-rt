@@ -269,6 +269,40 @@ void k_alarm_isr(void)
             ktcb_t *t = &g_k.tcb[i];
             if (now >= t->next_event) {
                 if (t->state != KS_UNUSED && t->state != KS_FAULTED) {
+                    if (t->period != 0u && now >= t->next_release && !t->job_active &&
+                        now < t->next_release + t->period && t->deadline == t->period &&
+                        t->state == KS_BLOCKED && t->wait == KW_PERIOD) {
+                        /* Fast path (on-time release of an idle task, D = T): only the stores
+                         * the job needs; everything else is derived at job end. */
+                        uint64_t ideal = t->next_release;
+                        uint32_t lat = (uint32_t)(now - ideal);
+                        t->release_ideal = ideal;
+                        t->next_release = ideal + t->period;
+                        t->abs_deadline = t->next_release;
+                        t->release_lat = lat;
+                        if (lat > t->max_release_lat) {
+                            t->max_release_lat = lat;
+                        }
+                        t->releases++;
+                        t->job_active = true;
+                        t->job_started = false;
+                        t->deadline_flagged = false;
+                        t->job_exec = 0u;
+                        trace_emit_locked(TE_RELEASE, t->id, sat16(lat));
+                        t->state = KS_READY;
+                        t->wait = KW_NONE;
+                        g_k.ready_levels |= 1u << t->level;
+                        t->next_event = t->next_release;
+                        if (t->next_event < next) {
+                            next = t->next_event;
+                        }
+#ifdef KESTREL_PROFILE
+                        if (i == 0u) {
+                            released_ctl = true;
+                        }
+#endif
+                        continue;
+                    }
                     if (t->period != 0u && now >= t->next_release) {
                         k_release_locked(t, now);
 #ifdef KESTREL_PROFILE
@@ -354,8 +388,7 @@ uint32_t *kestrel_sched_switch(uint32_t *old_sp)
     uint32_t ran = c0 - cur->switched_in;
     cur->job_exec += ran;
     cur->run_cycles += ran;
-    if (cur->cfg != 0 && cur->cfg->stack_base[KSTACK_CANARY_WORD] != KSTACK_CANARY &&
-        cur->state != KS_FAULTED) {
+    if (cur->canary != 0 && *cur->canary != KSTACK_CANARY && cur->state != KS_FAULTED) {
         cur->canary_hits++;
         const uint32_t *hw = old_sp + 10u + (((old_sp[0] & 0x10u) == 0u) ? 16u : 0u);
         kfault_record_software(cur, hw, KFAULT_STACK_CANARY, 0u);

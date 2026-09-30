@@ -1,0 +1,18 @@
+{
+ "flash": {
+  "app": 920,
+  "baseline-app": 1254,
+  "bench-shim": 2296,
+  "drivers": 2080,
+  "kestrel-kernel": 20,
+  "startup": 596,
+  "trace+telemetry": 992
+ },
+ "ram": {
+  "baseline-app": 184,
+  "bench-shim": 5936,
+  "drivers": 974
+ },
+ "flash_total": 8158,
+ "ram_total": 7094
+}

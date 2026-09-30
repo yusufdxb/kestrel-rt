@@ -1,0 +1,18 @@
+{
+ "flash": {
+  "app": 3091,
+  "drivers": 2356,
+  "kestrel-kernel": 12291,
+  "libgcc": 760,
+  "startup": 596,
+  "trace+telemetry": 3952
+ },
+ "ram": {
+  "app": 7380,
+  "drivers": 984,
+  "kestrel-kernel": 5967,
+  "trace+telemetry": 6238
+ },
+ "flash_total": 23046,
+ "ram_total": 20569
+}

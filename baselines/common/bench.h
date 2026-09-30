@@ -29,6 +29,9 @@ void bench_init(const char *system_name);
  * timebase; `t_start` = task-observed start; `exec_cycles` = CPU time of this job. */
 void bench_job(uint8_t task, uint32_t seq, uint32_t ideal, uint32_t t_start, uint32_t exec_cycles,
                uint32_t deadline_ticks);
+/* Same with all three timestamps supplied by the caller (any 48 MHz time domain). */
+void bench_job_ex(uint8_t task, uint32_t seq, uint32_t ideal, uint32_t t_start, uint32_t t_end,
+                  uint32_t exec_cycles, uint32_t deadline_ticks);
 /* Low-priority context only: RX commands, status, drain records, kick DMA. Bounded work. */
 void bench_service(void);
 /* Accounting hooks (context-switch hooks or superloop slot boundaries). */

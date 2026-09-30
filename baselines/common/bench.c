@@ -116,7 +116,13 @@ void bench_irq_latency(uint32_t ticks)
 void bench_job(uint8_t task, uint32_t seq, uint32_t ideal, uint32_t t_start, uint32_t exec_cycles,
                uint32_t deadline_ticks)
 {
-    uint32_t now = bench_now32();
+    bench_job_ex(task, seq, ideal, t_start, bench_now32(), exec_cycles, deadline_ticks);
+}
+
+void bench_job_ex(uint8_t task, uint32_t seq, uint32_t ideal, uint32_t t_start, uint32_t t_end,
+                  uint32_t exec_cycles, uint32_t deadline_ticks)
+{
+    uint32_t now = t_end;
     uint32_t start_lat = t_start - ideal;
     uint32_t resp = now - ideal;
     uint8_t flags = JR_FLAG_TASK_OBSERVED;

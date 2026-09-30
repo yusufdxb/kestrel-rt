@@ -1,0 +1,21 @@
+{
+ "flash": {
+  "libgcc": 760,
+  "other": 7460,
+  "zephyr-arch": 1548,
+  "zephyr-drivers": 2137,
+  "zephyr-hal": 424,
+  "zephyr-kernel": 3132,
+  "zephyr-lib": 3916,
+  "zephyr-other": 386
+ },
+ "ram": {
+  "other": 15639,
+  "zephyr-drivers": 350,
+  "zephyr-hal": 28,
+  "zephyr-kernel": 4121,
+  "zephyr-lib": 12
+ },
+ "flash_total": 19763,
+ "ram_total": 20150
+}

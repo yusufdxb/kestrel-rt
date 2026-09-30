@@ -30,6 +30,7 @@ static ctrl_state_t mb_ctrl_data;
 static kmailbox_t mb_ctrl = {0, sizeof(ctrl_state_t), (volatile uint8_t *)&mb_ctrl_data, 0, 0};
 static volatile uint32_t g_violations, g_logger_loops;
 
+volatile uint32_t g_dbg[6];
 static uint32_t s_gpt_at_tick0; /* GPT320 count at kernel tick s_tick0 */
 static int64_t s_tick0;
 static uint32_t s_gpt_per_tick;
@@ -62,18 +63,51 @@ static inline uint32_t ideal_of(int64_t tick)
     return s_gpt_at_tick0 + (uint32_t)(tick - s_tick0) * s_gpt_per_tick;
 }
 
+/* Cycle count at which tick 0 would begin: measured at a tick edge with interrupts locked (the
+ * tick grid and k_cycle_get_32() are not aligned at 0 on this port; measured offset was ~6 ms). */
+static volatile uint32_t s_cyc_offset;
+static volatile bool s_cyc_calibrated;
+
+static void calibrate_tick_edge(void)
+{
+    unsigned int key = irq_lock();
+    int64_t t0 = k_uptime_ticks();
+    int64_t t;
+    uint32_t c;
+    do {
+        c = k_cycle_get_32();
+        t = k_uptime_ticks();
+    } while (t == t0);
+    irq_unlock(key);
+    s_cyc_offset = c - (uint32_t)t * s_gpt_per_tick;
+    s_cyc_calibrated = true;
+}
+
 static void periodic(uint8_t id, uint32_t period_ms, void (*job)(void))
 {
+    if (!s_cyc_calibrated) {
+        calibrate_tick_edge();
+    }
     int64_t period = k_ms_to_ticks_ceil64(period_ms);
     int64_t next = k_uptime_ticks() + period;
     uint32_t seq = 0u;
     for (;;) {
         k_sleep(K_TIMEOUT_ABS_TICKS(next));
-        uint32_t t_start = bench_now32();
+        /* Zephyr's own 48 MHz cycle counter: tick n starts at cycle n * cycles_per_tick. */
+        uint32_t t_start = k_cycle_get_32();
         uint32_t c0 = bench_task_cycles(id);
+        if (id == 0u) {
+            g_dbg[0] = (uint32_t)next;
+            g_dbg[1] = t_start;
+            g_dbg[2] = (uint32_t)k_uptime_ticks();
+            g_dbg[3] = bench_now32();
+            g_dbg[4] = ideal_of(next);
+            g_dbg[5]++;
+        }
         job();
-        bench_job(id, ++seq, ideal_of(next), t_start, bench_task_cycles(id) - c0,
-                  period_ms * 48000u);
+        uint32_t t_end = k_cycle_get_32();
+        bench_job_ex(id, ++seq, (uint32_t)next * s_gpt_per_tick + s_cyc_offset, t_start, t_end,
+                     bench_task_cycles(id) - c0, period_ms * 48000u);
         next += period;
     }
 }
