@@ -10,6 +10,25 @@
 #define LINK_BUDGET_TICKS (300u * 48u) /* 300 us of the 5 ms period (6 %) */
 #define LINK_LOSS_MS 250u        /* no valid ESP frame for this long -> link degraded */
 #define LINK_OUTAGE_LOG 16u
+/* Negative-control build variants (docs/PHASE2_FAULT_MODEL.md), both off in the real image:
+ *   LINK_N3_DISCARD=1   frames are decoded and CRC-validated, then discarded (no policy, no replies)
+ *   LINK_N4_SYNTH_US=n  each link job burns n us of synthetic work (run with the ESP silent) */
+#ifndef LINK_N3_DISCARD
+#define LINK_N3_DISCARD 0
+#endif
+#ifndef LINK_N4_SYNTH_US
+#define LINK_N4_SYNTH_US 0
+#endif
+/* Link-local trace event types (TRACE frames; id/data per type) */
+enum {
+    LE_SESSION = 1,      /* data: new session id */
+    LE_OUTAGE_BEGIN = 2, /* ESP silent for LINK_LOSS_MS */
+    LE_OUTAGE_END = 3,   /* data: outage length ms (saturating) */
+    LE_MUTE = 4,         /* receiver muted by the error-storm guard; data: mute count */
+    LE_BUDGET = 5,       /* id: 1 bytes, 2 frames, 3 time */
+    LE_CONFIG = 6,       /* id: param; data: 1 applied, 0 rejected */
+    LE_REJECT = 7,       /* data: frames rejected by the policy in this job */
+};
 
 typedef struct {
     uint32_t start_ms;
@@ -29,6 +48,7 @@ typedef struct {
     uint32_t budget_hit_bytes, budget_hit_frames, budget_hit_time; /* jobs that stopped early */
     uint32_t max_job_ticks;
     uint32_t tx_frames, tx_skipped_busy, tx_dropped;
+    uint32_t rx_rejected, trace_dropped, n3_discarded;
     uint32_t loss_events;
     uint32_t outage_total_ms;
     uint32_t last_valid_ms;

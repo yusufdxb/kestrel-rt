@@ -60,7 +60,9 @@ KESTREL_STACK(stk_sensor, 1024);
 KESTREL_STACK(stk_comms, 2048);
 KESTREL_STACK(stk_health, 1024);
 KESTREL_STACK(stk_logger, 1024);
+#if KESTREL_PHASE2_LINK
 KESTREL_STACK(stk_link, 2048);
+#endif
 
 static void control_task(void *arg)
 {
@@ -207,9 +209,11 @@ static const kestrel_task_cfg_t k_tasks[T_COUNT] = {
     {"health", health_task, 0, 100000u, 100000u, 2u, 0u, stk_health, sizeof(stk_health), 1000000u},
     {"logger", logger_task, 0, 0u, 0u, 1u, 0u, stk_logger, sizeof(stk_logger), 2000000u},
 };
+#if KESTREL_PHASE2_LINK
 static const kestrel_task_cfg_t k_link_task = {
     "link", link_task, 0, LINK_PERIOD_US, LINK_PERIOD_US, 4u, KTASK_PRIVILEGED, stk_link,
     sizeof(stk_link), 500000u};
+#endif
 
 /* App commands (comms task context). Applied by the tasks at their next job start. */
 void kestrel_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
@@ -266,7 +270,7 @@ void kestrel_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
 #endif
     } else if (cmd == 0x40u) { /* LINK_STATS: evidence kept on the RA4 */
         const link_stats_t *ls = link_stats();
-        uint8_t out[4u * 46u];
+        uint8_t out[4u * 49u];
         const uint32_t v[] = {KESTREL_PHASE2_LINK, g_link.epoch, g_link.session, g_link.degraded,
                               g_link.sessions, g_link.frames_ok, g_link.dec_crc, g_link.dec_len,
                               g_link.dec_version, g_link.dec_skipped, g_link.rej_type,
@@ -281,9 +285,10 @@ void kestrel_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
                               ls->rx_overrun_bytes, ls->rx_overrun_events, ls->rx_hw_errors,
                               ls->rx_rearms, ls->tx_bytes, ls->tx_refused_busy, ls->tx_chunks,
                               (uint32_t)(kt_now() / 48000u), g_app.units[T_HEALTH],
-                              g_app.units[T_LOGGER], ls->rx_storm_mutes, g_link.tx_dropped};
+                              g_app.units[T_LOGGER], ls->rx_storm_mutes, g_link.tx_dropped, g_link.rx_rejected, g_link.trace_dropped,
+                              g_link.n3_discarded};
         _Static_assert(sizeof(v) == sizeof(out), "LINK_STATS layout");
-        for (uint32_t i = 0; i < 46u; i++) {
+        for (uint32_t i = 0; i < 49u; i++) {
             kput32(&out[4u * i], v[i]);
         }
         (void)telemetry_send(KF_RESULT, out, (uint16_t)sizeof(out));

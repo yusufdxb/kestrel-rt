@@ -7,6 +7,7 @@
 #include "kernel/time/timebase.h"
 #include "link/xlink.h"
 #include "safety/crashlog/crashlog.h"
+#include "trace/trace.h"
 
 link_evidence_t g_link;
 KESTREL_SHARED link_cfg_t g_link_cfg;
@@ -14,6 +15,7 @@ KESTREL_SHARED link_cfg_t g_link_cfg;
 static xl_decoder_t s_dec;
 static uint8_t s_carry[64];
 static uint32_t s_carry_len, s_carry_off;
+static bool s_muted_seen;
 static xl_rx_t s_rx;
 /* Double-buffered TX: frames are built into s_txb[s_build] (by RX handling and the periodic
  * emitter) while the DMA may still be sending the other buffer. */
@@ -25,6 +27,26 @@ static uint32_t s_telem_mask = 0xFFFFFFFFu;
 static uint32_t s_metrics_ms = 1000u;
 static uint32_t s_next_hb_ms, s_next_status_ms, s_next_metrics_ms;
 static uint32_t s_ctl_jobs_last, s_ctl_miss_last;
+
+/* Link-local flight recorder: link events in the kernel's 8-byte trace_event_t format, sent to the
+ * ESP as TRACE chunks. Single producer and consumer (this task); the kernel trace ring, whose only
+ * consumer is the SCI9 telemetry service, is not touched. Full ring: newest dropped and counted. */
+#define LTR_SLOTS 32u
+static trace_event_t s_ltr[LTR_SLOTS];
+static uint32_t s_ltr_head, s_ltr_tail;
+
+static void ltr(uint8_t type, uint8_t id, uint16_t data)
+{
+    if (s_ltr_head - s_ltr_tail >= LTR_SLOTS) {
+        g_link.trace_dropped++;
+        return;
+    }
+    trace_event_t *e = &s_ltr[s_ltr_head % LTR_SLOTS];
+    e->timestamp = kt_now32();
+    e->event = (uint16_t)(((uint16_t)type << 8) | id);
+    e->data = data;
+    s_ltr_head++;
+}
 
 static uint32_t now_ms(void)
 {
@@ -46,6 +68,7 @@ static void queue(uint8_t type, const uint8_t *p, uint16_t len)
 
 static void outage_begin(uint32_t t)
 {
+    ltr(LE_OUTAGE_BEGIN, 0u, 0u);
     g_link.degraded = 1u;
     g_link.loss_events++;
     link_outage_t *o = &g_link.outages[g_link.n_outages % LINK_OUTAGE_LOG];
@@ -63,6 +86,8 @@ static void outage_end(uint32_t t)
     link_outage_t *o = &g_link.outages[(g_link.n_outages - 1u) % LINK_OUTAGE_LOG];
     o->end_ms = t;
     g_link.outage_total_ms += t - o->start_ms;
+    uint32_t d = t - o->start_ms;
+    ltr(LE_OUTAGE_END, 0u, (uint16_t)(d > 0xFFFFu ? 0xFFFFu : d));
 }
 
 static void send_fault_record(void)
@@ -84,6 +109,7 @@ static void handle(const xl_frame_t *f, xl_verdict_t v, uint32_t t)
     if (v == XLR_NEW_SESSION) {
         g_link.session = s_rx.session;
         g_link.sessions = s_rx.sessions;
+        ltr(LE_SESSION, 0u, s_rx.session);
         outage_end(t);
         send_fault_record();
         return;
@@ -114,6 +140,7 @@ static void handle(const xl_frame_t *f, xl_verdict_t v, uint32_t t)
         } else {
             g_link.config_rejected++;
         }
+        ltr(LE_CONFIG, param, (uint16_t)ack[1]);
         xl_put32(&ack[2], value);
         queue(XL_CONFIG_ACK, ack, 6);
         break;
@@ -156,8 +183,10 @@ static void emit_periodic(uint32_t t)
         s_next_status_ms = t + 500u;
     }
     if ((s_telem_mask & 2u) != 0u && (int32_t)(t - s_next_metrics_ms) >= 0) {
-        uint8_t p[32];
+        uint8_t p[44];
         uint32_t jobs = g_k.tcb[0].jobs, miss = g_k.tcb[0].deadline_misses;
+        uint32_t crit = g_k.tcb[0].deadline_misses + g_k.tcb[1].deadline_misses +
+                        g_k.tcb[2].deadline_misses;
         xl_put32(p, jobs - s_ctl_jobs_last);
         xl_put32(&p[4], miss - s_ctl_miss_last);
         xl_put32(&p[8], g_link.frames_ok);
@@ -166,10 +195,26 @@ static void emit_periodic(uint32_t t)
         xl_put32(&p[20], link_stats()->rx_overrun_bytes);
         xl_put32(&p[24], g_link.max_job_ticks);
         xl_put32(&p[28], g_link.loss_events);
+        xl_put32(&p[32], crit);
+        xl_put32(&p[36], g_k.tcb[0].max_start_lat); /* control start-latency max (ticks) */
+        xl_put32(&p[40], g_link.rx_rejected);
         s_ctl_jobs_last = jobs;
         s_ctl_miss_last = miss;
         queue(XL_METRICS, p, sizeof(p));
         s_next_metrics_ms = t + s_metrics_ms;
+    }
+    if ((s_telem_mask & 4u) != 0u && s_ltr_head != s_ltr_tail) {
+        uint8_t p[16u * sizeof(trace_event_t)];
+        uint32_t n = 0u;
+        while (s_ltr_tail != s_ltr_head && n < 16u) {
+            const trace_event_t *e = &s_ltr[s_ltr_tail % LTR_SLOTS];
+            xl_put32(&p[8u * n], e->timestamp);
+            xl_put16(&p[8u * n + 4u], e->event);
+            xl_put16(&p[8u * n + 6u], e->data);
+            s_ltr_tail++;
+            n++;
+        }
+        queue(XL_TRACE, p, (uint16_t)(8u * n));
     }
 }
 
@@ -211,14 +256,27 @@ void link_task(void *arg)
     for (;;) {
         uint32_t t_start = kestrel_time32();
         uint32_t t = now_ms();
-        uint32_t bytes = 0u, frames = 0u;
-        (void)link_service_errors(t);
+        uint32_t bytes = 0u, frames = 0u, rejected_this_job = 0u;
+        if (link_service_errors(t) && !s_muted_seen) {
+            s_muted_seen = true;
+            ltr(LE_MUTE, 0u, (uint16_t)link_stats()->rx_storm_mutes);
+        } else {
+            s_muted_seen = false;
+        }
+#if LINK_N4_SYNTH_US
+        { /* N4 control: synthetic communications load, no ESP traffic processed */
+            uint32_t c0 = kcycles();
+            while ((kcycles() - c0) < LINK_N4_SYNTH_US * 48u) {
+            }
+        }
+#endif
         /* Bounded communications work: bytes, frames and time are all capped per job. Bytes read
          * from the ring but not decoded when the frame budget ends stay in s_carry for the next job. */
         for (;;) {
             if (s_carry_off == s_carry_len) {
                 if (bytes >= LINK_BUDGET_BYTES) {
                     g_link.budget_hit_bytes++;
+                    ltr(LE_BUDGET, 1u, 0u);
                     break;
                 }
                 uint32_t want = LINK_BUDGET_BYTES - bytes;
@@ -234,7 +292,19 @@ void link_task(void *arg)
                 if (xl_decode_byte(&s_dec, s_carry[s_carry_off++]) != XLD_FRAME) {
                     continue;
                 }
+#if LINK_N3_DISCARD
+                g_link.n3_discarded++; /* N3 control: validated (CRC), then discarded */
+                if (++frames >= LINK_BUDGET_FRAMES) {
+                    frame_budget = true;
+                    break;
+                }
+                continue;
+#endif
                 xl_verdict_t v = xl_rx_accept(&s_rx, &s_dec.f, t);
+                if (v < 0) {
+                    g_link.rx_rejected++;
+                    rejected_this_job++;
+                }
                 if (v == XLR_ACCEPT || v == XLR_NEW_SESSION) {
                     g_link.last_valid_ms = t;
                     if (v == XLR_ACCEPT) {
@@ -249,12 +319,17 @@ void link_task(void *arg)
             }
             if (frame_budget) {
                 g_link.budget_hit_frames++;
+                ltr(LE_BUDGET, 2u, 0u);
                 break;
             }
             if ((kestrel_time32() - t_start) > LINK_BUDGET_TICKS) {
                 g_link.budget_hit_time++;
+                ltr(LE_BUDGET, 3u, 0u);
                 break;
             }
+        }
+        if (rejected_this_job != 0u) {
+            ltr(LE_REJECT, 0u, (uint16_t)(rejected_this_job > 0xFFFFu ? 0xFFFFu : rejected_this_job));
         }
         if (g_link.degraded == 0u && (t - g_link.last_valid_ms) > LINK_LOSS_MS) {
             outage_begin(g_link.last_valid_ms);
