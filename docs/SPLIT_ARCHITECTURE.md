@@ -1,4 +1,7 @@
-# Split-criticality architecture (Phase 2) - NOT STARTED
+# Split-criticality architecture (Phase 2) - original plan
+
+> Historical plan written at the end of Phase 1. Phase 2 has since been built and measured: see
+> [PHASE2_ARCHITECTURE](PHASE2_ARCHITECTURE.md) and [PHASE2_RESULTS](PHASE2_RESULTS.md).
 
 Phase 1 passed its gate on 2026-09-30 (docs/SPEC.md section 10: soak 10.43 M periods, fault campaign 17/17,
 overload and FreeRTOS comparisons complete). No ESP32-S3 firmware has been written or flashed: replacing the

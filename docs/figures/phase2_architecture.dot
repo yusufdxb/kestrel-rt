@@ -1,0 +1,27 @@
+digraph p2 {
+  graph [rankdir=LR, fontname="Helvetica", bgcolor="white", compound=true, nodesep=0.3, ranksep=0.5, pad=0.2];
+  node [shape=box, style="rounded,filled", fillcolor="#f4f1ec", color="#3b3b3b", fontname="Helvetica", fontsize=10];
+  edge [color="#3b3b3b", arrowsize=0.6, fontname="Helvetica", fontsize=9];
+  host [label="host PC\nUSB: RA4 telemetry, commands,\nSWD, bootloader upload\nWi-Fi: UDP control / telemetry", fillcolor="#e6e6e6"];
+  subgraph cluster_esp { label="ESP32-S3 (untrusted, non-real-time)"; fontsize=10; color="#3b3b3b"; style="rounded";
+    usb [label="USB: CDC bridge + CMSIS-DAP\n(upstream 0.5.2, kept)"];
+    mbox [label="kx_mbox task (core 1)\nsession, PING, TIME_SYNC\ntask watchdog 2 s, panic"];
+    net [label="kx_net task (core 0)\nSoftAP WPA2, UDP 47000/47002\nfault modes F2-F12"];
+  }
+  subgraph cluster_ra4 { label="RA4M1 (trusted real-time domain, Kestrel)"; fontsize=10; color="#8a3b12"; style="rounded";
+    dma [label="SCI1 + DMAC3 RX ring 1 KB\nDMAC2 TX, error-storm guard"];
+    link [label="link task, priority 4, 5 ms\nbudget 512 B / 16 frames / 300 us\npolicy: CRC, type, length, rate,\nsession, sequence"];
+    crit [label="control 7, safety 6, sensor 5\n(critical, watchdog-voted)", fillcolor="#f0dccd"];
+    rest [label="comms 3 (SCI9 telemetry)\nhealth 2, logger 1"];
+    ev [label="link evidence: counters,\noutage log, link trace"];
+  }
+  host -> usb [label=" USB", dir=both];
+  host -> net [label=" Wi-Fi", dir=both, style=dashed];
+  usb -> rest [label=" UART0 / SCI9", dir=both];
+  usb -> crit [label=" SWD, RESET, MD\n(hardware authority)", style=dotted];
+  mbox -> dma [label=" UART1 / SCI1 1 Mbaud\nKX frames", dir=both];
+  net -> mbox [dir=both];
+  dma -> link;
+  link -> ev;
+  link -> rest [label=" config at\nhealth safe point", style=dashed];
+}
