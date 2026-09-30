@@ -4,21 +4,21 @@
 #include "drivers/gpio/gpio.h"
 #include "drivers/icu/icu.h"
 
-#define SCR_TIE  (1u << 7)
-#define SCR_RIE  (1u << 6)
-#define SCR_TE   (1u << 5)
-#define SCR_RE   (1u << 4)
-#define SCR_TEIE (1u << 2)
-#define SSR_ORER (1u << 5)
-#define SSR_FER  (1u << 4)
-#define SSR_PER  (1u << 3)
-#define SEMR_BGDM (1u << 6)
-#define SEMR_ABCS (1u << 4)
-#define SPTR_SPB2IO (1u << 2)
-#define SPTR_SPB2DT (1u << 1)
+#define SCR_TIE           (1u << 7)
+#define SCR_RIE           (1u << 6)
+#define SCR_TE            (1u << 5)
+#define SCR_RE            (1u << 4)
+#define SCR_TEIE          (1u << 2)
+#define SSR_ORER          (1u << 5)
+#define SSR_FER           (1u << 4)
+#define SSR_PER           (1u << 3)
+#define SEMR_BGDM         (1u << 6)
+#define SEMR_ABCS         (1u << 4)
+#define SPTR_SPB2IO       (1u << 2)
+#define SPTR_SPB2DT       (1u << 1)
 #define PSEL_SCI1_3_5_7_9 0x05u
-#define MSTPB30_SCI1 (1u << 30)
-#define MSTPA22_DMAC (1u << 22)
+#define MSTPB30_SCI1      (1u << 30)
+#define MSTPA22_DMAC      (1u << 22)
 
 static uint8_t s_ring[LINK_RX_RING] __attribute__((aligned(4)));
 static uint32_t s_read_total; /* consumer's free-running byte count */
@@ -36,8 +36,9 @@ static void rx_arm(void)
     R_DMAC3->DMCNT = 0u;
     R_DMAC3->DMSAR = (uint32_t)&R_SCI1->RDR;
     R_DMAC3->DMDAR = (uint32_t)s_ring;
-    R_DMAC3->DMTMD = (uint16_t)(1u << 14 | 0u << 12 | 0u << 8 | 1u); /* repeat, dst repeat area, byte */
-    R_DMAC3->DMAMD = (uint16_t)(0u << 14 | 2u << 6);                 /* src fixed, dst increment */
+    R_DMAC3->DMTMD =
+        (uint16_t)(1u << 14 | 0u << 12 | 0u << 8 | 1u); /* repeat, dst repeat area, byte */
+    R_DMAC3->DMAMD = (uint16_t)(0u << 14 | 2u << 6);    /* src fixed, dst increment */
     R_DMAC3->DMCRA = (LINK_RX_RING << 16) | LINK_RX_RING;
     R_DMAC3->DMCRB = 0u; /* 0 = 65536 repeats */
     R_DMAC3->DMINT = (uint8_t)(1u << 4);
@@ -166,7 +167,8 @@ uint32_t link_rx_read(uint8_t *buf, uint32_t max)
     uint32_t written = rx_written_total();
     uint32_t avail = written - s_read_total;
     if (avail > LINK_RX_RING - 16u) {
-        /* The writer lapped (or is about to lap) the reader: skip to recent data, count the loss. */
+        /* The writer lapped (or is about to lap) the reader: skip to recent data, count the loss.
+         */
         uint32_t skip = avail - (LINK_RX_RING / 2u);
         s_read_total += skip;
         s_st.rx_overrun_bytes += skip;

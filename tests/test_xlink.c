@@ -1,8 +1,8 @@
 /* Phase 2 mailbox protocol: codec + RA4 receive policy (the trust boundary). */
-#include <string.h>
-
 #include "link/xlink.h"
 #include "test_util.h"
+
+#include <string.h>
 
 static xl_decoder_t D;
 
@@ -132,7 +132,8 @@ int main(void)
     CHECK(v2 == XLR_ACCEPT); /* last accepted seq 40 -> 102 is a jump of 62 <= 64 */
     /* config whitelist: only noncritical ids exist */
     CHECK(xl_config_valid(XL_PARAM_LOGGER_UNITS, 20) && !xl_config_valid(XL_PARAM_LOGGER_UNITS, 0));
-    CHECK(!xl_config_valid(XL_PARAM_HEALTH_UNITS, 201) && xl_config_valid(XL_PARAM_METRICS_MS, 1000));
+    CHECK(!xl_config_valid(XL_PARAM_HEALTH_UNITS, 201) &&
+          xl_config_valid(XL_PARAM_METRICS_MS, 1000));
     for (uint32_t id = 0; id < 256; id++) {
         if (id < 1 || id > 3) {
             CHECK(!xl_config_valid((uint8_t)id, 1));
@@ -157,7 +158,8 @@ int main(void)
             for (int i = 0; i < 8; i++) {
                 p[i] = (uint8_t)xs32(&seed);
             }
-            uint8_t types[] = {XL_HELLO, XL_PING, XL_CONFIG_REQ, XL_TELEM_CTRL, XL_TIME_SYNC, 0x81, 0x00, 0xFF};
+            uint8_t types[] = {XL_HELLO,     XL_PING, XL_CONFIG_REQ, XL_TELEM_CTRL,
+                               XL_TIME_SYNC, 0x81,    0x00,          0xFF};
             sl = xl_encode(s, sizeof(s), types[xs32(&seed) % 8u], (uint16_t)(xs32(&seed) % 4u),
                            xs32(&seed) % 70u, p, (uint16_t)(xs32(&seed) % 9u));
             if ((xs32(&seed) & 1u) != 0u && sl > 2) {
@@ -173,10 +175,11 @@ int main(void)
             }
         }
     }
-    /* No HELLO in the fuzz can carry the right epoch (random payload): no session, nothing accepted. */
+    /* No HELLO in the fuzz can carry the right epoch (random payload): no session, nothing
+     * accepted. */
     CHECK(r.session == 0u && accepted == 0u);
-    printf("   fuzz: %u frames decoded, %u accepted (expected 0: no valid epoch), crc errs %u\n", delivered,
-           accepted, D.err_crc);
+    printf("   fuzz: %u frames decoded, %u accepted (expected 0: no valid epoch), crc errs %u\n",
+           delivered, accepted, D.err_crc);
 
     /* ---- fuzz phase 2: inside a valid session, mixed valid/invalid/replayed traffic ---- */
     xl_rx_init(&r, 0x77u, 0);
@@ -186,10 +189,12 @@ int main(void)
     for (uint32_t k = 0; k < 300000; k++) {
         uint32_t now = k / 2u; /* ~2 frames per ms: above the rate limit, so it engages */
         uint16_t sess = (uint16_t)((xs32(&seed) % 8u == 0u) ? xs32(&seed) % 200u : r.session);
-        uint32_t seq = r.last_seq + (xs32(&seed) % 80u) - 10u; /* replays, repeats, small and large jumps */
+        uint32_t seq =
+            r.last_seq + (xs32(&seed) % 80u) - 10u; /* replays, repeats, small and large jumps */
         uint8_t kind = (uint8_t)(xs32(&seed) % 10u);
         if (kind == 0u) {
-            f = hello((xs32(&seed) & 1u) ? 0x77u : 0x66u, (uint16_t)(xs32(&seed) % 300u), (xs32(&seed) & 1u) ? 1u : seq);
+            f = hello((xs32(&seed) & 1u) ? 0x77u : 0x66u, (uint16_t)(xs32(&seed) % 300u),
+                      (xs32(&seed) & 1u) ? 1u : seq);
         } else {
             f = ping(sess, seq);
         }
@@ -199,7 +204,8 @@ int main(void)
             CHECK(f.session != prev_session && f.session != 0u);
             new_sessions++;
         } else if (v == XLR_ACCEPT) {
-            CHECK(f.session == prev_session && f.seq > prev_seq && f.seq - prev_seq <= XL_MAX_SEQ_JUMP);
+            CHECK(f.session == prev_session && f.seq > prev_seq &&
+                  f.seq - prev_seq <= XL_MAX_SEQ_JUMP);
             acc2++;
         } else {
             CHECK(r.session == prev_session && r.last_seq == prev_seq); /* rejects change nothing */
@@ -207,7 +213,8 @@ int main(void)
         prev_seq = r.last_seq;
         prev_session = r.session;
     }
-    printf("   in-session fuzz: %u accepted, %u new sessions, rate-limited %u, replay %u, jump %u, stale session %u\n",
+    printf("   in-session fuzz: %u accepted, %u new sessions, rate-limited %u, replay %u, jump %u, "
+           "stale session %u\n",
            acc2, new_sessions, r.rej_rate, r.rej_replay, r.rej_jump, r.rej_session);
     DONE();
     return 0;

@@ -15,5 +15,5 @@ echo "== clang-format --dry-run"
 if clang-format --dry-run --Werror $(git ls-files '*.c' '*.h' | grep -v third_party) 2>/tmp/kestrel_fmt.txt; then
   echo "clang-format: clean"
 else
-  echo "clang-format: $(grep -c 'warning' /tmp/kestrel_fmt.txt) deviations (run: make format)"; exit 1
+  echo "clang-format: $(grep -cE 'warning|error' /tmp/kestrel_fmt.txt) deviations (run: make format)"; exit 1
 fi

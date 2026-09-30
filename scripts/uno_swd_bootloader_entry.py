@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# Provenance: copied unchanged (except this line) from ~/Projects/pace-id scripts/uno_swd_bootloader_entry.py
-# via ~/Projects/chronos-r4; same author. Proven upload-entry path for THIS board (docs/BOARD_NOTES.md).
+# Provenance: carried over unchanged (except these lines) from the author's earlier RA4M1 projects on the
+# same board, where this upload-entry path was proven (docs/LIMITATIONS.md, upload notes).
 """SWD-assisted Arduino bootloader entry for THIS UNO R4 WiFi (board-specific upload workaround).
 
 Observed on this board only (not reproduced on another board): the ESP32 bridge's automatic

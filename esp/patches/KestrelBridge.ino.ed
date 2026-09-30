@@ -1,0 +1,81 @@
+254,256c
+extern "C" void mylogchar(char c) { (void)c; }
+.
+236d
+226d
+221c
+    arduino_usb_cdc_event_data_t* data = (arduino_usb_cdc_event_data_t*)event_data;
+.
+219c
+void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
+{
+.
+215d
+206d
+202d
+197d
+195d
+188,191c
+void loop()
+{
+.
+182,185d
+179a
+  kx_start(&_baud);
+.
+161,178d
+157,159d
+147d
+133,142d
+127,130d
+125d
+62,123c
+void setup()
+{
+  // Level first, then direction: no low pulse on RA4 RESET / MD.
+  gpio_set_level((gpio_num_t)GPIO_RST, 1);
+  gpio_set_level((gpio_num_t)GPIO_BOOT, 1);
+  gpio_set_direction((gpio_num_t)GPIO_RST, GPIO_MODE_OUTPUT);
+  gpio_set_direction((gpio_num_t)GPIO_BOOT, GPIO_MODE_OUTPUT);
+.
+48,60c
+void ets_putc_handler(char c) { (void)c; }
+.
+43,45c
+  (void)cookie;
+  (void)buf;
+  return size;  // stdout is discarded: the CDC port belongs to the RA4 bridge
+.
+37,39c
+// Upstream declares this static member in at_handler.h; the AT server is not instantiated here.
+void CAtHandler::onWiFiEvent(WiFiEvent_t event) { (void)event; }
+.
+32,34c
+static volatile uint32_t _baud = 0;
+.
+20,28c
+#define SERIAL_USER          USBSerial
+#define SERIAL_USER_INTERNAL Serial
+.
+16,18c
+#include "driver/gpio.h"
+#include "kx_node.h"
+.
+2,11c
+#include "at_handler.h"  // upstream header: pin names, firmware version (DAP.h needs it)
+.
+0a
+// Kestrel-RT Phase 2 ESP32-S3 firmware: a fork of the official Arduino UNO R4 WiFi USB bridge 0.5.2
+// (github.com/arduino/uno-r4-wifi-usb-bridge, tag 0.5.2, UNOR4USBBridge.ino).
+//
+// Kept from upstream, unchanged in behavior:
+//   - USB identity 2341:1002, CMSIS-DAP (HID) with the 0xAA feature report -> ESP ROM download mode
+//   - USB CDC <-> UART0 (GPIO44/43) bridge to the RA4M1 SCI9 at the host's baud rate
+//   - CDC line-coding 1200 (RA4 double reset into its bootloader) and 2400 (RA4 ROM boot mode)
+// Changed:
+//   - RA4 RESET (GPIO4) and MD/BOOT (GPIO9) are driven HIGH before they become outputs (upstream made
+//     them outputs first, which pulsed RA4 RESET low on every ESP boot and reset the RA4M1).
+//   - the AT-command server on UART1 (GPIO6 RX / GPIO5 TX) is replaced by the Kestrel mailbox node
+//     (kx_node.cpp): framed, sequenced, CRC-checked protocol at 1,000,000 baud, Wi-Fi SoftAP, UDP.
+// The ESP32-S3 is the untrusted domain: nothing here can change RA4 timing, priorities or code.
+.

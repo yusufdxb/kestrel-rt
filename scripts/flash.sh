@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Upload a Kestrel image to THIS UNO R4 WiFi through the Arduino bootloader (bossac, SAM-BA on SCI9).
 # Board-specific: bridge automatic bootloader entry is unreliable on this board, so the bootloader's
-# own double-tap handshake is performed over SWD (scripts/uno_swd_bootloader_entry.py, proven in
-# ~/Projects/pace-id and ~/Projects/chronos-r4). Flash is NEVER written over SWD.
+# own double-tap handshake is performed over SWD (scripts/uno_swd_bootloader_entry.py, proven in the
+# author's earlier projects on this board). Flash is NEVER written over SWD.
 # Gates: image check (no byte below 0x4000), bootloader block verified read-only before and after,
 # application verified read-only after upload.
 # Usage: scripts/flash.sh build/<app>/kestrel.bin

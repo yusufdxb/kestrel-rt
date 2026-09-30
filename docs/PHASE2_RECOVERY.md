@@ -6,7 +6,7 @@ Status: **PASSED 2026-09-30, read-only.** Nothing was written to the ESP32-S3 to
 |---|---|
 | Current bridge firmware | 0.5.2 (HID GET_FEATURE report 00 05 02), USB 2341:1002, serial B081849CBB4C |
 | ROM download mode reachable | HID feature report 0xAA (Arduino's own unor4wifi-reboot mechanism) -> USB 303a:1001; esptool connects |
-| Chip identity | ESP32-S3 QFN56 rev v0.2, 8 MB embedded GD flash (c8/4017), MAC b0:81:84:xx:xx:xx, no secure boot, no flash encryption (backups/MANIFEST.md) |
+| Chip identity | ESP32-S3 QFN56 rev v0.2, 8 MB embedded GD flash (c8/4017), MAC b0:81:84:xx:xx:xx (last three octets redacted for publication), no secure boot, no flash encryption (backups/MANIFEST.md) |
 | Flash readable | full 8 MB read in 190.6 s |
 | Full backup | backups/esp32_factory_20260930T171352Z.bin, sha256 603807cb...232a4e6, `verify_flash`: digest matched |
 | Official stock image | github.com/arduino/uno-r4-wifi-usb-bridge release 0.5.2 (tag commit 4394ba03), UNOR4-WIFI-S3-0.5.2.bin sha256 a488aacf...10cd7ca; **byte-identical to the backup over its 1,966,080 bytes** |

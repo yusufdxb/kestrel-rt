@@ -21,11 +21,11 @@
 #include "apps/fault_injection/inject.h"
 #include "drivers/adc/adc.h"
 #include "drivers/timer/gpt.h"
+#include "drivers/uart/sci1_link.h"
 #include "kernel/ipc/mailbox.h"
 #include "kernel/kernel_priv.h"
 #include "kernel/kestrel.h"
 #include "kernel/time/timebase.h"
-#include "drivers/uart/sci1_link.h"
 #include "link/link_task.h"
 #include "link/xlink.h"
 #include "trace/frame.h"
@@ -211,8 +211,8 @@ static const kestrel_task_cfg_t k_tasks[T_COUNT] = {
 };
 #if KESTREL_PHASE2_LINK
 static const kestrel_task_cfg_t k_link_task = {
-    "link", link_task, 0, LINK_PERIOD_US, LINK_PERIOD_US, 4u, KTASK_PRIVILEGED, stk_link,
-    sizeof(stk_link), 500000u};
+    "link", link_task,        0,        LINK_PERIOD_US,   LINK_PERIOD_US,
+    4u,     KTASK_PRIVILEGED, stk_link, sizeof(stk_link), 500000u};
 #endif
 
 /* App commands (comms task context). Applied by the tasks at their next job start. */
@@ -271,21 +271,54 @@ void kestrel_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
     } else if (cmd == 0x40u) { /* LINK_STATS: evidence kept on the RA4 */
         const link_stats_t *ls = link_stats();
         uint8_t out[4u * 49u];
-        const uint32_t v[] = {KESTREL_PHASE2_LINK, g_link.epoch, g_link.session, g_link.degraded,
-                              g_link.sessions, g_link.frames_ok, g_link.dec_crc, g_link.dec_len,
-                              g_link.dec_version, g_link.dec_skipped, g_link.rej_type,
-                              g_link.rej_len, g_link.rej_rate, g_link.rej_nosession,
-                              g_link.rej_session, g_link.rej_replay, g_link.rej_jump,
-                              g_link.rej_epoch, g_link.rej_retired, g_link.rej_hello_seq,
-                              g_link.pings, g_link.config_applied, g_link.config_rejected,
-                              g_link.budget_hit_bytes, g_link.budget_hit_frames,
-                              g_link.budget_hit_time, g_link.max_job_ticks, g_link.tx_frames,
-                              g_link.tx_skipped_busy, g_link.loss_events, g_link.outage_total_ms,
-                              g_link.last_valid_ms, g_link.n_outages, ls->rx_bytes,
-                              ls->rx_overrun_bytes, ls->rx_overrun_events, ls->rx_hw_errors,
-                              ls->rx_rearms, ls->tx_bytes, ls->tx_refused_busy, ls->tx_chunks,
-                              (uint32_t)(kt_now() / 48000u), g_app.units[T_HEALTH],
-                              g_app.units[T_LOGGER], ls->rx_storm_mutes, g_link.tx_dropped, g_link.rx_rejected, g_link.trace_dropped,
+        const uint32_t v[] = {KESTREL_PHASE2_LINK,
+                              g_link.epoch,
+                              g_link.session,
+                              g_link.degraded,
+                              g_link.sessions,
+                              g_link.frames_ok,
+                              g_link.dec_crc,
+                              g_link.dec_len,
+                              g_link.dec_version,
+                              g_link.dec_skipped,
+                              g_link.rej_type,
+                              g_link.rej_len,
+                              g_link.rej_rate,
+                              g_link.rej_nosession,
+                              g_link.rej_session,
+                              g_link.rej_replay,
+                              g_link.rej_jump,
+                              g_link.rej_epoch,
+                              g_link.rej_retired,
+                              g_link.rej_hello_seq,
+                              g_link.pings,
+                              g_link.config_applied,
+                              g_link.config_rejected,
+                              g_link.budget_hit_bytes,
+                              g_link.budget_hit_frames,
+                              g_link.budget_hit_time,
+                              g_link.max_job_ticks,
+                              g_link.tx_frames,
+                              g_link.tx_skipped_busy,
+                              g_link.loss_events,
+                              g_link.outage_total_ms,
+                              g_link.last_valid_ms,
+                              g_link.n_outages,
+                              ls->rx_bytes,
+                              ls->rx_overrun_bytes,
+                              ls->rx_overrun_events,
+                              ls->rx_hw_errors,
+                              ls->rx_rearms,
+                              ls->tx_bytes,
+                              ls->tx_refused_busy,
+                              ls->tx_chunks,
+                              (uint32_t)(kt_now() / 48000u),
+                              g_app.units[T_HEALTH],
+                              g_app.units[T_LOGGER],
+                              ls->rx_storm_mutes,
+                              g_link.tx_dropped,
+                              g_link.rx_rejected,
+                              g_link.trace_dropped,
                               g_link.n3_discarded};
         _Static_assert(sizeof(v) == sizeof(out), "LINK_STATS layout");
         for (uint32_t i = 0; i < 49u; i++) {

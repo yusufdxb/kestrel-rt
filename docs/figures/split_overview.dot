@@ -1,0 +1,23 @@
+digraph split {
+  graph [rankdir=TB, fontname="Helvetica", bgcolor="white", nodesep=0.3, ranksep=0.45, pad=0.2];
+  node [shape=box, style="rounded,filled", fillcolor="#f4f1ec", color="#3b3b3b", fontname="Helvetica", fontsize=10];
+  edge [color="#3b3b3b", arrowsize=0.6, fontname="Helvetica", fontsize=9];
+  subgraph cluster_rt { label="Trusted real-time domain: RA4M1 (Cortex-M4F, 48 MHz), Kestrel-RT"; fontsize=10; color="#8a3b12"; style="rounded";
+    crit [label="control 1 ms, safety 2 ms, sensor 2 ms\ncritical, watchdog-voted", fillcolor="#f0dccb"];
+    kern [label="scheduler, PendSV, MPU,\nsupervisor + WDT, crash log, tracing"];
+    link [label="link task (priority 4, 5 ms)\nbudget: 512 B, 16 frames, 300 us per job\nCRC, type, length, rate, session, sequence"];
+    ring [label="SCI1 + DMA RX ring (1 KB) + DMA TX\nreceive-error storm guard"];
+    kern -> crit [style=invis]; crit -> link [style=invis]; link -> ring [dir=back];
+  }
+  subgraph cluster_esp { label="Untrusted domain: ESP32-S3 (fork of Arduino USB bridge 0.5.2)"; fontsize=10; color="#3b3b3b"; style="rounded";
+    mbox [label="mailbox node: sessions, heartbeats,\ntask watchdog (2 s)"];
+    net [label="Wi-Fi SoftAP, UDP telemetry/control"];
+    usb [label="USB: CDC bridge + CMSIS-DAP (kept)"];
+    { rank=same; mbox; usb; }
+    mbox -> usb [style=invis];
+    mbox -> net [dir=both];
+  }
+  ring -> mbox [dir=both, label="  UART 1 Mbaud, bounded KX frames\n  (the only defended boundary)"];
+  usb:e -> kern:e [style=dashed, color="#b03a2e", fontcolor="#b03a2e", constraint=false,
+               label=" RESET, MD, SWD: hardware authority\n held by the ESP, not defended "];
+}

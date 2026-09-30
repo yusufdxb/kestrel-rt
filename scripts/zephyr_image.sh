@@ -6,7 +6,7 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 TC=$HOME/.local/opt/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi
 export PATH=$HOME/.local/bin:$PATH ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb GNUARMEMB_TOOLCHAIN_PATH=$TC
-ZB=${ZEPHYR_WS:-$HOME/Projects/_ref/zephyrproject}
+ZB=${ZEPHYR_WS:?set ZEPHYR_WS to a west workspace with Zephyr 4.2.0}
 (cd "$ZB/zephyr" && west build -b arduino_uno_r4@wifi "$ROOT/baselines/zephyr" -d "$ROOT/build/base_zephyr" > "$ROOT/build/base_zephyr.log" 2>&1) || { tail -30 "$ROOT/build/base_zephyr.log"; exit 1; }
 E=$ROOT/build/base_zephyr/zephyr/zephyr.elf
 OUT=$ROOT/build/base_zephyr/image.elf

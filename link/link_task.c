@@ -185,8 +185,8 @@ static void emit_periodic(uint32_t t)
     if ((s_telem_mask & 2u) != 0u && (int32_t)(t - s_next_metrics_ms) >= 0) {
         uint8_t p[44];
         uint32_t jobs = g_k.tcb[0].jobs, miss = g_k.tcb[0].deadline_misses;
-        uint32_t crit = g_k.tcb[0].deadline_misses + g_k.tcb[1].deadline_misses +
-                        g_k.tcb[2].deadline_misses;
+        uint32_t crit =
+            g_k.tcb[0].deadline_misses + g_k.tcb[1].deadline_misses + g_k.tcb[2].deadline_misses;
         xl_put32(p, jobs - s_ctl_jobs_last);
         xl_put32(&p[4], miss - s_ctl_miss_last);
         xl_put32(&p[8], g_link.frames_ok);
@@ -247,8 +247,8 @@ void link_service_init(void)
         g_link.epoch ^= 1u;
     }
     xl_rx_init(&s_rx, g_link.epoch, 0u);
-    outage_begin(0u); /* no session since boot: a logged outage like any other */
-    g_link.loss_events = 0u;  /* the boot interval is not a loss event */
+    outage_begin(0u);        /* no session since boot: a logged outage like any other */
+    g_link.loss_events = 0u; /* the boot interval is not a loss event */
 }
 
 void link_task(void *arg)
@@ -272,7 +272,8 @@ void link_task(void *arg)
         }
 #endif
         /* Bounded communications work: bytes, frames and time are all capped per job. Bytes read
-         * from the ring but not decoded when the frame budget ends stay in s_carry for the next job. */
+         * from the ring but not decoded when the frame budget ends stay in s_carry for the next
+         * job. */
         for (;;) {
             if (s_carry_off == s_carry_len) {
                 if (bytes >= LINK_BUDGET_BYTES) {
@@ -281,7 +282,8 @@ void link_task(void *arg)
                     break;
                 }
                 uint32_t want = LINK_BUDGET_BYTES - bytes;
-                s_carry_len = link_rx_read(s_carry, want < sizeof(s_carry) ? want : sizeof(s_carry));
+                s_carry_len =
+                    link_rx_read(s_carry, want < sizeof(s_carry) ? want : sizeof(s_carry));
                 s_carry_off = 0u;
                 if (s_carry_len == 0u) {
                     break;
@@ -330,7 +332,8 @@ void link_task(void *arg)
             }
         }
         if (rejected_this_job != 0u) {
-            ltr(LE_REJECT, 0u, (uint16_t)(rejected_this_job > 0xFFFFu ? 0xFFFFu : rejected_this_job));
+            ltr(LE_REJECT, 0u,
+                (uint16_t)(rejected_this_job > 0xFFFFu ? 0xFFFFu : rejected_this_job));
         }
         if (g_link.degraded == 0u && (t - g_link.last_valid_ms) > LINK_LOSS_MS) {
             outage_begin(g_link.last_valid_ms);

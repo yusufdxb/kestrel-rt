@@ -41,7 +41,7 @@ enum kestrel_irq_line {
     IRQ_LINE_CAN_RX = 8,
     IRQ_LINE_CAN_TX = 9,
     IRQ_LINE_CAN_ERR = 10,
-    IRQ_LINE_ADC_TRIG = 11, /* GPT2 overflow: starts one ADC scan (2 kHz) */
+    IRQ_LINE_ADC_TRIG = 11,   /* GPT2 overflow: starts one ADC scan (2 kHz) */
     IRQ_LINE_LINK_TEI = 12,   /* Phase 2: SCI1 transmit end (ESP32-S3 link) */
     IRQ_LINE_LINK_ERI = 13,   /* Phase 2: SCI1 receive error */
     IRQ_LINE_LINK_DMATX = 14, /* Phase 2: DMAC2 transfer end (link TX) */
