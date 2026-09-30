@@ -26,6 +26,10 @@ static uint32_t s_base_total; /* bytes accounted for by previous DMA arms */
 static link_stats_t s_st;
 static volatile bool s_tx_busy;
 static volatile uint32_t s_tx_len;
+static volatile uint32_t s_err_window;
+static volatile bool s_muted;
+static uint32_t s_mute_since_ms;
+static bool s_mute_seen;
 
 static void rx_arm(void)
 {
@@ -68,6 +72,30 @@ static void eri_isr(void)
     s_st.rx_hw_errors++;
     (void)R_SCI1->RDR;
     R_SCI1->SSR = (uint8_t)(ssr & (uint8_t) ~(SSR_ORER | SSR_FER | SSR_PER));
+    if (++s_err_window >= LINK_ERR_STORM && !s_muted) {
+        R_SCI1->SCR = (uint8_t)(R_SCI1->SCR & (uint8_t) ~(SCR_RE | SCR_RIE));
+        s_muted = true;
+        s_st.rx_storm_mutes++;
+    }
+}
+
+bool link_service_errors(uint32_t now_ms)
+{
+    if (s_muted) {
+        if (!s_mute_seen) {
+            s_mute_seen = true;
+            s_mute_since_ms = now_ms;
+        } else if ((now_ms - s_mute_since_ms) >= LINK_MUTE_MS) {
+            s_mute_seen = false;
+            s_err_window = 0u;
+            s_muted = false;
+            link_rx_enable(true);
+            return false;
+        }
+        return true;
+    }
+    s_err_window = 0u;
+    return false;
 }
 
 static void tx_dma_end_isr(void)

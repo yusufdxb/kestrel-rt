@@ -8,3 +8,4 @@ baselines/*/build/
 backups/*.bin
 backups/*.bin.sha256
 build/esp/
+esp/secrets.env

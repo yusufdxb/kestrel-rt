@@ -208,6 +208,7 @@ void link_task(void *arg)
         uint32_t t_start = kestrel_time32();
         uint32_t t = now_ms();
         uint32_t bytes = 0u, frames = 0u;
+        (void)link_service_errors(t);
         /* Bounded communications work: bytes, frames and time are all capped per job. Bytes read
          * from the ring but not decoded when the frame budget ends stay in s_carry for the next job. */
         for (;;) {

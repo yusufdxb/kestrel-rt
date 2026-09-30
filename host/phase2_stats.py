@@ -18,7 +18,7 @@ FIELDS = ["phase2_link", "epoch", "session", "degraded", "sessions", "frames_ok"
           "config_rejected", "budget_hit_bytes", "budget_hit_frames", "budget_hit_time", "max_job_ticks",
           "tx_frames", "tx_skipped_busy", "loss_events", "outage_total_ms", "last_valid_ms", "n_outages",
           "rx_bytes", "rx_overrun_bytes", "rx_overrun_events", "rx_hw_errors", "rx_rearms", "tx_bytes",
-          "tx_refused_busy", "tx_chunks", "uptime_ms", "health_units", "logger_units"]
+          "tx_refused_busy", "tx_chunks", "uptime_ms", "health_units", "logger_units", "rx_storm_mutes"]
 
 
 def _result(lk, cmd, size, tries=3):

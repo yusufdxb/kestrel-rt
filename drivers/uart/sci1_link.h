@@ -8,6 +8,11 @@
  *     is derived from the DMA counters: blocks done (DMCRB) * ring + (ring - DMCRAL), a free-running
  *     byte count, so a consumer that falls more than one ring behind is detected exactly and
  *     resynchronised (bytes counted as dropped) instead of reading overwritten data.
+ * Error-storm guard: a peer can hold the line low (break) or send at the wrong rate and raise one
+ *     receive-error interrupt per character time (~100 kHz, observed while the ESP32-S3 sat in ROM
+ *     download mode). After LINK_ERR_STORM errors within one service window the receiver is muted
+ *     (RE/RIE off, no more interrupts) and the service re-enables it after LINK_MUTE_MS. This bounds
+ *     the interrupt load the untrusted side can put on the RA4M1.
  * This file is Phase 2 only; the Phase 1 SCI9 driver is unchanged. */
 #ifndef KESTREL_SCI1_LINK_H
 #define KESTREL_SCI1_LINK_H
@@ -16,6 +21,8 @@
 
 #define LINK_BAUD    1000000u
 #define LINK_RX_RING 1024u
+#define LINK_ERR_STORM 32u /* receive errors per service window before muting */
+#define LINK_MUTE_MS   20u
 
 typedef struct {
     uint32_t rx_bytes;         /* delivered to the consumer */
@@ -26,6 +33,7 @@ typedef struct {
     uint32_t tx_bytes;
     uint32_t tx_refused_busy;
     uint32_t tx_chunks;
+    uint32_t rx_storm_mutes;   /* receiver muted by the error-storm guard */
 } link_stats_t;
 
 int link_init(void);
@@ -38,6 +46,9 @@ uint32_t link_rx_pending(void);
 int link_tx_start(const uint8_t *buf, uint32_t n);
 bool link_tx_busy(void);
 const link_stats_t *link_stats(void);
+/* Once per service job: resets the error window, re-enables a muted receiver after LINK_MUTE_MS.
+ * Returns true while muted. */
+bool link_service_errors(uint32_t now_ms);
 /* Test hook (negative control N1): true stops the RX DMA and the SCI1 receiver. */
 void link_rx_enable(bool on);
 #endif
