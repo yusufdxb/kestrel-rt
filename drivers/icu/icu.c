@@ -2,6 +2,7 @@
 
 #include "arch/armv7m/cpu.h"
 #include "startup/startup.h"
+#include "trace/trace.h"
 
 #include <stdbool.h>
 
@@ -62,8 +63,15 @@ void kestrel_irq_dispatch(void)
         icu_last_entry_cycles[line] = cyc;
     }
     kestrel_isr_t isr = s_isr[line];
+    bool traced = (g_trace_mask & (1u << TE_ISR_ENTER)) != 0u;
+    if (traced) {
+        trace_emit(TE_ISR_ENTER, (uint8_t)line, 0u);
+    }
     if (isr != 0) {
         isr();
+    }
+    if (traced) {
+        trace_emit(TE_ISR_EXIT, (uint8_t)line, (uint16_t)(kcycles() - cyc));
     }
     if (level) {
         R_ICU->IELSR[line] &= ~IELSR_IR;

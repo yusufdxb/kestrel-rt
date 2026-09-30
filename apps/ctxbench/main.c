@@ -36,6 +36,9 @@ static void a_task(void *arg)
         (void)kestrel_flags_wait(&f_a, 1u, KFLAGS_ANY | KFLAGS_CLEAR, KWAIT_FOREVER);
         uint32_t t1 = kestrel_time32();
         lathist_add(&g_ctx.wake, t1 - g_ctx.t0);
+        if ((t1 - g_ctx.t0) > 20u * 48u) {
+            kestrel_trace((uint16_t)((t1 - g_ctx.t0) / 48u)); /* outlier marker (us) */
+        }
     }
 }
 
@@ -43,9 +46,7 @@ static void b_task(void *arg)
 {
     (void)arg;
     for (;;) {
-        uint32_t w = kestrel_time32();
-        while ((kestrel_time32() - w) < 48u * 50u) { /* 50 us between rounds */
-        }
+        kestrel_sleep_us(1000u); /* one round per ms; lower-priority comms keeps running */
         g_ctx.t0 = kestrel_time32();
         kestrel_flags_set(&f_a, 1u);
         uint32_t t3 = kestrel_time32();
@@ -88,13 +89,21 @@ void kestrel_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
     if (cmd == 0x21u) {
         send_hist(0u, &g_ctx.wake);
         send_hist(1u, &g_ctx.resume);
+    } else if (cmd == 0x32u) {
+        extern volatile uint32_t g_kprof_max[8];
+        uint8_t out[32];
+        for (uint32_t i = 0; i < 8u; i++) {
+            kput32(&out[4u * i], g_kprof_max[i]);
+        }
+        (void)telemetry_send(KF_RESULT, out, 32u);
     }
 }
 
 static const kestrel_task_cfg_t k_tasks[] = {
     {"A", a_task, 0, 0u, 0u, 6u, AB_FLAGS, stk_a, sizeof(stk_a), 0u},
     {"B", b_task, 0, 0u, 0u, 4u, AB_FLAGS, stk_b, sizeof(stk_b), 0u},
-    {"comms", comms_task, 0, 10000u, 10000u, 3u, KTASK_PRIVILEGED, stk_comms, sizeof(stk_comms), 0u},
+    {"comms", comms_task, 0, 10000u, 10000u, 3u, KTASK_PRIVILEGED, stk_comms, sizeof(stk_comms),
+     0u},
 };
 
 void kestrel_main(void)

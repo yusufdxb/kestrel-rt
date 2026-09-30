@@ -55,9 +55,7 @@ static void b_task(void *arg)
 {
     (void)arg;
     for (;;) {
-        uint32_t w = bench_now32();
-        while ((bench_now32() - w) < 48u * 50u) {
-        }
+        vTaskDelay(1u); /* one round per tick (1 ms), like the Kestrel variant */
         s_t0 = bench_now32();
         xTaskNotifyGive(s_a);
         uint32_t t3 = bench_now32();

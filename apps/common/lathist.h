@@ -3,8 +3,8 @@
 #define KESTREL_LATHIST_H
 #include <stdint.h>
 
-#define LATHIST_BINS 128u
-#define LATHIST_SHIFT 1u /* bin width 2 ticks = 41.7 ns; range 0..5.33 us, overflow above */
+#define LATHIST_BINS  128u
+#define LATHIST_SHIFT 4u /* bin width 16 ticks = 333 ns; range 0..42.7 us, overflow above */
 
 typedef struct {
     uint32_t count;

@@ -70,8 +70,14 @@ uint64_t kt_now(void)
 
 void kt_alarm_set(uint64_t when)
 {
+    kt_alarm_set_from(when, kt_now());
+}
+
+/* `now` may be slightly stale (the caller's own timestamp): a stale `now` only overstates the
+ * lead, and the post-write counter check below still catches a target that already passed. */
+void kt_alarm_set_from(uint64_t when, uint64_t now)
+{
     kcrit_t s = kcrit_enter();
-    uint64_t now = kt_now();
     int64_t lead = (int64_t)(when - now);
     if (lead > (int64_t)0x7FFFFFFF) {
         when = now + 0x7FFFFFFFu; /* far event: wake halfway and re-evaluate */

@@ -40,6 +40,7 @@ uint32_t k_flags_wait(ktcb_t *t, uint32_t *frame, kflags_t *f, uint32_t mask, ui
     t->wait_mode = (uint8_t)mode;
     t->wait_frame = frame;
     k_block(t, KW_FLAGS);
+    g_k.flag_wait_levels |= 1u << t->level;
     t->wake_at = (timeout_us == KWAIT_FOREVER) ? KNO_TIME : now + kt_us_to_ticks(timeout_us);
     k_events_changed(t);
     k_reschedule();
@@ -50,9 +51,17 @@ uint32_t k_flags_wait(ktcb_t *t, uint32_t *frame, kflags_t *f, uint32_t mask, ui
 void k_flags_set_locked(kflags_t *f, uint32_t bits)
 {
     f->bits |= bits;
-    for (int32_t lvl = (int32_t)KNUM_LEVELS - 1; lvl >= 0; lvl--) {
+    /* Visit only levels whose owner waits on flags, highest priority first (CLZ). */
+    uint32_t pending = g_k.flag_wait_levels;
+    while (pending != 0u) {
+        uint32_t lvl = 31u - __CLZ(pending);
+        pending &= ~(1u << lvl);
         ktcb_t *w = g_k.level_owner[lvl];
-        if (w == 0 || w->state != KS_BLOCKED || w->wait != KW_FLAGS || w->wait_obj != f) {
+        if (w == 0 || w->state != KS_BLOCKED || w->wait != KW_FLAGS) {
+            g_k.flag_wait_levels &= ~(1u << lvl); /* stale: woken by timeout or faulted */
+            continue;
+        }
+        if (w->wait_obj != f) {
             continue;
         }
         uint32_t m = match(f->bits, w->wait_mask, w->wait_mode);
@@ -62,6 +71,7 @@ void k_flags_set_locked(kflags_t *f, uint32_t bits)
         if ((w->wait_mode & KFLAGS_CLEAR) != 0u) {
             f->bits &= ~m;
         }
+        g_k.flag_wait_levels &= ~(1u << lvl);
         k_wake(w, m);
         trace_emit_locked(TE_WAKE, w->id, (uint16_t)m);
     }

@@ -81,18 +81,26 @@ bool kmpu_enabled(void)
     return s_enabled;
 }
 
+void kmpu_prepare(ktcb_t *t)
+{
+    uint32_t base = (uint32_t)(uintptr_t)t->cfg->stack_base;
+    t->mpu_rbar4 = base | MPU_RBAR_VALID_Msk | 4u;
+    t->mpu_rasr4 = AP_FULL | XN | MEM_SRAM | size_field(t->cfg->stack_size) | MPU_RASR_ENABLE_Msk;
+    t->mpu_rbar5 = base | MPU_RBAR_VALID_Msk | 5u;
+    t->mpu_rasr5 = AP_NONE | XN | MEM_SRAM | size_field(STACK_GUARD_BYTES) | MPU_RASR_ENABLE_Msk;
+}
+
 void kmpu_switch(const ktcb_t *t)
 {
     if (!s_enabled || t->cfg == 0) {
         return;
     }
-    uint32_t base = (uint32_t)(uintptr_t)t->cfg->stack_base;
-    /* Two register writes per region (RBAR with VALID|REGION selects the region itself). */
-    MPU->RBAR = base | MPU_RBAR_VALID_Msk | 4u;
-    MPU->RASR = AP_FULL | XN | MEM_SRAM | size_field(t->cfg->stack_size) | MPU_RASR_ENABLE_Msk;
-    MPU->RBAR = base | MPU_RBAR_VALID_Msk | 5u;
-    MPU->RASR = AP_NONE | XN | MEM_SRAM | size_field(STACK_GUARD_BYTES) | MPU_RASR_ENABLE_Msk;
-    /* No barrier needed here: the exception return that follows is context synchronizing. */
+    /* RBAR with VALID selects the region; four stores, values computed at task creation. No
+     * barrier: the exception return that follows is context synchronizing. */
+    MPU->RBAR = t->mpu_rbar4;
+    MPU->RASR = t->mpu_rasr4;
+    MPU->RBAR = t->mpu_rbar5;
+    MPU->RASR = t->mpu_rasr5;
 }
 
 void kmpu_set_enabled(bool on)

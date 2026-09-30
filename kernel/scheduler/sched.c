@@ -16,7 +16,8 @@
 #include "trace/trace.h"
 
 kernel_t g_k;
-volatile uint32_t g_kprof[8]; /* diagnostic stage stamps of the last timer ISR */
+volatile uint32_t g_kprof[8];     /* diagnostic stage stamps of the last timer ISR */
+volatile uint32_t g_kprof_max[8]; /* stage stamps of the slowest timer ISR so far */
 #ifdef KESTREL_PROFILE
 #define KPROF(i) (g_kprof[(i)] = kcycles())
 #else
@@ -207,6 +208,12 @@ static uint64_t task_next_event(const ktcb_t *t)
     return ne;
 }
 
+static void program_alarm_from(uint64_t when, uint64_t now)
+{
+    g_k.alarm_at = when;
+    kt_alarm_set_from(when, now);
+}
+
 static void program_alarm(uint64_t when)
 {
     g_k.alarm_at = when;
@@ -225,7 +232,7 @@ void k_recompute_alarm(uint64_t now)
 {
     (void)now;
     uint64_t next = g_k.next_supervisor;
-    for (uint32_t i = 0; i < KNUM_TCB; i++) {
+    for (uint32_t i = 0; i < g_k.ntasks; i++) {
         ktcb_t *t = &g_k.tcb[i];
         t->next_event = task_next_event(t);
         if (t->next_event < next) {
@@ -247,7 +254,7 @@ void k_alarm_isr(void)
         /* One pass: process due tasks and compute the next alarm. Tasks whose cached next_event is
          * in the future cost one 64-bit compare. */
         uint64_t next = g_k.next_supervisor;
-        for (uint32_t i = 0; i < KNUM_TCB; i++) {
+        for (uint32_t i = 0; i < g_k.ntasks; i++) {
             ktcb_t *t = &g_k.tcb[i];
             if (now >= t->next_event) {
                 if (t->state != KS_UNUSED && t->state != KS_FAULTED) {
@@ -283,7 +290,7 @@ void k_alarm_isr(void)
             }
         }
         KPROF(3);
-        program_alarm(next);
+        program_alarm_from(next, now);
         KPROF(4);
         k_reschedule();
         KPROF(5);
@@ -294,6 +301,12 @@ void k_alarm_isr(void)
     khist_add(&g_hist_alarm, dt);
     if (dt > g_k.max_alarm_cycles) {
         g_k.max_alarm_cycles = dt;
+#ifdef KESTREL_PROFILE
+        for (uint32_t i = 0; i < 7u; i++) {
+            g_kprof_max[i] = g_kprof[i] - g_kprof[0];
+        }
+        g_kprof_max[7] = g_k.alarm_count;
+#endif
     }
 }
 

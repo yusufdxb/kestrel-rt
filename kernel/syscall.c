@@ -148,7 +148,12 @@ void k_svc_dispatch(uint32_t *frame, uint32_t svc_num, uint32_t exc_return)
     uint32_t c0 = kcycles();
     g_k.svc_count++;
     ktcb_t *t = g_k.current;
-    uint64_t now = kt_now();
+    /* The 64-bit time read costs ~70 cycles: only the calls that need it pay for it. */
+    uint64_t now = (svc_num == SVC_WAIT_PERIOD || svc_num == SVC_SLEEP || svc_num == SVC_NOW ||
+                    svc_num == SVC_VOTE ||
+                    (svc_num == SVC_FLAGS_WAIT && frame[3] != 0u && frame[3] != KWAIT_FOREVER))
+                       ? kt_now()
+                       : 0u;
     switch (svc_num) {
     case SVC_WAIT_PERIOD:
         if (frame[1] == 1u && t->job_active) {

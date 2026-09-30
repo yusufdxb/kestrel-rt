@@ -75,12 +75,14 @@ typedef struct ktcb {
     uint32_t min_start_lat;
     uint64_t run_cycles; /* lifetime CPU time, cycles */
     uint32_t canary_hits;
+    uint32_t mpu_rbar4, mpu_rasr4, mpu_rbar5, mpu_rasr5; /* precomputed by kmpu_prepare() */
 } ktcb_t;
 
 typedef struct {
     ktcb_t tcb[KNUM_TCB];
     ktcb_t *level_owner[KNUM_LEVELS];
-    uint32_t ready_levels; /* bit L set: owner of level L is READY */
+    uint32_t ready_levels;     /* bit L set: owner of level L is READY */
+    uint32_t flag_wait_levels; /* bit L set: owner of level L is blocked on event flags */
     ktcb_t *current;
     uint32_t ntasks;
     bool started;
@@ -138,6 +140,7 @@ bool kstack_canary_ok(const ktcb_t *t);
 /* MPU (safety/mpu) */
 void kmpu_init(void);
 void kmpu_switch(const ktcb_t *t);
+void kmpu_prepare(ktcb_t *t); /* compute the task's region 4/5 words once, at creation */
 bool kmpu_enabled(void);
 void kmpu_set_enabled(bool on); /* experiments only */
 

@@ -25,6 +25,7 @@ static inline uint64_t kt_us_to_ticks(uint32_t us)
 /* Program the one-shot alarm (compare A) for absolute time `when`. If `when` is already in the
  * past or too close to program safely, the alarm interrupt is pended immediately. */
 void kt_alarm_set(uint64_t when);
+void kt_alarm_set_from(uint64_t when, uint64_t now);
 
 /* Test hooks for the rollover campaign (stop, preload the counter, restart). */
 void kt_test_preload(uint32_t counter_low, uint32_t high);
