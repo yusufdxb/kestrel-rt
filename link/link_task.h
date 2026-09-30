@@ -7,7 +7,8 @@
 #define LINK_PERIOD_US 5000u
 #define LINK_BUDGET_BYTES 512u   /* per job */
 #define LINK_BUDGET_FRAMES 16u   /* per job */
-#define LINK_BUDGET_TICKS (300u * 48u) /* 300 us of the 5 ms period (6 %) */
+#define LINK_BUDGET_TICKS (300u * 48u) /* 300 us of the 5 ms period (6 %), whole job */
+#define LINK_RX_BUDGET_TICKS (200u * 48u) /* receive side; the rest is left for TX emission */
 #define LINK_LOSS_MS 250u        /* no valid ESP frame for this long -> link degraded */
 #define LINK_OUTAGE_LOG 16u
 /* Negative-control build variants (docs/PHASE2_FAULT_MODEL.md), both off in the real image:

@@ -33,6 +33,7 @@ extern "C" {
 #define KX_PING_MS 100
 #define KX_TSYNC_MS 1000
 #define KX_WDT_S 2
+#define KX_DESYNC_MS 500
 
 #define RTC_MAGIC 0x4B58524Du  // "KXRM"
 #define REPLAY_SLOTS 16
@@ -81,6 +82,8 @@ static bool active(int f) { return (int32_t)(millis() - f_until_ms[f]) < 0; }
 // ---------------- mailbox task ----------------
 static uint32_t s_tx_seq;
 static uint32_t s_hs_sent_ms;
+static uint32_t s_acked_seq, s_acked_ms;
+static volatile uint32_t st_resyncs;
 
 static void record_replay(const uint8_t* b, size_t n)
 {
@@ -100,10 +103,11 @@ static void tx_raw(const uint8_t* b, size_t n)
 
 static void tx_frame(uint8_t type, const uint8_t* p, uint16_t len, bool count_valid = true)
 {
+  if (active(F_NOTX)) return;  // a frame not sent must not consume a sequence number
   uint8_t b[XL_OVERHEAD + 32];
-  size_t n = xl_encode(b, sizeof(b), type, (uint16_t)s_session, ++s_tx_seq, p, len);
+  size_t n = xl_encode(b, sizeof(b), type, (uint16_t)s_session, s_tx_seq + 1, p, len);
   if (n == 0) return;
-  if (active(F_NOTX)) return;
+  s_tx_seq++;
   tx_raw(b, n);
   st_tx_frames++;
   if (count_valid && s_established) st_valid_sent++;
@@ -119,6 +123,8 @@ static void start_handshake(void)
   s_session = sid;
   s_established = 0;
   s_tx_seq = 0;
+  s_acked_seq = 0;
+  s_acked_ms = millis();
   uint8_t p[8];
   xl_put32(p, s_ra4_epoch);
   xl_put32(&p[4], s_rtc.boot_count);
@@ -180,6 +186,15 @@ static void on_ra4_frame(const xl_frame_t* f)
       s_ra4_epoch = ep;
       start_handshake();
     } else if (ses == (uint16_t)s_session) {
+      uint32_t acked = xl_get32(&f->payload[10]);  // last ESP sequence the RA4 accepted
+      if (acked != s_acked_seq) {
+        s_acked_seq = acked;
+        s_acked_ms = now;
+      } else if (s_established && s_tx_seq > acked && (now - s_acked_ms) > KX_DESYNC_MS) {
+        st_resyncs++;  // RA4 refuses everything we send: start a clean session
+        start_handshake();
+        return;
+      }
       if (!s_established) {
         s_established = 1;
         uint8_t m[4];
@@ -207,13 +222,16 @@ static void on_ra4_frame(const xl_frame_t* f)
   if (xQueueSend(s_fwd, &m, 0) != pdTRUE) st_fwd_drop++;
 }
 
+// F11: frames of the previous ESP boot, copied out of RTC memory at boot (RTC slots are reused).
+static uint8_t s_old[REPLAY_SLOTS][32];
+static uint16_t s_old_len[REPLAY_SLOTS];
+static uint32_t s_old_n;
+
 static void replay_old_frames(void)
 {
-  uint32_t n = s_rtc.replay_n < REPLAY_SLOTS ? s_rtc.replay_n : REPLAY_SLOTS;
-  for (uint32_t i = 0; i < n; i++) {
-    uint32_t len = s_rtc.replay_len[i];
-    if (len > 0 && len <= 32) {
-      tx_raw(s_rtc.replay[i], len);
+  for (uint32_t i = 0; i < s_old_n; i++) {
+    if (s_old_len[i] > 0 && s_old_len[i] <= 32) {
+      tx_raw(s_old[i], s_old_len[i]);
       st_bad_sent[7]++;
     }
   }
@@ -230,6 +248,9 @@ static void mbox_task(void*)
   bool replay_after = replay_before;
   uint8_t buf[256];
   if (replay_before) {  // F11: frames of the previous ESP boot, before any HELLO
+    s_old_n = s_rtc.replay_n < REPLAY_SLOTS ? s_rtc.replay_n : REPLAY_SLOTS;
+    memcpy(s_old, s_rtc.replay, sizeof(s_old));
+    memcpy(s_old_len, s_rtc.replay_len, sizeof(s_old_len));
     replay_old_frames();
   }
   s_rtc.replay_n = 0;
@@ -333,7 +354,7 @@ static int stats_text(char* o, size_t cap)
       "rtt_us_min=%u rtt_us_avg=%u rtt_us_max=%u tx_frames=%u tx_bytes=%u valid_sent=%u "
       "bad=%u,%u,%u,%u,%u,%u,%u,%u fwd_drop=%u sink_pkts=%u sink_bytes=%llu ctrl_pkts=%u "
       "cfg_ack=%u cfg_nack=%u ra4_ctl_jobs=%u ra4_ctl_miss=%u ra4_degraded=%u heap=%u heap_min=%u "
-      "ap_restarts=%u stations=%u wdt_rc=%d",
+      "ap_restarts=%u stations=%u wdt_rc=%d resyncs=%u",
       s_rtc.boot_count, (int)esp_reset_reason(), (unsigned)millis(), s_ra4_epoch, s_session, s_established,
       st_handshakes, st_rx_frames, st_rx_crc, st_rx_len, st_rx_ver, st_rx_skipped, st_uart_rx_bytes, st_hb,
       st_pong, n ? st_rtt_min : 0, n ? (uint32_t)(st_rtt_sum / n) : 0, st_rtt_max, st_tx_frames, st_tx_bytes,
@@ -341,7 +362,7 @@ static int stats_text(char* o, size_t cap)
       st_bad_sent[5], st_bad_sent[6], st_bad_sent[7], st_fwd_drop, st_sink_pkts,
       (unsigned long long)st_sink_bytes, st_ctrl_pkts, st_config_acks, st_config_nacks, st_ra4_ctl_jobs,
       st_ra4_ctl_miss, st_ra4_degraded, (unsigned)ESP.getFreeHeap(), (unsigned)ESP.getMinFreeHeap(),
-      s_ap_restarts, (unsigned)WiFi.softAPgetStationNum(), st_wdt_rc);
+      s_ap_restarts, (unsigned)WiFi.softAPgetStationNum(), st_wdt_rc, st_resyncs);
 }
 
 static void reply(const char* s)

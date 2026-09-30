@@ -13,7 +13,7 @@ link_evidence_t g_link;
 KESTREL_SHARED link_cfg_t g_link_cfg;
 
 static xl_decoder_t s_dec;
-static uint8_t s_carry[64];
+static uint8_t s_carry[16]; /* time budget checked every 16 bytes */
 static uint32_t s_carry_len, s_carry_off;
 static bool s_muted_seen;
 static xl_rx_t s_rx;
@@ -247,7 +247,8 @@ void link_service_init(void)
         g_link.epoch ^= 1u;
     }
     xl_rx_init(&s_rx, g_link.epoch, 0u);
-    g_link.degraded = 1u; /* until the first session */
+    outage_begin(0u); /* no session since boot: a logged outage like any other */
+    g_link.loss_events = 0u;  /* the boot interval is not a loss event */
 }
 
 void link_task(void *arg)
@@ -322,7 +323,7 @@ void link_task(void *arg)
                 ltr(LE_BUDGET, 2u, 0u);
                 break;
             }
-            if ((kestrel_time32() - t_start) > LINK_BUDGET_TICKS) {
+            if ((kestrel_time32() - t_start) > LINK_RX_BUDGET_TICKS) {
                 g_link.budget_hit_time++;
                 ltr(LE_BUDGET, 3u, 0u);
                 break;

@@ -1,0 +1,32 @@
+{"name": "F4v2", "ra4_boot_before": 2, "ra4_boot_after": 2, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 31250, "control_records_lost": 0}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.92, 'max': 51.67, 'min': 21.12}
+link delta {'frames_ok': 447, 'dec_crc': 1970, 'dec_len': 2140, 'dec_version': 2077, 'dec_skipped': 69022, 'rej_type': 2096, 'rej_len': 2097, 'rej_replay': 2115, 'pings': 406, 'budget_hit_time': 1110, 'max_job_ticks': 2284, 'tx_frames': 3773, 'last_valid_ms': 40760, 'rx_bytes': 288961, 'tx_bytes': 101789, 'tx_chunks': 3365, 'uptime_ms': 40730, 'rx_rejected': 6308}
+esp delta {'rx_frames': 3780, 'rx_skipped': 21, 'uart_rx': 102046, 'hb': 411, 'pong': 410, 'rtt_us_min': -5, 'rtt_us_avg': -58, 'tx_frames': 453, 'tx_bytes': 289033, 'valid_sent': 453, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 41100}
+esp cmds [(6.5, 'fault malformed 15000 500', 'ok fault')]
+{"name": "F5v2", "ra4_boot_before": 2, "ra4_boot_after": 2, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 31250, "control_records_lost": 10}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.92, 'max': 49.75, 'min': 21.12}
+link delta {'frames_ok': 6335, 'dec_crc': 572, 'dec_len': 675, 'dec_version': 87, 'dec_skipped': 6367, 'rej_rate': 8540, 'pings': 6309, 'budget_hit_time': 3005, 'max_job_ticks': 562, 'tx_frames': 9847, 'last_valid_ms': 40920, 'rx_bytes': 293540, 'rx_overrun_bytes': 1213386, 'rx_overrun_events': 1500, 'tx_bytes': 250765, 'tx_chunks': 3524, 'uptime_ms': 40920, 'rx_rejected': 8540}
+esp delta {'rx_frames': 9851, 'uart_rx': 250883, 'hb': 411, 'pong': 6311, 'rtt_us_min': -10, 'rtt_us_avg': 69391355, 'rtt_us_max': 87309310, 'tx_frames': 83710, 'tx_bytes': 1506944, 'valid_sent': 83710, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 41100}
+esp cmds [(6.51, 'fault flood 15000', 'ok fault')]
+{"name": "F9v2", "ra4_boot_before": 2, "ra4_boot_after": 2, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 31250, "control_records_lost": 10}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.88, 'max': 52.17, 'min': 21.12}
+link delta {'frames_ok': 453, 'pings': 412, 'tx_frames': 947, 'last_valid_ms': 41160, 'rx_bytes': 8318, 'tx_bytes': 31168, 'tx_chunks': 823, 'uptime_ms': 41140}
+esp delta {'rx_frames': 724, 'uart_rx': 23806, 'hb': 314, 'pong': 315, 'rtt_us_min': -19, 'rtt_us_avg': -2908414, 'tx_frames': 451, 'tx_bytes': 8282, 'valid_sent': 451, 'fwd_drop': 27, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 40900}
+esp cmds [(6.51, 'fault noread 15000', 'ok fault')]
+{"name": "F10v2", "ra4_boot_before": 2, "ra4_boot_after": 2, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 31270, "control_records_lost": 0}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.92, 'max': 50.38, 'min': 21.12}
+link delta {'frames_ok': 287, 'pings': 261, 'tx_frames': 794, 'loss_events': 1, 'outage_total_ms': 15085, 'last_valid_ms': 41060, 'n_outages': 1, 'rx_bytes': 5270, 'tx_bytes': 27740, 'tx_chunks': 661, 'uptime_ms': 40980}
+esp delta {'rx_frames': 797, 'rx_skipped': 63, 'uart_rx': 27909, 'hb': 412, 'pong': 259, 'rtt_us_avg': -2276758, 'tx_frames': 288, 'tx_bytes': 5288, 'valid_sent': 288, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 41200}
+esp cmds [(6.51, 'fault notx 15000', 'ok fault')]
+{"name": "F11v2", "ra4_boot_before": 2, "ra4_boot_after": 2, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 29150, "control_records_lost": 2250}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.92, 'max': 49.75, 'min': 21.17}
+link delta {'session': 5989, 'sessions': 1, 'frames_ok': 453, 'dec_skipped': 1, 'rej_replay': 17, 'rej_retired': 1, 'pings': 408, 'config_applied': 1, 'budget_hit_time': 4, 'tx_frames': 952, 'loss_events': 1, 'outage_total_ms': 335, 'last_valid_ms': 41090, 'n_outages': 1, 'rx_bytes': 8667, 'tx_bytes': 31311, 'tx_chunks': 770, 'uptime_ms': 41050, 'health_units': 10, 'rx_rejected': 18}
+esp delta {'boot': 1, 'reset_reason': -3, 'session': 5989, 'handshakes': -1, 'rx_frames': -14998, 'rx_skipped': -42, 'uart_rx': -399662, 'hb': -1481, 'pong': -7230, 'rtt_us_min': 41, 'rtt_us_avg': -63910597, 'rtt_us_max': -87309326, 'tx_frames': -84830, 'tx_bytes': -1807891, 'valid_sent': -84829, 'fwd_drop': -27, 'ctrl_pkts': -13, 'ra4_ctl_jobs': 41100, 'heap': 200, 'heap_min': 9572}
+esp cmds [(6.51, 'config 2 60', 'ok config'), (6.52, 'fault replay', 'ok replay')]
+ok config
+{"name": "F12v2", "ra4_boot_before": 2, "ra4_boot_after": 2, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 41210, "control_records_lost": 10}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.92, 'max': 51.42, 'min': 21.12}
+link delta {'frames_ok': 392, 'pings': 356, 'tx_frames': 2218, 'loss_events': 1, 'outage_total_ms': 15285, 'last_valid_ms': 50745, 'n_outages': 1, 'rx_bytes': 7200, 'rx_hw_errors': 19200, 'tx_bytes': 61501, 'tx_chunks': 2064, 'uptime_ms': 50710, 'rx_storm_mutes': 600}
+esp delta {'rx_frames': 829, 'uart_rx': 27238, 'hb': 360, 'pong': 360, 'rtt_us_min': -12, 'rtt_us_avg': 24, 'tx_frames': 397, 'tx_bytes': 7294, 'valid_sent': 397, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 51100, 'heap': -188, 'heap_min': -1824}
+esp cmds [(6.51, 'fault txlow 15000', 'ok txlow')]
+CAMPAIGN_DONE

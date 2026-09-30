@@ -1,0 +1,59 @@
+{"name": "F1", "ra4_boot_before": 27, "ra4_boot_after": 27, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 31330, "control_records_lost": 10}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.88, 'max': 51.46, 'min': 21.17}
+link delta {'frames_ok': 450, 'pings': 409, 'tx_frames': 940, 'last_valid_ms': 40860, 'rx_bytes': 8254, 'tx_bytes': 30900, 'tx_chunks': 758, 'uptime_ms': 40840}
+esp delta {'rx_frames': 937, 'rx_skipped': 21, 'uart_rx': 30823, 'hb': 408, 'pong': 407, 'tx_frames': 449, 'tx_bytes': 8246, 'valid_sent': 449, 'sink_pkts': 7702, 'sink_bytes': 10782800, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 40800, 'heap_min': -18408}
+esp cmds [(6.51, 'sub', 'ok sub')]
+{"name": "F2", "ra4_boot_before": 27, "ra4_boot_after": 27, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 19440, "control_records_lost": 11890}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.88, 'max': 50.79, 'min': 21.12}
+link delta {'frames_ok': 456, 'pings': 415, 'tx_frames': 955, 'last_valid_ms': 41460, 'rx_bytes': 8372, 'tx_bytes': 31403, 'tx_chunks': 830, 'uptime_ms': 41470}
+esp delta {'rx_frames': 935, 'uart_rx': 30760, 'hb': 406, 'pong': 406, 'rtt_us_avg': 50, 'rtt_us_max': 13056, 'tx_frames': 447, 'tx_bytes': 8210, 'valid_sent': 447, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 40600, 'heap': -2424}
+esp cmds [(6.51, 'fault cpu 15000 10', 'ok fault')]
+{"name": "F3", "ra4_boot_before": 27, "ra4_boot_after": 27, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 31250, "control_records_lost": 0}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.88, 'max': 49.71, 'min': 21.17}
+link delta {'frames_ok': 451, 'pings': 410, 'tx_frames': 943, 'last_valid_ms': 40965, 'rx_bytes': 8282, 'tx_bytes': 30974, 'tx_chunks': 820, 'uptime_ms': 40930}
+esp delta {'rx_frames': 946, 'uart_rx': 31077, 'hb': 411, 'pong': 412, 'tx_frames': 453, 'tx_bytes': 8318, 'valid_sent': 453, 'fwd_drop': 313, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 41100, 'heap_min': -98848}
+esp cmds [(6.51, 'fault mem 15000 8192', 'ok mem held=84 heap=9296')]
+{"name": "F4", "ra4_boot_before": 27, "ra4_boot_after": 27, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 31200, "control_records_lost": 10}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.88, 'max': 50.12, 'min': 21.17}
+link delta {'frames_ok': 447, 'dec_crc': 1988, 'dec_len': 2142, 'dec_version': 2079, 'dec_skipped': 68970, 'rej_type': 2094, 'rej_len': 2094, 'rej_replay': 2120, 'pings': 406, 'max_job_ticks': 8964, 'tx_frames': 3720, 'last_valid_ms': 40860, 'rx_bytes': 288979, 'tx_bytes': 92075, 'tx_chunks': 3308, 'uptime_ms': 40870, 'rx_rejected': 6308}
+esp delta {'rx_frames': 3716, 'rx_skipped': 147, 'uart_rx': 92149, 'hb': 410, 'pong': 406, 'rtt_us_avg': 1, 'tx_frames': 452, 'tx_bytes': 289015, 'valid_sent': 452, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 41000}
+esp cmds [(6.51, 'fault malformed 15000 500', 'ok fault')]
+{"name": "F5", "ra4_boot_before": 27, "ra4_boot_after": 27, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 31310, "control_records_lost": 0}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.92, 'max': 49.71, 'min': 21.12}
+link delta {'frames_ok': 6335, 'dec_crc': 590, 'dec_len': 657, 'dec_version': 85, 'dec_skipped': 9629, 'rej_rate': 24352, 'pings': 6308, 'budget_hit_time': 3005, 'max_job_ticks': 7806, 'tx_frames': 9845, 'last_valid_ms': 40935, 'rx_bytes': 581782, 'rx_overrun_bytes': 925144, 'rx_overrun_events': 1499, 'tx_bytes': 250785, 'tx_chunks': 3524, 'uptime_ms': 40970, 'rx_rejected': 24352}
+esp delta {'rx_frames': 9848, 'rx_crc': 1, 'rx_skipped': 44, 'uart_rx': 250954, 'hb': 412, 'pong': 6310, 'rtt_us_avg': 95584303, 'rtt_us_max': 911802917, 'tx_frames': 83712, 'tx_bytes': 1506980, 'valid_sent': 83712, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 41200, 'heap': 2208}
+esp cmds [(6.51, 'fault flood 15000', 'ok fault')]
+{"name": "F6", "ra4_boot_before": 27, "ra4_boot_after": 27, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 30030, "control_records_lost": 11210}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.88, 'max': 49.96, 'min': 21.17}
+link delta {'session': -28582, 'sessions': 7, 'frames_ok': 555, 'dec_skipped': 1, 'pings': 493, 'tx_frames': 1174, 'loss_events': 5, 'outage_total_ms': 1620, 'last_valid_ms': 51070, 'n_outages': 5, 'rx_bytes': 10219, 'tx_bytes': 39356, 'tx_chunks': 902, 'uptime_ms': 51110}
+esp delta {'boot': 5, 'reset_reason': -3, 'session': -28582, 'rx_frames': -128720, 'rx_crc': -1, 'rx_skipped': -695, 'uart_rx': -4128509, 'hb': -50880, 'pong': -56796, 'rtt_us_min': 43, 'rtt_us_avg': -95565753, 'rtt_us_max': -911816021, 'tx_frames': -139279, 'tx_bytes': -2808109, 'valid_sent': -139279, 'fwd_drop': -313, 'sink_pkts': -17038, 'sink_bytes': -23853200, 'ctrl_pkts': -24, 'ra4_ctl_jobs': 51000, 'heap': 108, 'heap_min': 174120}
+esp cmds [(6.51, 'fault rebootloop 5 3000', 'ok rebootloop')]
+{"name": "F7", "ra4_boot_before": 27, "ra4_boot_after": 27, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 29040, "control_records_lost": 2310}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.88, 'max': 49.92, 'min': 21.17}
+link delta {'session': 14142, 'sessions': 1, 'frames_ok': 450, 'pings': 407, 'tx_frames': 943, 'loss_events': 1, 'outage_total_ms': 435, 'last_valid_ms': 41095, 'n_outages': 1, 'rx_bytes': 8268, 'tx_bytes': 31105, 'tx_chunks': 765, 'uptime_ms': 41030}
+esp delta {'boot': 1, 'reset_reason': 1, 'session': 14142, 'rx_frames': 42, 'rx_skipped': -21, 'uart_rx': 1373, 'hb': 18, 'pong': 18, 'rtt_us_min': 10, 'rtt_us_avg': 28, 'rtt_us_max': 7, 'tx_frames': 19, 'tx_bytes': 350, 'valid_sent': 19, 'ctrl_pkts': -1, 'ra4_ctl_jobs': 41100, 'heap': 20, 'heap_min': -3168}
+esp cmds [(6.51, 'fault crash', 'ok crash')]
+{"name": "F7b", "ra4_boot_before": 27, "ra4_boot_after": 27, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 26990, "control_records_lost": 4290}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.88, 'max': 49.75, 'min': 21.17}
+link delta {'session': 16769, 'sessions': 1, 'frames_ok': 427, 'pings': 385, 'tx_frames': 916, 'loss_events': 1, 'outage_total_ms': 2340, 'last_valid_ms': 40805, 'n_outages': 1, 'rx_bytes': 7850, 'tx_bytes': 30398, 'tx_chunks': 740, 'uptime_ms': 40720}
+esp delta {'boot': 1, 'reset_reason': 2, 'session': 16769, 'rx_frames': -51, 'rx_skipped': 21, 'uart_rx': -1595, 'hb': -22, 'pong': -24, 'rtt_us_min': -5, 'rtt_us_avg': 21, 'tx_frames': -25, 'tx_bytes': -458, 'valid_sent': -25, 'ctrl_pkts': -1, 'ra4_ctl_jobs': 41200, 'heap': -116, 'heap_min': 3280}
+esp cmds [(6.5, 'fault hang', 'ok fault')]
+{"name": "F8", "ra4_boot_before": 27, "ra4_boot_after": 27, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 31350, "control_records_lost": 10}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.88, 'max': 50.29, 'min': 21.17}
+link delta {'frames_ok': 453, 'pings': 412, 'tx_frames': 946, 'last_valid_ms': 41160, 'rx_bytes': 8318, 'tx_bytes': 31077, 'tx_chunks': 823, 'uptime_ms': 41090}
+esp delta {'rx_frames': 1265, 'uart_rx': 41580, 'hb': 550, 'pong': 550, 'rtt_us_min': -12, 'rtt_us_avg': -97, 'tx_frames': 605, 'tx_bytes': 11110, 'valid_sent': 605, 'fwd_drop': 295, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 55000, 'heap': -512, 'heap_min': -3988, 'ap_restarts': 5}
+esp cmds [(6.51, 'fault apstorm 5 1000', 'ok apstorm')]
+{"name": "F9", "ra4_boot_before": null, "ra4_boot_after": null, "critical_misses": 0, "kernel_misses": {}, "control_records": null, "control_records_lost": null}
+control start us {}
+link delta {}
+esp delta {'rx_frames': 6830, 'rx_skipped': 21, 'uart_rx': 224516, 'hb': 2969, 'pong': 2970, 'rtt_us_avg': 104045, 'rtt_us_max': 14982024, 'tx_frames': 3372, 'tx_bytes': 61924, 'valid_sent': 3372, 'fwd_drop': 28, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 306300}
+esp cmds [(6.51, 'fault noread 15000', 'ok fault')]
+UNO R4 WiFi bridge not found
+UNO R4 WiFi bridge not found
+None
+{"name": "F12", "ra4_boot_before": 1, "ra4_boot_after": 1, "critical_misses": 0, "kernel_misses": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "8": 0}, "control_records": 31270, "control_records_lost": 10}
+control start us {'p50': 24.96, 'p95': 45.96, 'p99': 47.88, 'p99.9': 47.88, 'max': 52.17, 'min': 21.17}
+link delta {'degraded': 1, 'frames_ok': 291, 'rej_jump': 201, 'pings': 264, 'tx_frames': 2428, 'loss_events': 1, 'last_valid_ms': 26380, 'n_outages': 1, 'rx_bytes': 9036, 'rx_hw_errors': 19200, 'tx_bytes': 68401, 'tx_chunks': 2204, 'uptime_ms': 59890, 'rx_storm_mutes': 600, 'rx_rejected': 201}
+esp delta {'rx_frames': 591, 'uart_rx': 19440, 'hb': 258, 'pong': 66, 'rtt_us_avg': -18, 'tx_frames': 281, 'tx_bytes': 5162, 'valid_sent': 281, 'ctrl_pkts': 2, 'ra4_ctl_jobs': 40800, 'ra4_degraded': 1, 'heap': -136}
+esp cmds [(6.51, 'fault txlow 15000', 'ok txlow')]
+CAMPAIGN_DONE
