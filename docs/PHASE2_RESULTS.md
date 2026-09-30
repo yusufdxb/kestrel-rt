@@ -75,9 +75,9 @@ frames sent** (a replayed PING being accepted would push accepted above valid).
 | G6 mailbox flood | **PASS on the final image**; **FAILED in campaign 1** (see section 4) |
 | G7 ESP reset | **PASS**: F6, F7, F7b 0 RA4 resets, 0 misses |
 | G8 recovery | **PASS**: new session after every ESP boot, outages 0.3 to 2.3 s; F11 32/32 stale rejected |
-| G9 long soak | see section 5 |
+| G9 long soak | **PASS**: 10,003,440 control periods, 11 forced ESP crashes, 0 misses, 0 RA4 resets, 0 desyncs (section 5) |
 
-Kill criteria K1-K6: none triggered in the final campaign. K4 detail: the **stock** bridge resets the RA4
+**Phase 2 verdict: GO.** Kill criteria K1-K6: none triggered in the final campaign or the soak. K4 detail: the **stock** bridge resets the RA4
 on its own boot (observed twice: in the recovery gate and when B0 was prepared); the fork never did in any
 boot where the RA4 boot counter was checked: 8 in the final campaign, 7 in campaign 1 (F6, F7, F7b), 2 in
 the F11 reruns, and the fork flashes before N1 and F11v3 (and the first two fork flashes).
@@ -105,10 +105,28 @@ the F11 reruns, and the fork flashes before N1 and F11v3 (and the first two fork
 6. F11 in campaign 2 exercised only the pre-HELLO replay (a test bug cleared the stored frames); fixed and
    rerun (F11v3, final FF11).
 
-## 5. G9 long soak
-Not yet run to completion. A first attempt was stopped on request after 541 s (539,900 control periods over
-Wi-Fi heartbeats, 0 misses, no forced crash reached yet; log `results/phase2/soak_p2_partial_stopped.log`).
-The full >= 10,000,000-period run is scheduled for the night of 2026-09-30. **G9 is open until then.**
+## 5. G9 long soak: PASS
+2026-09-30 16:41 to 19:28 EDT, final images, `host/phase2_soak.py soak_p2 --periods 10000000 --crash-every 900`
+(`results/phase2/soak_p2.json`, heartbeat/metrics log `soak_p2_udp.jsonl`). Workload: Phase 1 six-task
+set + link task, RA4 telemetry forwarded over Wi-Fi to the host, a forced ESP panic every 15 min.
+
+| | Result |
+|---|---|
+| Duration / control periods | 10,012 s; 10,003,440 control jobs (kernel counter); 10,000,000 by Wi-Fi heartbeat count |
+| Critical deadline misses | control 0, safety 0 (5,001,720 jobs), sensor 0 (5,001,720); overruns 0 |
+| Other tasks | comms 1,000,344, health 100,034, link 2,000,688 jobs, all 0 misses |
+| RA4 resets | 0: VBATT boot counter 5 before, during (33/33 USB checks) and after; one RA4 epoch in all 99,539 heartbeats |
+| RA4 faults / watchdog warnings | 0 / 0 |
+| ESP crashes forced | 11 (ESP boot counter 14 -> 25, last reset reason 4 panic); 0 unplanned ESP resets |
+| Outages seen by the RA4 | 11, total 4.34 s (about 0.4 s per crash), every one ended with a new session (12 sessions: 11 + one HELLO retry) |
+| Protocol desynchronization | none: 0 resyncs, 0 stale/replay/jump/session rejections, 0 CRC errors, 0 receive errors, degraded = 0 at the end |
+| Link task worst job | 313.8 us |
+| Control start latency, kernel dispatch max | 50.4 us over the soak (kernel measure, about 3.9 us below the task-observed measure used in the tables above) |
+
+Earlier attempts, kept: attempt 1 stopped on request after 541 s (539,900 periods, 0 misses); attempt 2
+ended at 841 s (839,900 periods, 0 misses) when the host harness exited on an uncaught `SystemExit` while
+the bridge re-enumerated after the first forced crash (harness bug, fixed; the RA4 was unaffected: boot 5,
+0 misses). Logs: `soak_p2_partial_stopped.log`, `soak_p2_attempt2_harness_crash.log`.
 
 ## 6. Maximum rates (measured)
 - Mailbox link: 1,000,000 baud; F5 offered 5,580 valid frames/s (the UART limit for 18-byte frames).

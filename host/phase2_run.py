@@ -41,7 +41,7 @@ def ra4_snapshot(retries=20):
             if s and st:
                 return {"link": s, "outages": o, "status": {k: v for k, v in st.items() if k != "tasks"},
                         "tasks": st["tasks"]}
-        except Exception as ex:  # noqa: BLE001  (USB bridge may be re-enumerating)
+        except (Exception, SystemExit) as ex:  # noqa: BLE001  (USB bridge may be re-enumerating; find_port exits)
             print("ra4 snapshot retry:", ex)
         time.sleep(1.5)
     return None

@@ -1,0 +1,986 @@
+{
+ "name": "soak_p2",
+ "wall_s": 10012.0,
+ "periods_target": 10000000,
+ "hb_first": {
+  "jobs": 2608801,
+  "miss": 0,
+  "ep": 387265,
+  "ms": 2608802
+ },
+ "hb_last": {
+  "ep": 387265,
+  "ms": 12608802,
+  "session": 58454,
+  "jobs": 12608801,
+  "miss": 0,
+  "degraded": 0
+ },
+ "control_periods_wifi": 10000000,
+ "ra4_epochs_seen": [
+  387265
+ ],
+ "heartbeats": 99539,
+ "max_heartbeat_gap_s": 5.4,
+ "esp_crashes_forced": [
+  {
+   "t": 900.0,
+   "reply": "ok crash"
+  },
+  {
+   "t": 1800.1,
+   "reply": "ok crash"
+  },
+  {
+   "t": 2700.2,
+   "reply": "ok crash"
+  },
+  {
+   "t": 3600.2,
+   "reply": "ok crash"
+  },
+  {
+   "t": 4500.2,
+   "reply": "ok crash"
+  },
+  {
+   "t": 5400.3,
+   "reply": null
+  },
+  {
+   "t": 6300.3,
+   "reply": "ok crash"
+  },
+  {
+   "t": 7200.3,
+   "reply": "ok crash"
+  },
+  {
+   "t": 8100.4,
+   "reply": "ok crash"
+  },
+  {
+   "t": 9000.5,
+   "reply": "ok crash"
+  },
+  {
+   "t": 9900.5,
+   "reply": "ok crash"
+  }
+ ],
+ "usb_checks": [
+  {
+   "t": 300.0,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 2909041,
+   "sessions": 11,
+   "loss": 11
+  },
+  {
+   "t": 600.0,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 3209361,
+   "sessions": 11,
+   "loss": 11
+  },
+  {
+   "t": 900.5,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 3510751,
+   "sessions": 12,
+   "loss": 12
+  },
+  {
+   "t": 1200.5,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 3809061,
+   "sessions": 12,
+   "loss": 12
+  },
+  {
+   "t": 1500.5,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 4108511,
+   "sessions": 12,
+   "loss": 12
+  },
+  {
+   "t": 1800.6,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 4409951,
+   "sessions": 13,
+   "loss": 13
+  },
+  {
+   "t": 2100.6,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 4708381,
+   "sessions": 13,
+   "loss": 13
+  },
+  {
+   "t": 2400.6,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 5007691,
+   "sessions": 13,
+   "loss": 13
+  },
+  {
+   "t": 2700.7,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 5309041,
+   "sessions": 14,
+   "loss": 14
+  },
+  {
+   "t": 3000.7,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 5607531,
+   "sessions": 14,
+   "loss": 14
+  },
+  {
+   "t": 3300.7,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 5907001,
+   "sessions": 14,
+   "loss": 14
+  },
+  {
+   "t": 3601.2,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 6209391,
+   "sessions": 15,
+   "loss": 15
+  },
+  {
+   "t": 3901.2,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 6507741,
+   "sessions": 15,
+   "loss": 15
+  },
+  {
+   "t": 4201.2,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 6807151,
+   "sessions": 15,
+   "loss": 15
+  },
+  {
+   "t": 4501.7,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 7107521,
+   "sessions": 16,
+   "loss": 16
+  },
+  {
+   "t": 4801.7,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 7406911,
+   "sessions": 16,
+   "loss": 16
+  },
+  {
+   "t": 5102.0,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 7707311,
+   "sessions": 16,
+   "loss": 16
+  },
+  {
+   "t": 5402.3,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 8006851,
+   "sessions": 17,
+   "loss": 17
+  },
+  {
+   "t": 5702.4,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 8307251,
+   "sessions": 17,
+   "loss": 17
+  },
+  {
+   "t": 6002.4,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 8606821,
+   "sessions": 17,
+   "loss": 17
+  },
+  {
+   "t": 6302.8,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 8907181,
+   "sessions": 18,
+   "loss": 18
+  },
+  {
+   "t": 6602.8,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 9206591,
+   "sessions": 18,
+   "loss": 18
+  },
+  {
+   "t": 6902.8,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 9506941,
+   "sessions": 18,
+   "loss": 18
+  },
+  {
+   "t": 7202.9,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 9806361,
+   "sessions": 19,
+   "loss": 19
+  },
+  {
+   "t": 7503.0,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 10105721,
+   "sessions": 19,
+   "loss": 19
+  },
+  {
+   "t": 7803.1,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 10406081,
+   "sessions": 19,
+   "loss": 19
+  },
+  {
+   "t": 8103.4,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 10705451,
+   "sessions": 21,
+   "loss": 20
+  },
+  {
+   "t": 8403.4,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 11005821,
+   "sessions": 21,
+   "loss": 20
+  },
+  {
+   "t": 8703.5,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 11305041,
+   "sessions": 21,
+   "loss": 20
+  },
+  {
+   "t": 9003.5,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 11605401,
+   "sessions": 22,
+   "loss": 21
+  },
+  {
+   "t": 9303.5,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 11904911,
+   "sessions": 22,
+   "loss": 21
+  },
+  {
+   "t": 9603.5,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 12204381,
+   "sessions": 22,
+   "loss": 21
+  },
+  {
+   "t": 9903.6,
+   "ok": true,
+   "boot": 5,
+   "crit_misses": 0,
+   "ctl_jobs": 12504901,
+   "sessions": 23,
+   "loss": 22
+  }
+ ],
+ "ra4_before": {
+  "link": {
+   "phase2_link": 1,
+   "epoch": 387265,
+   "session": 52330,
+   "degraded": 0,
+   "sessions": 11,
+   "frames_ok": 34221,
+   "dec_crc": 2576,
+   "dec_len": 2773,
+   "dec_version": 2156,
+   "dec_skipped": 75614,
+   "rej_type": 2090,
+   "rej_len": 2091,
+   "rej_rate": 8526,
+   "rej_nosession": 0,
+   "rej_session": 16,
+   "rej_replay": 2132,
+   "rej_jump": 0,
+   "rej_epoch": 0,
+   "rej_retired": 0,
+   "rej_hello_seq": 0,
+   "pings": 31637,
+   "config_applied": 2,
+   "config_rejected": 0,
+   "budget_hit_bytes": 0,
+   "budget_hit_frames": 0,
+   "budget_hit_time": 4098,
+   "max_job_ticks": 15061,
+   "tx_frames": 72625,
+   "tx_skipped_busy": 0,
+   "loss_events": 11,
+   "outage_total_ms": 35427,
+   "last_valid_ms": 2607557,
+   "n_outages": 12,
+   "rx_bytes": 1087151,
+   "rx_overrun_bytes": 1213388,
+   "rx_overrun_events": 1500,
+   "rx_hw_errors": 19200,
+   "rx_rearms": 0,
+   "tx_bytes": 2283237,
+   "tx_refused_busy": 0,
+   "tx_chunks": 56662,
+   "uptime_ms": 2607592,
+   "health_units": 50,
+   "logger_units": 20,
+   "rx_storm_mutes": 600,
+   "tx_dropped": 0,
+   "rx_rejected": 14855,
+   "trace_dropped": 0,
+   "n3_discarded": 0,
+   "max_job_us": 313.8
+  },
+  "outages": [
+   12,
+   [
+    [
+     0,
+     7
+    ],
+    [
+     325497,
+     340582
+    ],
+    [
+     367357,
+     382647
+    ],
+    [
+     419512,
+     419807
+    ],
+    [
+     481552,
+     481907
+    ],
+    [
+     484802,
+     485107
+    ],
+    [
+     488102,
+     488407
+    ],
+    [
+     491302,
+     491707
+    ],
+    [
+     494702,
+     495007
+    ],
+    [
+     546757,
+     547107
+    ],
+    [
+     588567,
+     590907
+    ],
+    [
+     2547722,
+     2548107
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     0
+    ]
+   ]
+  ],
+  "status": {
+   "uptime_lo": 659358323,
+   "uptime_hi": 29,
+   "boot_count": 5,
+   "reset_cause": 264,
+   "ctx_switches": 8634505,
+   "alarms": 3130333,
+   "svcs": 14005768,
+   "max_alarm_cyc": 1195,
+   "max_sched_cyc": 213,
+   "max_crit_cyc": 533,
+   "max_pendsv_cyc": 1030,
+   "trace_events": 1,
+   "trace_dropped": 0,
+   "jobs": 5920604,
+   "jobs_dropped": 0,
+   "rx_bytes": 7837,
+   "rx_errors": 6236,
+   "tx_bytes": 74830650,
+   "rx_queue_rejected": 0,
+   "cmd_frames_ok": 168,
+   "cmd_frames_bad": 0,
+   "dwt_rearms": 1,
+   "degraded": 0,
+   "wd_warnings": 0,
+   "wdt_feeds": 521723,
+   "faults": 0,
+   "tx_ring_full": 0,
+   "ntasks": 8,
+   "uptime_s": 2608.6127063958334
+  },
+  "tasks": [
+   {
+    "id": 0,
+    "state": 2,
+    "stack_used": 264,
+    "jobs": 2608611,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 9228,
+    "max_resp_ticks": 11036,
+    "max_start_lat_ticks": 2419,
+    "faults": 0,
+    "run_cycles": 22938018501
+   },
+   {
+    "id": 1,
+    "state": 2,
+    "stack_used": 312,
+    "jobs": 1304306,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 2715,
+    "max_resp_ticks": 13662,
+    "max_start_lat_ticks": 11805,
+    "faults": 0,
+    "run_cycles": 3621873559
+   },
+   {
+    "id": 2,
+    "state": 2,
+    "stack_used": 256,
+    "jobs": 1304306,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 2655,
+    "max_resp_ticks": 16578,
+    "max_start_lat_ticks": 14431,
+    "faults": 0,
+    "run_cycles": 3643772398
+   },
+   {
+    "id": 3,
+    "state": 1,
+    "stack_used": 700,
+    "jobs": 260861,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 43295,
+    "max_resp_ticks": 74782,
+    "max_start_lat_ticks": 26077,
+    "faults": 0,
+    "run_cycles": 3287104188
+   },
+   {
+    "id": 4,
+    "state": 2,
+    "stack_used": 152,
+    "jobs": 26087,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 112295,
+    "max_resp_ticks": 224220,
+    "max_start_lat_ticks": 75517,
+    "faults": 0,
+    "run_cycles": 2944261059
+   },
+   {
+    "id": 5,
+    "state": 1,
+    "stack_used": 104,
+    "jobs": 0,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 0,
+    "max_resp_ticks": 0,
+    "max_start_lat_ticks": 0,
+    "faults": 0,
+    "run_cycles": 87763644287
+   },
+   {
+    "id": 6,
+    "state": 2,
+    "stack_used": 296,
+    "jobs": 521723,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 9007,
+    "max_resp_ticks": 25342,
+    "max_start_lat_ticks": 17437,
+    "faults": 0,
+    "run_cycles": 1014538907
+   },
+   {
+    "id": 8,
+    "state": 1,
+    "stack_used": 72,
+    "jobs": 0,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 0,
+    "max_resp_ticks": 0,
+    "max_start_lat_ticks": 0,
+    "faults": 0,
+    "run_cycles": 0
+   }
+  ]
+ },
+ "ra4_after": {
+  "link": {
+   "phase2_link": 1,
+   "epoch": 387265,
+   "session": 58454,
+   "degraded": 0,
+   "sessions": 23,
+   "frames_ok": 144341,
+   "dec_crc": 2576,
+   "dec_len": 2773,
+   "dec_version": 2156,
+   "dec_skipped": 75614,
+   "rej_type": 2090,
+   "rej_len": 2091,
+   "rej_rate": 8526,
+   "rej_nosession": 0,
+   "rej_session": 16,
+   "rej_replay": 2132,
+   "rej_jump": 0,
+   "rej_epoch": 0,
+   "rej_retired": 0,
+   "rej_hello_seq": 0,
+   "pings": 131722,
+   "config_applied": 2,
+   "config_rejected": 0,
+   "budget_hit_bytes": 0,
+   "budget_hit_frames": 0,
+   "budget_hit_time": 4099,
+   "max_job_ticks": 15061,
+   "tx_frames": 302799,
+   "tx_skipped_busy": 0,
+   "loss_events": 22,
+   "outage_total_ms": 39767,
+   "last_valid_ms": 12611802,
+   "n_outages": 23,
+   "rx_bytes": 3109407,
+   "rx_overrun_bytes": 1213388,
+   "rx_overrun_events": 1500,
+   "rx_hw_errors": 19200,
+   "rx_rearms": 0,
+   "tx_bytes": 9849426,
+   "tx_refused_busy": 0,
+   "tx_chunks": 251398,
+   "uptime_ms": 12611822,
+   "health_units": 50,
+   "logger_units": 20,
+   "rx_storm_mutes": 600,
+   "tx_dropped": 0,
+   "rx_rejected": 14855,
+   "trace_dropped": 0,
+   "n3_discarded": 0,
+   "max_job_us": 313.8
+  },
+  "outages": [
+   23,
+   [
+    [
+     7105372,
+     7105807
+    ],
+    [
+     8004702,
+     8005107
+    ],
+    [
+     8903877,
+     8904307
+    ],
+    [
+     9803102,
+     9803507
+    ],
+    [
+     10702372,
+     10702707
+    ],
+    [
+     11601587,
+     11602007
+    ],
+    [
+     12500747,
+     12501107
+    ],
+    [
+     491302,
+     491707
+    ],
+    [
+     494702,
+     495007
+    ],
+    [
+     546757,
+     547107
+    ],
+    [
+     588567,
+     590907
+    ],
+    [
+     2547722,
+     2548107
+    ],
+    [
+     3508032,
+     3508407
+    ],
+    [
+     4407417,
+     4407807
+    ],
+    [
+     5306827,
+     5307207
+    ],
+    [
+     6206102,
+     6206507
+    ]
+   ]
+  ],
+  "status": {
+   "uptime_lo": 4083108469,
+   "uptime_hi": 140,
+   "boot_count": 5,
+   "reset_cause": 264,
+   "ctx_switches": 41745891,
+   "alarms": 15134461,
+   "svcs": 67715832,
+   "max_alarm_cyc": 1197,
+   "max_sched_cyc": 213,
+   "max_crit_cyc": 535,
+   "max_pendsv_cyc": 1030,
+   "trace_events": 1,
+   "trace_dropped": 0,
+   "jobs": 29028550,
+   "jobs_dropped": 0,
+   "rx_bytes": 17349,
+   "rx_errors": 14018,
+   "tx_bytes": 366649668,
+   "rx_queue_rejected": 0,
+   "cmd_frames_ok": 236,
+   "cmd_frames_bad": 0,
+   "dwt_rearms": 1,
+   "degraded": 0,
+   "wd_warnings": 0,
+   "wdt_feeds": 2522411,
+   "faults": 0,
+   "tx_ring_full": 0,
+   "ntasks": 8,
+   "uptime_s": 12612.0527064375
+  },
+  "tasks": [
+   {
+    "id": 0,
+    "state": 2,
+    "stack_used": 264,
+    "jobs": 12612051,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 9481,
+    "max_resp_ticks": 11282,
+    "max_start_lat_ticks": 2419,
+    "faults": 0,
+    "run_cycles": 110920933270
+   },
+   {
+    "id": 1,
+    "state": 2,
+    "stack_used": 312,
+    "jobs": 6306026,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 2715,
+    "max_resp_ticks": 14142,
+    "max_start_lat_ticks": 12169,
+    "faults": 0,
+    "run_cycles": 17521453219
+   },
+   {
+    "id": 2,
+    "state": 2,
+    "stack_used": 256,
+    "jobs": 6306026,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 2659,
+    "max_resp_ticks": 17292,
+    "max_start_lat_ticks": 15029,
+    "faults": 0,
+    "run_cycles": 17628416601
+   },
+   {
+    "id": 3,
+    "state": 1,
+    "stack_used": 700,
+    "jobs": 1261205,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 52851,
+    "max_resp_ticks": 81626,
+    "max_start_lat_ticks": 26077,
+    "faults": 0,
+    "run_cycles": 16068695117
+   },
+   {
+    "id": 4,
+    "state": 2,
+    "stack_used": 152,
+    "jobs": 126121,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 116715,
+    "max_resp_ticks": 224220,
+    "max_start_lat_ticks": 75523,
+    "faults": 0,
+    "run_cycles": 14187690146
+   },
+   {
+    "id": 5,
+    "state": 1,
+    "stack_used": 104,
+    "jobs": 0,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 0,
+    "max_resp_ticks": 0,
+    "max_start_lat_ticks": 0,
+    "faults": 0,
+    "run_cycles": 424370644928
+   },
+   {
+    "id": 6,
+    "state": 2,
+    "stack_used": 296,
+    "jobs": 2522411,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 13099,
+    "max_resp_ticks": 25342,
+    "max_start_lat_ticks": 18179,
+    "faults": 0,
+    "run_cycles": 4680499620
+   },
+   {
+    "id": 8,
+    "state": 1,
+    "stack_used": 72,
+    "jobs": 0,
+    "misses": 0,
+    "overruns": 0,
+    "wcet_cyc": 0,
+    "max_resp_ticks": 0,
+    "max_start_lat_ticks": 0,
+    "faults": 0,
+    "run_cycles": 0
+   }
+  ]
+ },
+ "esp_before": {
+  "boot": 14,
+  "reset_reason": 4,
+  "up_ms": 60951,
+  "ra4_epoch": 387265,
+  "session": 52330,
+  "est": 1,
+  "handshakes": 1,
+  "rx_frames": 1373,
+  "rx_crc": 0,
+  "rx_len": 0,
+  "rx_ver": 0,
+  "rx_skipped": 482,
+  "uart_rx": 45935,
+  "hb": 607,
+  "pong": 583,
+  "rtt_us_min": 1011,
+  "rtt_us_avg": 3579,
+  "rtt_us_max": 7019,
+  "tx_frames": 669,
+  "tx_bytes": 12290,
+  "valid_sent": 668,
+  "bad": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "fwd_drop": 0,
+  "sink_pkts": 0,
+  "sink_bytes": 0,
+  "ctrl_pkts": 2,
+  "cfg_ack": 0,
+  "cfg_nack": 0,
+  "ra4_ctl_jobs": 2608701,
+  "ra4_ctl_miss": 0,
+  "ra4_degraded": 0,
+  "heap": 184620,
+  "heap_min": 180100,
+  "ap_restarts": 0,
+  "stations": 1,
+  "wdt_rc": 0,
+  "resyncs": 0
+ },
+ "esp_after": {
+  "boot": 25,
+  "reset_reason": 4,
+  "up_ms": 111381,
+  "ra4_epoch": 387265,
+  "session": 58454,
+  "est": 1,
+  "handshakes": 1,
+  "rx_frames": 2531,
+  "rx_crc": 0,
+  "rx_len": 0,
+  "rx_ver": 0,
+  "rx_skipped": 546,
+  "uart_rx": 84102,
+  "hb": 1111,
+  "pong": 1085,
+  "rtt_us_min": 1014,
+  "rtt_us_avg": 3596,
+  "rtt_us_max": 7040,
+  "tx_frames": 1225,
+  "tx_bytes": 22502,
+  "valid_sent": 1224,
+  "bad": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "fwd_drop": 0,
+  "sink_pkts": 0,
+  "sink_bytes": 0,
+  "ctrl_pkts": 22,
+  "cfg_ack": 0,
+  "cfg_nack": 0,
+  "ra4_ctl_jobs": 12612101,
+  "ra4_ctl_miss": 0,
+  "ra4_degraded": 0,
+  "heap": 184612,
+  "heap_min": 172732,
+  "ap_restarts": 0,
+  "stations": 1,
+  "wdt_rc": 0,
+  "resyncs": 0
+ }
+}
