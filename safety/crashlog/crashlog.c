@@ -80,6 +80,11 @@ void crashlog_boot(void)
     uint32_t hdr[2];
     vb_read(VB_BOOT, hdr, sizeof(hdr));
     if (hdr[0] != VB_BOOT_MAGIC) {
+        /* Backup registers lost their content: VCC and VBATT were both off, i.e. a cold power-up.
+         * On this board RSTSR0.PORF is not reliably set by the time Kestrel runs (observed after a
+         * USB replug), so the lost magic is the authoritative power-on indicator. */
+        s_info.reset_cause |= KRST_POWER_ON;
+        s_info.reset_cause &= ~KRST_PIN_OR_UNKNOWN;
         hdr[0] = VB_BOOT_MAGIC;
         hdr[1] = 0u;
     }

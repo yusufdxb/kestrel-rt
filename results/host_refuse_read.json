@@ -1,0 +1,38 @@
+{
+ "window_s": 16.9,
+ "during_window": {
+  "0": {
+   "jobs": 16847,
+   "deadline_misses": 0,
+   "overruns": 0
+  },
+  "1": {
+   "jobs": 8423,
+   "deadline_misses": 0,
+   "overruns": 0
+  },
+  "2": {
+   "jobs": 8422,
+   "deadline_misses": 0,
+   "overruns": 0
+  },
+  "3": {
+   "jobs": 1684,
+   "deadline_misses": 0,
+   "overruns": 0
+  },
+  "4": {
+   "jobs": 168,
+   "deadline_misses": 0,
+   "overruns": 0
+  },
+  "5": {
+   "jobs": 0,
+   "deadline_misses": 0,
+   "overruns": 0
+  }
+ },
+ "frames_after_resume": 20,
+ "bad": 0,
+ "status_after": null
+}
