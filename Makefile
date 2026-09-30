@@ -30,6 +30,9 @@ LDFLAGS := $(CPUFLAGS) -nostdlib -nostartfiles -Wl,--gc-sections -Wl,-Map=$(BUIL
 KERNEL_SRC := $(sort $(wildcard startup/*.c kernel/*.c kernel/*/*.c safety/*/*.c trace/*.c drivers/*/*.c))
 KERNEL_ASM := $(sort $(wildcard arch/armv7m/*.S safety/*/*.S))
 APP_SRC := $(sort $(wildcard apps/$(APP)/*.c apps/common/*.c apps/fault_injection/*.c))
+ifeq ($(APP),phase2)
+APP_SRC += $(sort $(wildcard link/*.c))
+endif
 
 OBJS := $(addprefix $(BUILD)/,$(KERNEL_SRC:.c=.o) $(KERNEL_ASM:.S=.o) $(APP_SRC:.c=.o))
 
