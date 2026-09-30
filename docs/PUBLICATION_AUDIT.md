@@ -65,7 +65,7 @@ so the fork ships as an ed script, not source. Not legal advice.
 - `scripts/demo.sh` and `scripts/demo.sh --esp` ran on the board.
 
 ## Repository size
-Rewritten public history after `git gc --aggressive`: 814 objects, **1.43 MiB** packed (`git count-objects -vH`);
+Rewritten public history after `git gc --aggressive`: about **1.4 MiB** packed (`git count-objects -vH`);
 the checked-out tree is about 5.4 MB, of which 1.33 MB is the vendored device header.
 
 ## History rewrite record
