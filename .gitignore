@@ -5,3 +5,6 @@ __pycache__/
 results/raw/
 baselines/*/build/
 .venv/
+backups/*.bin
+backups/*.bin.sha256
+build/esp/
