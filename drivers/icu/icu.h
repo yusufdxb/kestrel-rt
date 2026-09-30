@@ -17,6 +17,12 @@
 #define EVT_GPT0_OVF        93u
 #define EVT_GPT1_CMP_A      95u
 #define EVT_GPT1_OVF        101u
+#define EVT_DMAC2_INT       19u
+#define EVT_DMAC3_INT       20u
+#define EVT_SCI1_RXI        158u
+#define EVT_SCI1_TXI        159u
+#define EVT_SCI1_TEI        160u
+#define EVT_SCI1_ERI        161u
 #define EVT_SCI9_RXI        168u
 #define EVT_SCI9_TXI        169u
 #define EVT_SCI9_TEI        170u
@@ -36,6 +42,10 @@ enum kestrel_irq_line {
     IRQ_LINE_CAN_TX = 9,
     IRQ_LINE_CAN_ERR = 10,
     IRQ_LINE_ADC_TRIG = 11, /* GPT2 overflow: starts one ADC scan (2 kHz) */
+    IRQ_LINE_LINK_TEI = 12,   /* Phase 2: SCI1 transmit end (ESP32-S3 link) */
+    IRQ_LINE_LINK_ERI = 13,   /* Phase 2: SCI1 receive error */
+    IRQ_LINE_LINK_DMATX = 14, /* Phase 2: DMAC2 transfer end (link TX) */
+    IRQ_LINE_LINK_DMARX = 15, /* Phase 2: DMAC3 all repeats done (link RX ring re-arm) */
     IRQ_LINE_COUNT
 };
 

@@ -6,8 +6,8 @@ CFLAGS := -std=c17 -O1 -g -Wall -Wextra -Werror -Wconversion -Wshadow -I$(ROOT) 
 SAN := -fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all
 BUILD := build
 
-PORTABLE := $(ROOT)/trace/frame.c $(ROOT)/trace/crc16.c $(ROOT)/safety/crashlog/crc32.c
-TESTS := test_spsc test_mailbox test_frame test_crc test_timebase test_khist
+PORTABLE := $(ROOT)/trace/frame.c $(ROOT)/trace/crc16.c $(ROOT)/safety/crashlog/crc32.c $(ROOT)/link/xlink.c
+TESTS := test_spsc test_mailbox test_frame test_crc test_timebase test_khist test_xlink
 
 all: run
 
