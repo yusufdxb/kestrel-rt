@@ -28,7 +28,7 @@ typedef struct {
     uint32_t pings, config_applied, config_rejected;
     uint32_t budget_hit_bytes, budget_hit_frames, budget_hit_time; /* jobs that stopped early */
     uint32_t max_job_ticks;
-    uint32_t tx_frames, tx_skipped_busy;
+    uint32_t tx_frames, tx_skipped_busy, tx_dropped;
     uint32_t loss_events;
     uint32_t outage_total_ms;
     uint32_t last_valid_ms;

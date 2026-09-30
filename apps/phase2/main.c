@@ -266,7 +266,7 @@ void kestrel_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
 #endif
     } else if (cmd == 0x40u) { /* LINK_STATS: evidence kept on the RA4 */
         const link_stats_t *ls = link_stats();
-        uint8_t out[4u * 45u];
+        uint8_t out[4u * 46u];
         const uint32_t v[] = {KESTREL_PHASE2_LINK, g_link.epoch, g_link.session, g_link.degraded,
                               g_link.sessions, g_link.frames_ok, g_link.dec_crc, g_link.dec_len,
                               g_link.dec_version, g_link.dec_skipped, g_link.rej_type,
@@ -281,9 +281,9 @@ void kestrel_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
                               ls->rx_overrun_bytes, ls->rx_overrun_events, ls->rx_hw_errors,
                               ls->rx_rearms, ls->tx_bytes, ls->tx_refused_busy, ls->tx_chunks,
                               (uint32_t)(kt_now() / 48000u), g_app.units[T_HEALTH],
-                              g_app.units[T_LOGGER], ls->rx_storm_mutes};
+                              g_app.units[T_LOGGER], ls->rx_storm_mutes, g_link.tx_dropped};
         _Static_assert(sizeof(v) == sizeof(out), "LINK_STATS layout");
-        for (uint32_t i = 0; i < 45u; i++) {
+        for (uint32_t i = 0; i < 46u; i++) {
             kput32(&out[4u * i], v[i]);
         }
         (void)telemetry_send(KF_RESULT, out, (uint16_t)sizeof(out));

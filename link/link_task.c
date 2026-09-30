@@ -15,7 +15,10 @@ static xl_decoder_t s_dec;
 static uint8_t s_carry[64];
 static uint32_t s_carry_len, s_carry_off;
 static xl_rx_t s_rx;
-static uint8_t s_tx[1024];
+/* Double-buffered TX: frames are built into s_txb[s_build] (by RX handling and the periodic
+ * emitter) while the DMA may still be sending the other buffer. */
+static uint8_t s_txb[2][512];
+static uint32_t s_build;
 static uint32_t s_tx_len;
 static uint32_t s_tx_seq;
 static uint32_t s_telem_mask = 0xFFFFFFFFu;
@@ -30,11 +33,12 @@ static uint32_t now_ms(void)
 
 static void queue(uint8_t type, const uint8_t *p, uint16_t len)
 {
-    if (s_tx_len + len + XL_OVERHEAD > sizeof(s_tx)) {
-        g_link.tx_skipped_busy++;
+    uint8_t *b = s_txb[s_build];
+    if (s_tx_len + len + XL_OVERHEAD > sizeof(s_txb[0])) {
+        g_link.tx_dropped++;
         return;
     }
-    size_t n = xl_encode(&s_tx[s_tx_len], sizeof(s_tx) - s_tx_len, type, (uint16_t)g_link.epoch,
+    size_t n = xl_encode(&b[s_tx_len], sizeof(s_txb[0]) - s_tx_len, type, (uint16_t)g_link.epoch,
                          ++s_tx_seq, p, len);
     s_tx_len += (uint32_t)n;
     g_link.tx_frames++;
@@ -256,14 +260,14 @@ void link_task(void *arg)
             outage_begin(g_link.last_valid_ms);
         }
         sync_counters();
-        if (!link_tx_busy()) {
-            s_tx_len = 0u;
-            emit_periodic(t);
-            if (s_tx_len != 0u && link_tx_start(s_tx, s_tx_len) != 0) {
-                g_link.tx_skipped_busy++;
+        emit_periodic(t);
+        if (s_tx_len != 0u) {
+            if (!link_tx_busy() && link_tx_start(s_txb[s_build], s_tx_len) == 0) {
+                s_build ^= 1u;
+                s_tx_len = 0u;
+            } else {
+                g_link.tx_skipped_busy++; /* still draining: keep building, never wait */
             }
-        } else {
-            g_link.tx_skipped_busy++; /* previous transmission still draining: never wait */
         }
         uint32_t dt = kestrel_time32() - t_start;
         if (dt > g_link.max_job_ticks) {
