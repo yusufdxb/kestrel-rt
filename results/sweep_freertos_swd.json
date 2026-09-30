@@ -1,0 +1,295 @@
+{
+ "name": "sweep_freertos_swd",
+ "system": "freertos",
+ "method": "swd-nonhalting",
+ "steps": [
+  {
+   "scale": 3.0,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 11145,
+     "releases": 11145,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 5572,
+     "releases": 5572,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 5572,
+     "releases": 5572,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 1115,
+     "releases": 1115,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 111,
+     "releases": 111,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  },
+  {
+   "scale": 5.0,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 11155,
+     "releases": 11155,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 5577,
+     "releases": 5577,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 5578,
+     "releases": 5578,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 1116,
+     "releases": 1116,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 100,
+     "releases": 100,
+     "deadline_misses": 101,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  },
+  {
+   "scale": 5.5,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 11148,
+     "releases": 11148,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 5575,
+     "releases": 5575,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 5574,
+     "releases": 5574,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 1115,
+     "releases": 1115,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 18,
+     "releases": 18,
+     "deadline_misses": 18,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  },
+  {
+   "scale": 6.0,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 11210,
+     "releases": 11210,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 5606,
+     "releases": 5606,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 5609,
+     "releases": 5609,
+     "deadline_misses": 5101,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 1122,
+     "releases": 1122,
+     "deadline_misses": 960,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 9,
+     "releases": 9,
+     "deadline_misses": 9,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  },
+  {
+   "scale": 6.5,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 11193,
+     "releases": 11193,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 5596,
+     "releases": 5596,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  },
+  {
+   "scale": 7.0,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 10760,
+     "releases": 10760,
+     "deadline_misses": 10759,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  }
+ ]
+}

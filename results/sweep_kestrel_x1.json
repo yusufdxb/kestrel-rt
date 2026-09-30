@@ -1,0 +1,417 @@
+{
+ "name": "sweep_kestrel_x1",
+ "secs": 8.0,
+ "raw_sha256": "58fc806c6fc5af1df944f56d76cf0cf97515bbe9aedc08978d59d2386a56d6c7",
+ "raw_bytes": 262828,
+ "frames_ok": 1011,
+ "frames_bad": 0,
+ "work": [
+  "control=20",
+  "safety=10",
+  "sensor=10",
+  "health=50"
+ ],
+ "inject": null,
+ "stall_ms": 0,
+ "storm_hz": null,
+ "tasks": {
+  "control": {
+   "records": 9380,
+   "records_lost_in_transit_or_dropped": 0,
+   "misses_flagged": 0,
+   "saturated": 0,
+   "release_latency_us": {
+    "n": 9380,
+    "p50": 3.9166666666666665,
+    "p95": 3.9166666666666665,
+    "p99": 3.958333333333333,
+    "p99.9": 5.375,
+    "max": 6.25,
+    "min": 3.9166666666666665
+   },
+   "start_latency_us": {
+    "n": 9380,
+    "p50": 24.5625,
+    "p95": 42.8125,
+    "p99": 44.854166666666664,
+    "p99.9": 44.854166666666664,
+    "max": 48.4375,
+    "min": 20.6875
+   },
+   "exec_us": {
+    "n": 9380,
+    "p50": 172.33333333333331,
+    "p95": 172.66666666666666,
+    "p99": 172.66666666666666,
+    "p99.9": 181.0,
+    "max": 181.0,
+    "min": 172.33333333333331
+   },
+   "response_us": {
+    "n": 9380,
+    "p50": 188.66666666666666,
+    "p95": 207.0,
+    "p99": 209.0,
+    "p99.9": 209.33333333333331,
+    "max": 212.33333333333331,
+    "min": 184.66666666666666
+   }
+  },
+  "safety": {
+   "records": 4690,
+   "records_lost_in_transit_or_dropped": 0,
+   "misses_flagged": 0,
+   "saturated": 0,
+   "release_latency_us": {
+    "n": 4690,
+    "p50": 3.9166666666666665,
+    "p95": 3.9166666666666665,
+    "p99": 3.958333333333333,
+    "p99.9": 5.375,
+    "max": 6.25,
+    "min": 3.9166666666666665
+   },
+   "start_latency_us": {
+    "n": 4690,
+    "p50": 208.95833333333331,
+    "p95": 227.20833333333331,
+    "p99": 229.25,
+    "p99.9": 229.29166666666666,
+    "max": 232.875,
+    "min": 208.95833333333331
+   },
+   "exec_us": {
+    "n": 4690,
+    "p50": 40.33333333333333,
+    "p95": 42.666666666666664,
+    "p99": 42.666666666666664,
+    "p99.9": 46.666666666666664,
+    "max": 46.666666666666664,
+    "min": 40.33333333333333
+   },
+   "response_us": {
+    "n": 4690,
+    "p50": 241.0,
+    "p95": 259.3333333333333,
+    "p99": 261.3333333333333,
+    "p99.9": 261.3333333333333,
+    "max": 265.0,
+    "min": 241.0
+   }
+  },
+  "sensor": {
+   "records": 4690,
+   "records_lost_in_transit_or_dropped": 0,
+   "misses_flagged": 0,
+   "saturated": 0,
+   "release_latency_us": {
+    "n": 4690,
+    "p50": 3.9166666666666665,
+    "p95": 3.9166666666666665,
+    "p99": 3.958333333333333,
+    "p99.9": 5.375,
+    "max": 6.25,
+    "min": 3.9166666666666665
+   },
+   "start_latency_us": {
+    "n": 4690,
+    "p50": 261.35416666666663,
+    "p95": 279.5625,
+    "p99": 281.60416666666663,
+    "p99.9": 281.6458333333333,
+    "max": 285.2708333333333,
+    "min": 261.3125
+   },
+   "exec_us": {
+    "n": 4690,
+    "p50": 53.666666666666664,
+    "p95": 58.0,
+    "p99": 58.0,
+    "p99.9": 58.0,
+    "max": 60.0,
+    "min": 51.0
+   },
+   "response_us": {
+    "n": 4690,
+    "p50": 306.66666666666663,
+    "p95": 325.0,
+    "p99": 327.0,
+    "p99.9": 327.0,
+    "max": 333.0,
+    "min": 304.0
+   }
+  },
+  "comms": {
+   "records": 938,
+   "records_lost_in_transit_or_dropped": 0,
+   "misses_flagged": 0,
+   "saturated": 0,
+   "release_latency_us": {
+    "n": 938,
+    "p50": 3.9166666666666665,
+    "p95": 3.9166666666666665,
+    "p99": 3.958333333333333,
+    "p99.9": 6.25,
+    "max": 6.25,
+    "min": 3.9166666666666665
+   },
+   "start_latency_us": {
+    "n": 938,
+    "p50": 344.5208333333333,
+    "p95": 346.60416666666663,
+    "p99": 346.60416666666663,
+    "p99.9": 352.6458333333333,
+    "max": 352.6458333333333,
+    "min": 344.5208333333333
+   },
+   "exec_us": {
+    "n": 938,
+    "p50": 229.0,
+    "p95": 238.33333333333331,
+    "p99": 311.3333333333333,
+    "p99.9": 790.6666666666666,
+    "max": 790.6666666666666,
+    "min": 226.0
+   },
+   "response_us": {
+    "n": 938,
+    "p50": 566.0,
+    "p95": 575.3333333333333,
+    "p99": 648.3333333333333,
+    "p99.9": 1314.0,
+    "max": 1314.0,
+    "min": 563.0
+   }
+  },
+  "health": {
+   "records": 94,
+   "records_lost_in_transit_or_dropped": 0,
+   "misses_flagged": 0,
+   "saturated": 0,
+   "release_latency_us": {
+    "n": 94,
+    "p50": 3.9166666666666665,
+    "p95": 3.9166666666666665,
+    "p99": 3.958333333333333,
+    "p99.9": 3.958333333333333,
+    "max": 3.958333333333333,
+    "min": 3.9166666666666665
+   },
+   "start_latency_us": {
+    "n": 94,
+    "p50": 586.8958333333333,
+    "p95": 1330.5625,
+    "p99": 1332.8541666666665,
+    "p99.9": 1332.8541666666665,
+    "max": 1332.8541666666665,
+    "min": 586.6458333333333
+   },
+   "exec_us": {
+    "n": 94,
+    "p50": 2324.6666666666665,
+    "p95": 2330.0,
+    "p99": 2333.333333333333,
+    "p99.9": 2333.333333333333,
+    "max": 2333.333333333333,
+    "min": 2321.0
+   },
+   "response_us": {
+    "n": 94,
+    "p50": 3575.0,
+    "p95": 4433.333333333333,
+    "p99": 4442.333333333333,
+    "p99.9": 4442.333333333333,
+    "max": 4442.333333333333,
+    "min": 3574.6666666666665
+   }
+  }
+ },
+ "histograms": {
+  "pendsv_cycles": {
+   "count": 31069,
+   "max": 654,
+   "overflow": 723,
+   "width": 4,
+   "p50": 316,
+   "p95": 352,
+   "p99": 654,
+   "p99.9": 654
+  },
+  "alarm_isr_cycles": {
+   "count": 12708,
+   "max": 1071,
+   "overflow": 106,
+   "width": 8,
+   "p50": 416,
+   "p95": 984,
+   "p99": 984,
+   "p99.9": 1071
+  },
+  "svc_cycles": {
+   "count": 55753,
+   "max": 549,
+   "overflow": 19813,
+   "width": 4,
+   "p50": 88,
+   "p95": 549,
+   "p99": 549,
+   "p99.9": 549
+  },
+  "irq_latency_ticks": {
+   "count": 11790,
+   "max": 195,
+   "overflow": 0,
+   "width": 2,
+   "p50": 84,
+   "p95": 84,
+   "p99": 86,
+   "p99.9": 162
+  }
+ },
+ "status_last": {
+  "uptime_lo": 1008124520,
+  "uptime_hi": 0,
+  "boot_count": 23,
+  "reset_cause": 264,
+  "ctx_switches": 65315,
+  "alarms": 25201,
+  "svcs": 104537,
+  "max_alarm_cyc": 1071,
+  "max_sched_cyc": 210,
+  "max_crit_cyc": 549,
+  "max_pendsv_cyc": 654,
+  "trace_events": 1,
+  "trace_dropped": 0,
+  "jobs": 44313,
+  "jobs_dropped": 0,
+  "rx_bytes": 67,
+  "rx_errors": 0,
+  "tx_bytes": 561259,
+  "rx_queue_rejected": 0,
+  "cmd_frames_ok": 5,
+  "cmd_frames_bad": 0,
+  "dwt_rearms": 1,
+  "degraded": 0,
+  "wd_warnings": 0,
+  "wdt_feeds": 4201,
+  "faults": 0,
+  "tx_ring_full": 0,
+  "ntasks": 7,
+  "uptime_s": 21.00259416666667
+ },
+ "status_tasks": [
+  {
+   "id": 0,
+   "state": 2,
+   "stack_used": 264,
+   "jobs": 21001,
+   "misses": 0,
+   "overruns": 0,
+   "wcet_cyc": 8700,
+   "max_resp_ticks": 10206,
+   "max_start_lat_ticks": 2140,
+   "faults": 0,
+   "run_cycles": 185803708
+  },
+  {
+   "id": 1,
+   "state": 2,
+   "stack_used": 312,
+   "jobs": 10501,
+   "misses": 0,
+   "overruns": 0,
+   "wcet_cyc": 2252,
+   "max_resp_ticks": 12722,
+   "max_start_lat_ticks": 10992,
+   "faults": 0,
+   "run_cycles": 26606044
+  },
+  {
+   "id": 2,
+   "state": 2,
+   "stack_used": 256,
+   "jobs": 10501,
+   "misses": 0,
+   "overruns": 0,
+   "wcet_cyc": 2888,
+   "max_resp_ticks": 15990,
+   "max_start_lat_ticks": 13508,
+   "faults": 0,
+   "run_cycles": 33494018
+  },
+  {
+   "id": 3,
+   "state": 1,
+   "stack_used": 408,
+   "jobs": 2100,
+   "misses": 0,
+   "overruns": 0,
+   "wcet_cyc": 37952,
+   "max_resp_ticks": 63074,
+   "max_start_lat_ticks": 16776,
+   "faults": 0,
+   "run_cycles": 24864542
+  },
+  {
+   "id": 4,
+   "state": 1,
+   "stack_used": 144,
+   "jobs": 210,
+   "misses": 0,
+   "overruns": 0,
+   "wcet_cyc": 112012,
+   "max_resp_ticks": 213238,
+   "max_start_lat_ticks": 63826,
+   "faults": 0,
+   "run_cycles": 23549182
+  },
+  {
+   "id": 5,
+   "state": 1,
+   "stack_used": 104,
+   "jobs": 0,
+   "misses": 0,
+   "overruns": 0,
+   "wcet_cyc": 0,
+   "max_resp_ticks": 0,
+   "max_start_lat_ticks": 0,
+   "faults": 0,
+   "run_cycles": 713770605
+  },
+  {
+   "id": 8,
+   "state": 1,
+   "stack_used": 72,
+   "jobs": 0,
+   "misses": 0,
+   "overruns": 0,
+   "wcet_cyc": 0,
+   "max_resp_ticks": 0,
+   "max_start_lat_ticks": 0,
+   "faults": 0,
+   "run_cycles": 0
+  }
+ ],
+ "cpu_share": {
+  "control": 0.18442320312499996,
+  "safety": 0.026396799479166663,
+  "sensor": 0.03322260416666666,
+  "comms": 0.02466298958333333,
+  "health": 0.023361656249999998,
+  "logger": 0.7079327473958332,
+  "idle": 0.0
+ },
+ "app_stats": {
+  "violations": 0,
+  "stale_sensor": 0,
+  "stale_control": 0,
+  "mb_busy": 0,
+  "health_runs": 246,
+  "logger_loops": 18689,
+  "adc_gaps": 0,
+  "mb_sensor_retries": 0,
+  "mb_ctrl_retries": 0,
+  "adc_isr": 49105
+ },
+ "trace_events": []
+}

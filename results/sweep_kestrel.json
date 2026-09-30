@@ -1,0 +1,922 @@
+{
+ "name": "sweep_kestrel",
+ "system": "kestrel",
+ "steps": [
+  {
+   "scale": 1.0,
+   "work": [
+    "control=20",
+    "safety=10",
+    "sensor=10",
+    "health=50"
+   ],
+   "tasks": {
+    "control": {
+     "jobs": 9380,
+     "misses": 0,
+     "resp_max_us": 212.33333333333331,
+     "resp_p99_us": 209.0,
+     "start_p99_us": 44.854166666666664,
+     "exec_max_us": 181.0
+    },
+    "safety": {
+     "jobs": 4690,
+     "misses": 0,
+     "resp_max_us": 265.0,
+     "resp_p99_us": 261.3333333333333,
+     "start_p99_us": 229.25,
+     "exec_max_us": 46.666666666666664
+    },
+    "sensor": {
+     "jobs": 4690,
+     "misses": 0,
+     "resp_max_us": 333.0,
+     "resp_p99_us": 327.0,
+     "start_p99_us": 281.60416666666663,
+     "exec_max_us": 60.0
+    },
+    "comms": {
+     "jobs": 938,
+     "misses": 0,
+     "resp_max_us": 1314.0,
+     "resp_p99_us": 648.3333333333333,
+     "start_p99_us": 346.60416666666663,
+     "exec_max_us": 790.6666666666666
+    },
+    "health": {
+     "jobs": 94,
+     "misses": 0,
+     "resp_max_us": 4442.333333333333,
+     "resp_p99_us": 4442.333333333333,
+     "start_p99_us": 1332.8541666666665,
+     "exec_max_us": 2333.333333333333
+    }
+   },
+   "kernel_misses": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "kernel_overruns": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "U_with_overheads": 0.4781316666666667,
+   "liu_layland_pass": true,
+   "rta": {
+    "control": {
+     "R_us": 268.75,
+     "ok": true
+    },
+    "safety": {
+     "R_us": 346.9166666666667,
+     "ok": true
+    },
+    "sensor": {
+     "R_us": 438.3333333333333,
+     "ok": true
+    },
+    "comms": {
+     "R_us": 1572.75,
+     "ok": true
+    },
+    "health": {
+     "R_us": 5401.75,
+     "ok": true
+    }
+   },
+   "cpu_share": {
+    "control": 0.18442320312499996,
+    "safety": 0.026396799479166663,
+    "sensor": 0.03322260416666666,
+    "comms": 0.02466298958333333,
+    "health": 0.023361656249999998,
+    "logger": 0.7079327473958332,
+    "idle": 0.0
+   }
+  },
+  {
+   "scale": 2.0,
+   "work": [
+    "control=40",
+    "safety=20",
+    "sensor=20",
+    "health=100"
+   ],
+   "tasks": {
+    "control": {
+     "jobs": 9380,
+     "misses": 0,
+     "resp_max_us": 367.0,
+     "resp_p99_us": 360.3333333333333,
+     "start_p99_us": 44.854166666666664,
+     "exec_max_us": 332.66666666666663
+    },
+    "safety": {
+     "jobs": 4690,
+     "misses": 0,
+     "resp_max_us": 435.0,
+     "resp_p99_us": 428.3333333333333,
+     "start_p99_us": 380.8333333333333,
+     "exec_max_us": 62.33333333333333
+    },
+    "sensor": {
+     "jobs": 4690,
+     "misses": 0,
+     "resp_max_us": 506.66666666666663,
+     "resp_p99_us": 500.0,
+     "start_p99_us": 448.60416666666663,
+     "exec_max_us": 68.33333333333333
+    },
+    "comms": {
+     "jobs": 938,
+     "misses": 0,
+     "resp_max_us": 1627.3333333333333,
+     "resp_p99_us": 828.6666666666666,
+     "start_p99_us": 519.7291666666666,
+     "exec_max_us": 782.0
+    },
+    "health": {
+     "jobs": 94,
+     "misses": 0,
+     "resp_max_us": 8692.0,
+     "resp_p99_us": 8692.0,
+     "start_p99_us": 760.1458333333333,
+     "exec_max_us": 4686.0
+    }
+   },
+   "kernel_misses": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "kernel_overruns": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "U_with_overheads": 0.66442125,
+   "liu_layland_pass": true,
+   "rta": {
+    "control": {
+     "R_us": 420.2916666666667,
+     "ok": true
+    },
+    "safety": {
+     "R_us": 539.1666666666666,
+     "ok": true
+    },
+    "sensor": {
+     "R_us": 639.0416666666666,
+     "ok": true
+    },
+    "comms": {
+     "R_us": 1903.875,
+     "ok": true
+    },
+    "health": {
+     "R_us": 13865.708333333334,
+     "ok": true
+    }
+   },
+   "cpu_share": {
+    "control": 0.33589574739583333,
+    "safety": 0.03410707291666667,
+    "sensor": 0.03630219791666667,
+    "comms": 0.024647239583333334,
+    "health": 0.046889432291666665,
+    "logger": 0.5221583098958333,
+    "idle": 0.0
+   }
+  },
+  {
+   "scale": 3.0,
+   "work": [
+    "control=60",
+    "safety=30",
+    "sensor=30",
+    "health=150"
+   ],
+   "tasks": {
+    "control": {
+     "jobs": 9380,
+     "misses": 0,
+     "resp_max_us": 506.0,
+     "resp_p99_us": 504.66666666666663,
+     "start_p99_us": 44.854166666666664,
+     "exec_max_us": 477.3333333333333
+    },
+    "safety": {
+     "jobs": 4690,
+     "misses": 0,
+     "resp_max_us": 589.3333333333333,
+     "resp_p99_us": 588.0,
+     "start_p99_us": 525.0,
+     "exec_max_us": 80.0
+    },
+    "sensor": {
+     "jobs": 4690,
+     "misses": 0,
+     "resp_max_us": 674.6666666666666,
+     "resp_p99_us": 673.3333333333333,
+     "start_p99_us": 608.1875,
+     "exec_max_us": 86.33333333333333
+    },
+    "comms": {
+     "jobs": 938,
+     "misses": 0,
+     "resp_max_us": 1952.3333333333333,
+     "resp_p99_us": 1500.6666666666665,
+     "start_p99_us": 692.8541666666666,
+     "exec_max_us": 789.6666666666666
+    },
+    "health": {
+     "jobs": 94,
+     "misses": 0,
+     "resp_max_us": 17879.0,
+     "resp_p99_us": 17879.0,
+     "start_p99_us": 940.6458333333333,
+     "exec_max_us": 7174.333333333333
+    }
+   },
+   "kernel_misses": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "kernel_overruns": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "U_with_overheads": 0.8522745833333334,
+   "liu_layland_pass": false,
+   "rta": {
+    "control": {
+     "R_us": 589.875,
+     "ok": true
+    },
+    "safety": {
+     "R_us": 701.2916666666666,
+     "ok": true
+    },
+    "sensor": {
+     "R_us": 831.375,
+     "ok": true
+    },
+    "comms": {
+     "R_us": 3619.6666666666665,
+     "ok": true
+    },
+    "health": {
+     "R_us": 35628.208333333336,
+     "ok": true
+    }
+   },
+   "cpu_share": {
+    "control": 0.480119796875,
+    "safety": 0.0417824765625,
+    "sensor": 0.043100690104166665,
+    "comms": 0.0253794375,
+    "health": 0.0717725625,
+    "logger": 0.33784503645833336,
+    "idle": 0.0
+   }
+  },
+  {
+   "scale": 4.0,
+   "work": [
+    "control=80",
+    "safety=40",
+    "sensor=40",
+    "health=200"
+   ],
+   "tasks": {
+    "control": {
+     "jobs": 9391,
+     "misses": 0,
+     "resp_max_us": 655.3333333333333,
+     "resp_p99_us": 648.6666666666666,
+     "start_p99_us": 44.854166666666664,
+     "exec_max_us": 621.6666666666666
+    },
+    "safety": {
+     "jobs": 4695,
+     "misses": 0,
+     "resp_max_us": 754.0,
+     "resp_p99_us": 747.3333333333333,
+     "start_p99_us": 669.1666666666666,
+     "exec_max_us": 95.33333333333333
+    },
+    "sensor": {
+     "jobs": 4695,
+     "misses": 0,
+     "resp_max_us": 860.3333333333333,
+     "resp_p99_us": 853.6666666666666,
+     "start_p99_us": 767.7708333333333,
+     "exec_max_us": 103.0
+    },
+    "comms": {
+     "jobs": 939,
+     "misses": 0,
+     "resp_max_us": 3791.333333333333,
+     "resp_p99_us": 1843.3333333333333,
+     "start_p99_us": 873.5208333333333,
+     "exec_max_us": 850.6666666666666
+    },
+    "health": {
+     "jobs": 94,
+     "misses": 0,
+     "resp_max_us": 21845.0,
+     "resp_p99_us": 21845.0,
+     "start_p99_us": 1365.3125,
+     "exec_max_us": 9932.333333333332
+    }
+   },
+   "kernel_misses": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "kernel_overruns": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "U_with_overheads": 1.0464125,
+   "liu_layland_pass": false,
+   "rta": {
+    "control": {
+     "R_us": 734.2916666666666,
+     "ok": true
+    },
+    "safety": {
+     "R_us": 873.5416666666666,
+     "ok": true
+    },
+    "sensor": {
+     "R_us": 1723.4166666666667,
+     "ok": true
+    },
+    "comms": {
+     "R_us": 7769.333333333333,
+     "ok": true
+    },
+    "health": {
+     "R_us": 189869.75,
+     "ok": false
+    }
+   },
+   "cpu_share": {
+    "control": 0.6245436067708328,
+    "safety": 0.04932549479166662,
+    "sensor": 0.05316661197916662,
+    "comms": 0.027402695312499975,
+    "health": 0.0993301093749999,
+    "logger": 0.1462314817708332,
+    "idle": 0.0
+   }
+  },
+  {
+   "scale": 4.5,
+   "work": [
+    "control=90",
+    "safety=45",
+    "sensor=45",
+    "health=225"
+   ],
+   "tasks": {
+    "control": {
+     "jobs": 9390,
+     "misses": 0,
+     "resp_max_us": 727.6666666666666,
+     "resp_p99_us": 721.0,
+     "start_p99_us": 44.854166666666664,
+     "exec_max_us": 701.3333333333333
+    },
+    "safety": {
+     "jobs": 4695,
+     "misses": 0,
+     "resp_max_us": 837.0,
+     "resp_p99_us": 834.6666666666666,
+     "start_p99_us": 741.25,
+     "exec_max_us": 110.66666666666666
+    },
+    "sensor": {
+     "jobs": 4695,
+     "misses": 0,
+     "resp_max_us": 942.6666666666666,
+     "resp_p99_us": 940.3333333333333,
+     "start_p99_us": 855.0625,
+     "exec_max_us": 102.33333333333333
+    },
+    "comms": {
+     "jobs": 939,
+     "misses": 0,
+     "resp_max_us": 5831.0,
+     "resp_p99_us": 1984.3333333333333,
+     "start_p99_us": 960.0208333333333,
+     "exec_max_us": 960.6666666666666
+    },
+    "health": {
+     "jobs": 94,
+     "misses": 0,
+     "resp_max_us": 21845.0,
+     "resp_p99_us": 21845.0,
+     "start_p99_us": 1365.3125,
+     "exec_max_us": 11828.666666666666
+    }
+   },
+   "kernel_misses": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "kernel_overruns": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "U_with_overheads": 1.1634766666666667,
+   "liu_layland_pass": false,
+   "rta": {
+    "control": {
+     "R_us": 826.5,
+     "ok": true
+    },
+    "safety": {
+     "R_us": 968.5833333333334,
+     "ok": true
+    },
+    "sensor": {
+     "R_us": 1910.0833333333333,
+     "ok": true
+    },
+    "comms": {
+     "R_us": 19924.166666666668,
+     "ok": false
+    },
+    "health": {
+     "R_us": null,
+     "ok": false
+    }
+   },
+   "cpu_share": {
+    "control": 0.6965286875,
+    "safety": 0.05691908854166667,
+    "sensor": 0.052845361979166665,
+    "comms": 0.028201369791666667,
+    "health": 0.11825487239583334,
+    "logger": 0.04725061979166666,
+    "idle": 0.0
+   }
+  },
+  {
+   "scale": 5.0,
+   "work": [
+    "control=100",
+    "safety=50",
+    "sensor=50",
+    "health=250"
+   ],
+   "tasks": {
+    "control": {
+     "jobs": 9390,
+     "misses": 0,
+     "resp_max_us": 804.0,
+     "resp_p99_us": 795.3333333333333,
+     "start_p99_us": 44.854166666666664,
+     "exec_max_us": 766.0
+    },
+    "safety": {
+     "jobs": 4695,
+     "misses": 0,
+     "resp_max_us": 918.0,
+     "resp_p99_us": 914.3333333333333,
+     "start_p99_us": 820.6666666666666,
+     "exec_max_us": 118.33333333333333
+    },
+    "sensor": {
+     "jobs": 4695,
+     "misses": 0,
+     "resp_max_us": 1827.6666666666665,
+     "resp_p99_us": 1822.6666666666665,
+     "start_p99_us": 934.6875,
+     "exec_max_us": 137.33333333333331
+    },
+    "comms": {
+     "jobs": 939,
+     "misses": 0,
+     "resp_max_us": 3646.333333333333,
+     "resp_p99_us": 3645.6666666666665,
+     "start_p99_us": 1365.3125,
+     "exec_max_us": 766.3333333333333
+    },
+    "health": {
+     "jobs": 94,
+     "misses": 0,
+     "resp_max_us": 21845.0,
+     "resp_p99_us": 21845.0,
+     "start_p99_us": 1365.3125,
+     "exec_max_us": 11609.666666666666
+    }
+   },
+   "kernel_misses": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "kernel_overruns": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "8": 0
+   },
+   "U_with_overheads": 1.2275929166666668,
+   "liu_layland_pass": false,
+   "rta": {
+    "control": {
+     "R_us": 891.0,
+     "ok": true
+    },
+    "safety": {
+     "R_us": 1912.9583333333333,
+     "ok": true
+    },
+    "sensor": {
+     "R_us": 3975.7916666666665,
+     "ok": false
+    },
+    "comms": {
+     "R_us": null,
+     "ok": false
+    },
+    "health": {
+     "R_us": null,
+     "ok": false
+    }
+   },
+   "cpu_share": {
+    "control": 0.47785589351851854,
+    "safety": 0.05993544212962963,
+    "sensor": 0.06930190972222222,
+    "comms": 0.02773062962962963,
+    "health": 0.11593327777777777,
+    "logger": 0.24924284722222223,
+    "idle": 0.0
+   }
+  },
+  {
+   "scale": 5.25,
+   "work": [
+    "control=105",
+    "safety=52",
+    "sensor=52",
+    "health=262"
+   ],
+   "tasks": {
+    "control": {
+     "jobs": 9378,
+     "misses": 0,
+     "resp_max_us": 855.6666666666666,
+     "resp_p99_us": 842.6666666666666,
+     "start_p99_us": 49.27083333333333,
+     "exec_max_us": 817.3333333333333
+    },
+    "safety": {
+     "jobs": 4689,
+     "misses": 0,
+     "resp_max_us": 973.0,
+     "resp_p99_us": 960.3333333333333,
+     "start_p99_us": 863.4166666666666,
+     "exec_max_us": 114.0
+    },
+    "sensor": {
+     "jobs": 4689,
+     "misses": 0,
+     "resp_max_us": 1925.0,
+     "resp_p99_us": 1908.0,
+     "start_p99_us": 980.5208333333333,
+     "exec_max_us": 142.0
+    },
+    "comms": {
+     "jobs": 918,
+     "misses": 10,
+     "resp_max_us": 21845.0,
+     "resp_p99_us": 21845.0,
+     "start_p99_us": 1365.3125,
+     "exec_max_us": 1552.0
+    },
+    "health": {
+     "jobs": 16,
+     "misses": 16,
+     "resp_max_us": 21845.0,
+     "resp_p99_us": 21845.0,
+     "start_p99_us": 1365.3125,
+     "exec_max_us": 16569.333333333332
+    }
+   },
+   "kernel_misses": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 10,
+    "4": 35,
+    "5": 0,
+    "8": 0
+   },
+   "kernel_overruns": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 20,
+    "4": 107,
+    "5": 0,
+    "8": 0
+   },
+   "U_with_overheads": 1.4075812499999998,
+   "liu_layland_pass": false,
+   "rta": {
+    "control": {
+     "R_us": 942.5833333333334,
+     "ok": true
+    },
+    "safety": {
+     "R_us": 2935.7083333333335,
+     "ok": false
+    },
+    "sensor": {
+     "R_us": 55999.625,
+     "ok": false
+    },
+    "comms": {
+     "R_us": null,
+     "ok": false
+    },
+    "health": {
+     "R_us": null,
+     "ok": false
+    }
+   },
+   "cpu_share": {
+    "control": 0.8126654909072021,
+    "safety": 0.05857609038801459,
+    "sensor": 0.0693359644308361,
+    "comms": 0.031084737495717996,
+    "health": 0.027391366679047093,
+    "logger": 0.000931373988216126,
+    "idle": 0.0
+   }
+  },
+  {
+   "scale": 5.5,
+   "work": [
+    "control=110",
+    "safety=55",
+    "sensor=55",
+    "health=275"
+   ],
+   "tasks": {
+    "control": {
+     "jobs": 3544,
+     "misses": 0,
+     "resp_max_us": 891.3333333333333,
+     "resp_p99_us": 883.0,
+     "start_p99_us": 55.27083333333333,
+     "exec_max_us": 851.3333333333333
+    },
+    "safety": {
+     "jobs": 1769,
+     "misses": 0,
+     "resp_max_us": 1881.0,
+     "resp_p99_us": 1874.3333333333333,
+     "start_p99_us": 904.75,
+     "exec_max_us": 136.66666666666666
+    },
+    "sensor": {
+     "jobs": 1687,
+     "misses": 1,
+     "resp_max_us": 2000.3333333333333,
+     "resp_p99_us": 1993.6666666666665,
+     "start_p99_us": 1365.3125,
+     "exec_max_us": 156.33333333333331
+    }
+   },
+   "kernel_misses": {
+    "0": 0,
+    "1": 0,
+    "2": 2,
+    "3": 63,
+    "4": 49,
+    "5": 0,
+    "8": 0
+   },
+   "kernel_overruns": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 888,
+    "4": 237,
+    "5": 0,
+    "8": 0
+   },
+   "U_with_overheads": 1.5571395833333335,
+   "liu_layland_pass": false,
+   "rta": {
+    "control": {
+     "R_us": 976.5833333333334,
+     "ok": true
+    },
+    "safety": {
+     "R_us": 4976.041666666667,
+     "ok": false
+    },
+    "sensor": {
+     "R_us": null,
+     "ok": false
+    },
+    "comms": {
+     "R_us": null,
+     "ok": false
+    },
+    "health": {
+     "R_us": null,
+     "ok": false
+    }
+   },
+   "cpu_share": {
+    "control": 0.846572600558818,
+    "safety": 0.061695484099459276,
+    "sensor": 0.06896056137339766,
+    "comms": 0.02036285871069639,
+    "health": 0.0021656528216370276,
+    "logger": 0.0,
+    "idle": 0.0
+   }
+  },
+  {
+   "scale": 5.75,
+   "work": [
+    "control=115",
+    "safety=58",
+    "sensor=58",
+    "health=288"
+   ],
+   "tasks": {
+    "control": {
+     "jobs": 1372,
+     "misses": 0,
+     "resp_max_us": 928.6666666666666,
+     "resp_p99_us": 920.0,
+     "start_p99_us": 56.4375,
+     "exec_max_us": 881.0
+    },
+    "safety": {
+     "jobs": 632,
+     "misses": 0,
+     "resp_max_us": 1961.0,
+     "resp_p99_us": 1953.6666666666665,
+     "start_p99_us": 942.4583333333333,
+     "exec_max_us": 153.66666666666666
+    },
+    "sensor": {
+     "jobs": 160,
+     "misses": 160,
+     "resp_max_us": 7961.666666666666,
+     "resp_p99_us": 6097.0,
+     "start_p99_us": 1365.3125,
+     "exec_max_us": 251.0
+    },
+    "comms": {
+     "jobs": 17,
+     "misses": 12,
+     "resp_max_us": 21845.0,
+     "resp_p99_us": 21845.0,
+     "start_p99_us": 1365.3125,
+     "exec_max_us": 4061.0
+    }
+   },
+   "kernel_misses": {
+    "0": 0,
+    "1": 0,
+    "2": 1965,
+    "3": 102,
+    "4": 52,
+    "5": 0,
+    "8": 0
+   },
+   "kernel_overruns": {
+    "0": 0,
+    "1": 0,
+    "2": 3171,
+    "3": 2065,
+    "4": 387,
+    "5": 0,
+    "8": 0
+   },
+   "U_with_overheads": 1.790845833333333,
+   "liu_layland_pass": false,
+   "rta": {
+    "control": {
+     "R_us": 1040.1666666666667,
+     "ok": false
+    },
+    "safety": {
+     "R_us": 56999.625,
+     "ok": false
+    },
+    "sensor": {
+     "R_us": null,
+     "ok": false
+    },
+    "comms": {
+     "R_us": null,
+     "ok": false
+    },
+    "health": {
+     "R_us": null,
+     "ok": false
+    }
+   },
+   "cpu_share": {
+    "control": 0.8638115071038203,
+    "safety": 0.07257175615162059,
+    "sensor": 0.03871671227716889,
+    "comms": 0.005544021136519433,
+    "health": 0.0008917979103118199,
+    "logger": 0.0,
+    "idle": 0.0
+   }
+  },
+  {
+   "scale": 6.0,
+   "work": [
+    "control=120",
+    "safety=60",
+    "sensor=60",
+    "health=300"
+   ],
+   "tasks": {}
+  },
+  {
+   "scale": 6.5,
+   "work": [
+    "control=130",
+    "safety=65",
+    "sensor=65",
+    "health=325"
+   ],
+   "tasks": {}
+  }
+ ],
+ "first_scale_with_measured_miss": 5.25,
+ "first_scale_rta_unschedulable": 4.0
+}

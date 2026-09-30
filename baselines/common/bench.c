@@ -1,6 +1,7 @@
 #include "baselines/common/bench.h"
 
 #include "arch/armv7m/cpu.h"
+#include "drivers/timer/gpt.h"
 #include "drivers/uart/sci_uart.h"
 #include "kernel/ipc/spsc.h"
 #include "kernel/khist.h"
@@ -250,6 +251,11 @@ static void command(const kframe_decoder_t *d)
         }
         break;
     case 0x04: /* set_trace: job mask only (0 pauses the job stream) */
+        break;
+    case 0x22: /* interrupt storm (same driver and priority as the Kestrel benchmark) */
+        if (d->len >= 5u) {
+            storm_set_rate(kget32(a));
+        }
         break;
     default:
         bench_app_command(d->payload[0], a, (uint16_t)(d->len - 1u));

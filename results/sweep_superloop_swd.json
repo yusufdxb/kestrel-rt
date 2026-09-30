@@ -1,0 +1,295 @@
+{
+ "name": "sweep_superloop_swd",
+ "system": "superloop",
+ "method": "swd-nonhalting",
+ "steps": [
+  {
+   "scale": 3.0,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 11146,
+     "releases": 11146,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 5573,
+     "releases": 5573,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 5572,
+     "releases": 5572,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 1114,
+     "releases": 1114,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 111,
+     "releases": 111,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  },
+  {
+   "scale": 5.0,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 11206,
+     "releases": 11206,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 5603,
+     "releases": 5603,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 5604,
+     "releases": 5604,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 1121,
+     "releases": 1121,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 112,
+     "releases": 112,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  },
+  {
+   "scale": 5.5,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 11198,
+     "releases": 11198,
+     "deadline_misses": 4632,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 5599,
+     "releases": 5599,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 5599,
+     "releases": 5599,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 1120,
+     "releases": 1120,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 112,
+     "releases": 112,
+     "deadline_misses": 112,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  },
+  {
+   "scale": 6.0,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 10332,
+     "releases": 10332,
+     "deadline_misses": 10327,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 5166,
+     "releases": 5166,
+     "deadline_misses": 5163,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 5165,
+     "releases": 5165,
+     "deadline_misses": 5162,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 1033,
+     "releases": 1033,
+     "deadline_misses": 1032,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 103,
+     "releases": 103,
+     "deadline_misses": 103,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  },
+  {
+   "scale": 6.5,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 9592,
+     "releases": 9592,
+     "deadline_misses": 9592,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 4796,
+     "releases": 4796,
+     "deadline_misses": 4796,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 4796,
+     "releases": 4796,
+     "deadline_misses": 4796,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 959,
+     "releases": 959,
+     "deadline_misses": 959,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 96,
+     "releases": 96,
+     "deadline_misses": 96,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  },
+  {
+   "scale": 7.0,
+   "secs": 10.0,
+   "tasks": {
+    "control": {
+     "jobs": 8973,
+     "releases": 8973,
+     "deadline_misses": 8973,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "safety": {
+     "jobs": 4487,
+     "releases": 4487,
+     "deadline_misses": 4487,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "sensor": {
+     "jobs": 4487,
+     "releases": 4487,
+     "deadline_misses": 4487,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "comms": {
+     "jobs": 897,
+     "releases": 897,
+     "deadline_misses": 898,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "health": {
+     "jobs": 89,
+     "releases": 89,
+     "deadline_misses": 89,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    },
+    "logger": {
+     "jobs": 0,
+     "releases": 0,
+     "deadline_misses": 0,
+     "overruns": 0,
+     "wcet_cycles_lifetime_max": 0
+    }
+   }
+  }
+ ]
+}

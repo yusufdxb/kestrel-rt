@@ -1,0 +1,20 @@
+{
+ "name": "sweep_kestrel_x6",
+ "secs": 8.0,
+ "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "raw_bytes": 0,
+ "frames_ok": 0,
+ "frames_bad": 0,
+ "work": [
+  "control=120",
+  "safety=60",
+  "sensor=60",
+  "health=300"
+ ],
+ "inject": null,
+ "stall_ms": 0,
+ "storm_hz": null,
+ "tasks": {},
+ "histograms": {},
+ "trace_events": []
+}

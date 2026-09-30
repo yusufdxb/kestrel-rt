@@ -5,7 +5,7 @@ project(kestrel_zephyr_baseline)
 set(K ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 # Shared register-level drivers + measurement shim (same code as the other baselines).
 set(SHARED ${K}/baselines/common/bench.c ${K}/drivers/uart/sci_uart.c ${K}/drivers/icu/icu.c
-    ${K}/drivers/gpio/gpio.c ${K}/drivers/adc/adc.c ${K}/trace/frame.c ${K}/trace/crc16.c
+    ${K}/drivers/gpio/gpio.c ${K}/drivers/adc/adc.c ${K}/drivers/timer/gpt.c ${K}/trace/frame.c ${K}/trace/crc16.c
     ${K}/apps/common/workload.c)
 target_sources(app PRIVATE src/main.c ${SHARED})
 target_include_directories(app BEFORE PRIVATE ${K} ${K}/board ${K}/third_party/renesas/Include)

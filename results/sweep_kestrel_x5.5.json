@@ -1,0 +1,333 @@
+{
+ "name": "sweep_kestrel_x5.5",
+ "secs": 8.0,
+ "raw_sha256": "f5b5b461f451e9c689327818a8e357633b2c589bfef1d99d5fccbfa57d86358b",
+ "raw_bytes": 100030,
+ "frames_ok": 225,
+ "frames_bad": 0,
+ "work": [
+  "control=110",
+  "safety=55",
+  "sensor=55",
+  "health=275"
+ ],
+ "inject": null,
+ "stall_ms": 0,
+ "storm_hz": null,
+ "tasks": {
+  "control": {
+   "records": 3544,
+   "records_lost_in_transit_or_dropped": 5666,
+   "misses_flagged": 0,
+   "saturated": 0,
+   "release_latency_us": {
+    "n": 3544,
+    "p50": 3.9166666666666665,
+    "p95": 12.833333333333332,
+    "p99": 12.833333333333332,
+    "p99.9": 15.916666666666666,
+    "max": 19.791666666666664,
+    "min": 3.9166666666666665
+   },
+   "start_latency_us": {
+    "n": 3544,
+    "p50": 24.5625,
+    "p95": 48.229166666666664,
+    "p99": 55.27083333333333,
+    "p99.9": 57.604166666666664,
+    "max": 57.729166666666664,
+    "min": 20.979166666666664
+   },
+   "exec_us": {
+    "n": 3544,
+    "p50": 835.6666666666666,
+    "p95": 836.0,
+    "p99": 842.3333333333333,
+    "p99.9": 845.0,
+    "max": 851.3333333333333,
+    "min": 835.6666666666666
+   },
+   "response_us": {
+    "n": 3544,
+    "p50": 852.0,
+    "p95": 875.6666666666666,
+    "p99": 883.0,
+    "p99.9": 885.6666666666666,
+    "max": 891.3333333333333,
+    "min": 848.3333333333333
+   }
+  },
+  "safety": {
+   "records": 1769,
+   "records_lost_in_transit_or_dropped": 2836,
+   "misses_flagged": 0,
+   "saturated": 0,
+   "release_latency_us": {
+    "n": 1769,
+    "p50": 3.9166666666666665,
+    "p95": 3.958333333333333,
+    "p99": 8.875,
+    "p99.9": 11.25,
+    "max": 19.791666666666664,
+    "min": 3.9166666666666665
+   },
+   "start_latency_us": {
+    "n": 1769,
+    "p50": 872.4166666666666,
+    "p95": 896.0833333333333,
+    "p99": 904.75,
+    "p99.9": 906.9166666666666,
+    "max": 911.7083333333333,
+    "min": 872.4166666666666
+   },
+   "exec_us": {
+    "n": 1769,
+    "p50": 109.66666666666666,
+    "p95": 109.66666666666666,
+    "p99": 130.0,
+    "p99.9": 130.0,
+    "max": 136.66666666666666,
+    "min": 109.66666666666666
+   },
+   "response_us": {
+    "n": 1769,
+    "p50": 973.6666666666666,
+    "p95": 997.3333333333333,
+    "p99": 1874.3333333333333,
+    "p99.9": 1876.6666666666665,
+    "max": 1881.0,
+    "min": 973.6666666666666
+   }
+  },
+  "sensor": {
+   "records": 1687,
+   "records_lost_in_transit_or_dropped": 2919,
+   "misses_flagged": 1,
+   "saturated": 383,
+   "release_latency_us": {
+    "n": 1687,
+    "p50": 3.9166666666666665,
+    "p95": 3.958333333333333,
+    "p99": 8.416666666666666,
+    "p99.9": 10.916666666666666,
+    "max": 11.25,
+    "min": 0.4583333333333333
+   },
+   "start_latency_us": {
+    "n": 1687,
+    "p50": 994.1458333333333,
+    "p95": 1365.3125,
+    "p99": 1365.3125,
+    "p99.9": 1365.3125,
+    "max": 1365.3125,
+    "min": 994.1458333333333
+   },
+   "exec_us": {
+    "n": 1687,
+    "p50": 127.33333333333333,
+    "p95": 148.66666666666666,
+    "p99": 156.33333333333331,
+    "p99.9": 156.33333333333331,
+    "max": 156.33333333333331,
+    "min": 107.33333333333333
+   },
+   "response_us": {
+    "n": 1687,
+    "p50": 1962.6666666666665,
+    "p95": 1982.3333333333333,
+    "p99": 1993.6666666666665,
+    "p99.9": 1996.0,
+    "max": 2000.3333333333333,
+    "min": 1961.0
+   }
+  }
+ },
+ "histograms": {
+  "pendsv_cycles": {
+   "count": 28593,
+   "max": 2218,
+   "overflow": 217,
+   "width": 4,
+   "p50": 352,
+   "p95": 352,
+   "p99": 352,
+   "p99.9": 2218
+  },
+  "alarm_isr_cycles": {
+   "count": 12485,
+   "max": 1685,
+   "overflow": 851,
+   "width": 8,
+   "p50": 600,
+   "p95": 1685,
+   "p99": 1685,
+   "p99.9": 1685
+  },
+  "svc_cycles": {
+   "count": 44572,
+   "max": 743,
+   "overflow": 7001,
+   "width": 4,
+   "p50": 420,
+   "p95": 743,
+   "p99": 743,
+   "p99.9": 743
+  },
+  "irq_latency_ticks": {
+   "count": 11604,
+   "max": 1275,
+   "overflow": 806,
+   "width": 2,
+   "p50": 84,
+   "p95": 1275,
+   "p99": 1275,
+   "p99.9": 1275
+  }
+ },
+ "status_last": {
+  "uptime_lo": 1776851676,
+  "uptime_hi": 1,
+  "boot_count": 23,
+  "reset_cause": 264,
+  "ctx_switches": 389791,
+  "alarms": 151823,
+  "svcs": 567027,
+  "max_alarm_cyc": 1685,
+  "max_sched_cyc": 212,
+  "max_crit_cyc": 743,
+  "max_pendsv_cyc": 1774,
+  "trace_events": 279,
+  "trace_dropped": 893,
+  "jobs": 201481,
+  "jobs_dropped": 12506,
+  "rx_bytes": 1173,
+  "rx_errors": 0,
+  "tx_bytes": 2638703,
+  "rx_queue_rejected": 0,
+  "cmd_frames_ok": 89,
+  "cmd_frames_bad": 0,
+  "dwt_rearms": 1,
+  "degraded": 48,
+  "wd_warnings": 0,
+  "wdt_feeds": 25304,
+  "faults": 0,
+  "tx_ring_full": 282,
+  "ntasks": 7,
+  "uptime_s": 126.49622858333333
+ },
+ "status_tasks": [
+  {
+   "id": 0,
+   "state": 2,
+   "stack_used": 264,
+   "jobs": 126520,
+   "misses": 0,
+   "overruns": 0,
+   "wcet_cyc": 40876,
+   "max_resp_ticks": 42900,
+   "max_start_lat_ticks": 2764,
+   "faults": 0,
+   "run_cycles": 3169800667
+  },
+  {
+   "id": 1,
+   "state": 2,
+   "stack_used": 320,
+   "jobs": 63260,
+   "misses": 0,
+   "overruns": 0,
+   "wcet_cyc": 6570,
+   "max_resp_ticks": 90298,
+   "max_start_lat_ticks": 43598,
+   "faults": 0,
+   "run_cycles": 278861592
+  },
+  {
+   "id": 2,
+   "state": 2,
+   "stack_used": 304,
+   "jobs": 63260,
+   "misses": 2,
+   "overruns": 0,
+   "wcet_cyc": 7516,
+   "max_resp_ticks": 96022,
+   "max_start_lat_ticks": 91084,
+   "faults": 0,
+   "run_cycles": 307125283
+  },
+  {
+   "id": 3,
+   "state": 1,
+   "stack_used": 424,
+   "jobs": 11763,
+   "misses": 63,
+   "overruns": 888,
+   "wcet_cyc": 200587,
+   "max_resp_ticks": 8831558,
+   "max_start_lat_ticks": 190974,
+   "faults": 0,
+   "run_cycles": 132855554
+  },
+  {
+   "id": 4,
+   "state": 1,
+   "stack_used": 144,
+   "jobs": 1028,
+   "misses": 49,
+   "overruns": 237,
+   "wcet_cyc": 0,
+   "max_resp_ticks": 0,
+   "max_start_lat_ticks": 0,
+   "faults": 0,
+   "run_cycles": 372599038
+  },
+  {
+   "id": 5,
+   "state": 1,
+   "stack_used": 104,
+   "jobs": 0,
+   "misses": 0,
+   "overruns": 0,
+   "wcet_cyc": 0,
+   "max_resp_ticks": 0,
+   "max_start_lat_ticks": 0,
+   "faults": 0,
+   "run_cycles": 1811788279
+  },
+  {
+   "id": 8,
+   "state": 1,
+   "stack_used": 72,
+   "jobs": 0,
+   "misses": 0,
+   "overruns": 0,
+   "wcet_cyc": 0,
+   "max_resp_ticks": 0,
+   "max_start_lat_ticks": 0,
+   "faults": 0,
+   "run_cycles": 0
+  }
+ ],
+ "cpu_share": {
+  "control": 0.846572600558818,
+  "safety": 0.061695484099459276,
+  "sensor": 0.06896056137339766,
+  "comms": 0.02036285871069639,
+  "health": 0.0021656528216370276,
+  "logger": 0.0,
+  "idle": 0.0
+ },
+ "app_stats": {
+  "violations": 0,
+  "stale_sensor": 0,
+  "stale_control": 0,
+  "mb_busy": 4546,
+  "health_runs": 1030,
+  "logger_loops": 39912,
+  "adc_gaps": 0,
+  "mb_sensor_retries": 18191,
+  "mb_ctrl_retries": 0,
+  "adc_isr": 260512
+ },
+ "trace_events": []
+}

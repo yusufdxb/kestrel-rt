@@ -1,0 +1,18 @@
+{
+ "plain": {
+  "protocol_active": 0,
+  "samples": 502,
+  "wait_max_us": 5179.291666666667,
+  "wait_mean_us": 5173.222028552457,
+  "wait_last_us": 5173.0,
+  "contentions": 1049
+ },
+ "ceiling": {
+  "protocol_active": 1,
+  "samples": 503,
+  "wait_max_us": 942.875,
+  "wait_mean_us": 909.114314115308,
+  "wait_last_us": 909.0,
+  "contentions": 1051
+ }
+}

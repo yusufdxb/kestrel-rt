@@ -13,7 +13,7 @@ CFLAGS := $(CPU) -std=c17 -O2 -g3 -ffreestanding -fno-common -ffunction-sections
 LDFLAGS := $(CPU) -nostdlib -nostartfiles -Wl,--gc-sections -Wl,-Map=$(BUILD)/image.map \
   -Wl,--print-memory-usage -Wl,--no-warn-rwx-segments -T linker/kestrel_ra4m1.ld
 COMMON := startup/startup.c startup/clock.c kernel/memory/kstring.c drivers/icu/icu.c drivers/uart/sci_uart.c \
-  drivers/gpio/gpio.c drivers/adc/adc.c trace/frame.c trace/crc16.c apps/common/workload.c baselines/common/bench.c
+  drivers/gpio/gpio.c drivers/adc/adc.c drivers/timer/gpt.c trace/frame.c trace/crc16.c apps/common/workload.c baselines/common/bench.c
 FR := build/ext/FreeRTOS-Kernel
 FRSRC := $(FR)/tasks.c $(FR)/list.c $(FR)/queue.c $(FR)/portable/GCC/ARM_CM4F/port.c
 ifeq ($(BASE),freertos)
