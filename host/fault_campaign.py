@@ -94,6 +94,11 @@ def cfsr_bits(v):
 
 def run_case(lk, syms, case):
     name, kind, task, expect, ckind, cbits, arg = case
+    if not latest_status(lk, 3.0):
+        lk.ser.close()
+        import bridge
+        bridge.ensure_link(name)
+        lk.__init__()
     st0 = latest_status(lk)
     if st0 is None:
         return {"name": name, "verdict": "FAIL", "why": "no status before injection"}
@@ -185,10 +190,12 @@ def main():
         r = run_case(lk, syms, case)
         results.append(r)
         print(json.dumps(r))
-        if r["expect"] == "contain":
+        if r.get("expect") == "contain":
             # faulted tasks stay parked until reset: reboot to a clean state for the next case
+            # Clean state for the next case: software reset command. (SWD resets between cases made
+            # the ESP32 bridge's CDC path go silent after every reset; see results/bridge_recoveries.log.)
             lk.send("reset")
-            time.sleep(2.0)
+            time.sleep(3.0)
             lk.poll(0.5)
     out = ROOT / "results" / "fault_campaign.json"
     prev = json.loads(out.read_text()) if out.exists() and only else []

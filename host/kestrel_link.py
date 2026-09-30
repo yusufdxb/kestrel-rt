@@ -172,6 +172,16 @@ class Link:
         self.raw = bytearray()
 
     def send(self, cmd, payload=b""):
+        try:
+            self._send(cmd, payload)
+        except Exception:  # noqa: BLE001
+            try:
+                self.reopen()
+                self._send(cmd, payload)
+            except Exception:  # noqa: BLE001
+                pass
+
+    def _send(self, cmd, payload=b""):
         if isinstance(cmd, str):
             code = CMD[cmd] if cmd in CMD else int(cmd, 0)
         else:
@@ -179,11 +189,27 @@ class Link:
         self.ser.write(encode(0x40, bytes([code]) + payload, self.seq))
         self.seq += 1
 
+    def reopen(self):
+        try:
+            self.ser.close()
+        except Exception:  # noqa: BLE001
+            pass
+        time.sleep(1.0)
+        self.ser = open_port()
+
     def poll(self, secs=0.1):
         out = []
         end = time.time() + secs
         while time.time() < end:
-            d = self.ser.read(8192)
+            try:
+                d = self.ser.read(8192)
+            except Exception:  # noqa: BLE001  (bridge re-enumerated under us)
+                time.sleep(1.0)
+                try:
+                    self.reopen()
+                except Exception:  # noqa: BLE001
+                    pass
+                continue
             if d:
                 self.raw += d
                 out += self.dec.feed(d)

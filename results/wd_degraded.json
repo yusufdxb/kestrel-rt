@@ -1,0 +1,65 @@
+[
+ {
+  "hung_task": "comms",
+  "degraded_mask": "0x38",
+  "no_reset": true,
+  "critical_tasks_8s": {
+   "0": {
+    "jobs": 9855,
+    "misses": 0
+   },
+   "1": {
+    "jobs": 4927,
+    "misses": 0
+   },
+   "2": {
+    "jobs": 4927,
+    "misses": 0
+   }
+  },
+  "boot_count_before": 36,
+  "verdict": "PASS"
+ },
+ {
+  "hung_task": "health",
+  "degraded_mask": "0x30",
+  "no_reset": true,
+  "critical_tasks_8s": {
+   "0": {
+    "jobs": 9820,
+    "misses": 0
+   },
+   "1": {
+    "jobs": 4910,
+    "misses": 0
+   },
+   "2": {
+    "jobs": 4910,
+    "misses": 0
+   }
+  },
+  "boot_count_before": 37,
+  "verdict": "PASS"
+ },
+ {
+  "hung_task": "logger",
+  "degraded_mask": "0x20",
+  "no_reset": true,
+  "critical_tasks_8s": {
+   "0": {
+    "jobs": 9837,
+    "misses": 0
+   },
+   "1": {
+    "jobs": 4918,
+    "misses": 0
+   },
+   "2": {
+    "jobs": 4918,
+    "misses": 0
+   }
+  },
+  "boot_count_before": 38,
+  "verdict": "PASS"
+ }
+]
