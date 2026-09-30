@@ -52,8 +52,11 @@ tradeoffs measured.
 - Telemetry backpressure: a 5 s TX stall and a 17 s host read stall left every deadline intact; dropped records
   are counted exactly.
 
-Open (see [docs/TEST_PLAN.md](docs/TEST_PLAN.md)): the 10-million-period soak and a complete fault campaign after
-the UART-receive fix. Known weaknesses: [docs/LIMITATIONS.md](docs/LIMITATIONS.md).
+- Soak: 10,429,500 control periods (2.9 h) with 0 misses, 0 overruns, 0 faults; control start latency max 50.5 us.
+- Final fault campaign: 17/17 cases pass on the final firmware.
+
+Known weaknesses: [docs/LIMITATIONS.md](docs/LIMITATIONS.md). Phase 2 (ESP32-S3 split architecture) is planned,
+not started: [docs/SPLIT_ARCHITECTURE.md](docs/SPLIT_ARCHITECTURE.md).
 
 ## Build, flash, measure
 ```bash

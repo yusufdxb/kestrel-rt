@@ -1,0 +1,100 @@
+{
+ "name": "soak_10M",
+ "hours": 2.9,
+ "raw_sha256": "3a15b8160c1f1973e93e1928b96502ea279e529948bbb2b5151129fe1f89d325",
+ "boot_counts_seen": [
+  2
+ ],
+ "link_outages_s": [],
+ "control_records": 10430210,
+ "control_record_gaps": 0,
+ "control_miss_flags": 0,
+ "control_start_us": {
+  "p50": 24.5,
+  "p95": 43.0,
+  "p99": 45.0,
+  "p99.9": 45.0,
+  "p99.99": 46.5,
+  "max": 50.5
+ },
+ "hourly": [
+  {
+   "n": 3596860,
+   "max": 48.458333333333336,
+   "miss_flags": 0,
+   "p50": 24.5,
+   "p99": 45.0,
+   "p99.9": 45.0
+  },
+  {
+   "n": 3596590,
+   "max": 50.5,
+   "miss_flags": 0,
+   "p50": 24.5,
+   "p99": 45.0,
+   "p99.9": 45.0
+  }
+ ],
+ "target_counters_delta": {
+  "uptime_s": 10429.5,
+  "tasks": [
+   {
+    "id": 0,
+    "jobs": 10429500,
+    "misses": 0,
+    "overruns": 0,
+    "faults": 0
+   },
+   {
+    "id": 1,
+    "jobs": 5214750,
+    "misses": 0,
+    "overruns": 0,
+    "faults": 0
+   },
+   {
+    "id": 2,
+    "jobs": 5214750,
+    "misses": 0,
+    "overruns": 0,
+    "faults": 0
+   },
+   {
+    "id": 3,
+    "jobs": 1042950,
+    "misses": 0,
+    "overruns": 0,
+    "faults": 0
+   },
+   {
+    "id": 4,
+    "jobs": 104295,
+    "misses": 0,
+    "overruns": 0,
+    "faults": 0
+   },
+   {
+    "id": 5,
+    "jobs": 0,
+    "misses": 0,
+    "overruns": 0,
+    "faults": 0
+   },
+   {
+    "id": 8,
+    "jobs": 0,
+    "misses": 0,
+    "overruns": 0,
+    "faults": 0
+   }
+  ],
+  "wd_warnings": 0,
+  "faults": 0
+ },
+ "target_totals_at_end": {
+  "uptime_s": 10449.54257975,
+  "control_jobs": 10449541,
+  "control_misses": 0,
+  "boot_count": 2
+ }
+}

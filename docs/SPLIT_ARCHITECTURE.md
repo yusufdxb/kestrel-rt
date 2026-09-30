@@ -1,7 +1,8 @@
 # Split-criticality architecture (Phase 2) - NOT STARTED
 
-Phase 2 is gated on the Phase 1 success criteria in docs/SPEC.md section 10. Two of them are still open
-(>= 10M-period soak, a complete post-fix fault campaign), so no ESP32-S3 firmware has been written or flashed.
+Phase 1 passed its gate on 2026-09-30 (docs/SPEC.md section 10: soak 10.43 M periods, fault campaign 17/17,
+overload and FreeRTOS comparisons complete). No ESP32-S3 firmware has been written or flashed: replacing the
+bridge firmware is an irreversible change to this board's only USB and SWD path and needs an explicit decision.
 
 ## Intent
 RA4M1 = deterministic, trusted domain (scheduler, timing, safety state, control workload, watchdog, critical

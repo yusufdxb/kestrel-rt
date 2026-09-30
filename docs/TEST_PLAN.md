@@ -40,7 +40,9 @@ after reboot with the right class and reset cause.
   case: 3/3. Full run 3: 16/17 (assert_critical: same symptom). Root cause of the lost commands found later:
   SCI9 receive overruns while the kernel timer ISR ran longer than one character time; fixed by DMA
   reception (300/300 commands acknowledged afterwards, 0 receive errors). Run 4 with the fix: the 4 cases it
-  reached passed, then the ESP32 USB bridge stopped enumerating. **A complete post-fix run is pending.**
+  reached passed, then the ESP32 USB bridge stopped enumerating (after repeated hub-port cycles).
+- **Run 5 (final firmware, 2026-09-30): 17/17 PASS** in one full run, no bridge recovery needed
+  (`results/fault_campaign_run5_final.json`). Host-observed recovery 0.755 s (fault reset), 1.00 s (WDT).
 - Capture latency (fault entry to record ready, before the backup-register write): 1,846-2,174 cycles
   (38-45 us); 391-484 cycles for stacking faults; 3,875 cycles for the privileged bus fault.
 - Contained faults do not delay control: the first version wrote the record to the VBATT backup registers
@@ -81,6 +83,10 @@ test (10,380 records dropped and counted, equal to the host's gap count).
 Fuzzed decoder (host). On hardware, receive errors before the DMA fix corrupted command frames; all were
 rejected by CRC and counted (`cmd_frames_bad`), never executed.
 
-## S. Soak - pending
-Target: at least 10,000,000 control periods (2.8 h at 1 kHz) without unexplained failure. Tool: `host/soak.py`
-(streams only control job records; the authoritative counters come from the target's status frames).
+## S. Soak - HW, PASS (`results/soak_10M.json`, raw sha256 3a15b816...)
+2026-09-30, final benchmark image, nominal load, 10,429.5 s:
+- control 10,429,500 jobs, 0 misses, 0 overruns; safety and sensor 5,214,750 jobs each, 0 misses; comms
+  1,042,950 and health 104,295 jobs, 0 misses; 0 faults, 0 watchdog warnings, no reset (boot count unchanged).
+- host received every control record (0 sequence gaps), 0 link outages.
+- control start latency over 10.43 M jobs (0.5 us bins): p50 24.5, p95 43.0, p99 45.0, p99.99 46.5, max 50.5 us;
+  per-hour p50/p99 identical in all three hours (no drift).

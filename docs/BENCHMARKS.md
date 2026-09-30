@@ -144,5 +144,6 @@ the FreeRTOS and Zephyr configurations used here do not.
 ## 8. Faults and watchdog
 See docs/TEST_PLAN.md (fault campaign: 17 cases on hardware; watchdog degraded-mode tests).
 
-## 9. Long soak
-See docs/TEST_PLAN.md, section S (target: at least 10,000,000 control periods).
+## 9. Long soak (Kestrel)
+10,429,500 control periods (2.9 h) with 0 misses, 0 overruns, 0 faults, no reset; control start latency
+p50 24.5 / p99 45.0 / p99.99 46.5 / max 50.5 us over all jobs, stable hour to hour (docs/TEST_PLAN.md section S).

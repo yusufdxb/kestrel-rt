@@ -38,7 +38,8 @@
   job-end system call; exact definitions per system in docs/BENCHMARKS.md.
 - Zephyr is measured in its own SysTick cycle domain with a one-time tick-edge calibration (few-cycle error).
 - On-target histograms report bin upper edges; values above a histogram's range are reported as maxima only.
-- Soak and a complete post-fix fault campaign are pending (docs/TEST_PLAN.md).
+- The benchmark image keeps experiment hooks reachable from the host link (MPU off, flash-cache off, storm,
+  fault injection); a production image would compile them out.
 
 ## Not implemented
 CAN (controller present, no transceiver on the board; loopback driver not written), native USB, low-power modes,
