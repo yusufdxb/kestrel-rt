@@ -146,4 +146,4 @@ See docs/TEST_PLAN.md (fault campaign: 17 cases on hardware; watchdog degraded-m
 
 ## 9. Long soak (Kestrel)
 10,429,500 control periods (2.9 h) with 0 misses, 0 overruns, 0 faults, no reset; control start latency
-p50 24.5 / p99 45.0 / p99.99 46.5 / max 50.5 us over all jobs, stable hour to hour (docs/TEST_PLAN.md section S).
+p50 24.5 / p99 45.0 / p99.99 46.5 / max 50.5 us over all jobs; identical p50/p99 in both full hours (docs/TEST_PLAN.md section S).

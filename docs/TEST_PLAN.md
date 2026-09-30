@@ -89,4 +89,4 @@ rejected by CRC and counted (`cmd_frames_bad`), never executed.
   1,042,950 and health 104,295 jobs, 0 misses; 0 faults, 0 watchdog warnings, no reset (boot count unchanged).
 - host received every control record (0 sequence gaps), 0 link outages.
 - control start latency over 10.43 M jobs (0.5 us bins): p50 24.5, p95 43.0, p99 45.0, p99.99 46.5, max 50.5 us;
-  per-hour p50/p99 identical in all three hours (no drift).
+  p50/p99 identical in both full one-hour buckets (the final 0.9 h is only in the total): no drift observed.
