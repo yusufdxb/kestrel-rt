@@ -22,11 +22,15 @@ static void ovf_isr(void)
     s_overflows++;
 }
 
+volatile uint32_t g_kt_last_entry, g_kt_last_target; /* profiling: last compare ISR */
+
 static void cmp_isr(void)
 {
     /* ISR latency: compare-match instant (the programmed target) to this line, in timer ticks.
      * Includes NVIC entry, the ICU dispatcher and any interrupt-masked section in the way. */
     uint32_t cnt = R_GPT0->GTCNT;
+    g_kt_last_entry = cnt;
+    g_kt_last_target = s_alarm_target;
     if (s_alarm_hw) {
         s_alarm_hw = false;
         khist_add(&g_hist_irqlat, cnt - s_alarm_target);

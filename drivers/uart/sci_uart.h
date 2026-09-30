@@ -1,6 +1,7 @@
 /* SCI9 asynchronous UART (P109 TXD9 / P110 RXD9) to the ESP32-S3 USB bridge.
  * TX: DMAC channel 0 triggered by SCI9 TXI (nonblocking); polled TX exists only for the boot banner
- * and the fault path, where interrupts may be unusable. RX: RXI ISR -> SPSC byte queue. */
+ * and the fault path, where interrupts may be unusable. RX: DMAC1 repeat-mode ring (no per-byte
+ * ISR). */
 #ifndef KESTREL_SCI_UART_H
 #define KESTREL_SCI_UART_H
 #include "kernel/ipc/spsc.h"
@@ -36,7 +37,8 @@ void uart_write_polled(const uint8_t *buf, uint32_t n);
 /* Force the TX path idle (fault path takes over the UART). */
 void uart_tx_abort(void);
 
-kq_spsc_t *uart_rx_queue(void);
+/* Copy up to max received bytes (task context, single consumer). */
+uint32_t uart_rx_read(uint8_t *buf, uint32_t max);
 const uart_stats_t *uart_stats(void);
 
 /* Fault-campaign hook: while stalled, uart_tx_dma_start refuses to start (simulates a TX path

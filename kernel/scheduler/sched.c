@@ -18,6 +18,14 @@
 kernel_t g_k;
 volatile uint32_t g_kprof[8];     /* diagnostic stage stamps of the last timer ISR */
 volatile uint32_t g_kprof_max[8]; /* stage stamps of the slowest timer ISR so far */
+/* Control-release path profile (KESTREL_PROFILE): sums of stage times relative to the ideal
+ * release of task 0, in timer ticks: [0] compare target, [1] ISR entry, [2] timer ISR end,
+ * [3] dispatch (PendSV), [4] task-observed start, [5] samples. */
+volatile uint32_t g_kpath[6];
+volatile uint32_t g_kentry_hist[40]; /* 1 us bins: release-ISR entry - ideal */
+volatile uint32_t g_kstage[8]; /* sums over control-release ISRs: GPT(k_alarm_isr start)-ideal, then
+                                  DWT stage deltas KPROF1..6 relative to KPROF0; [7] = samples */
+extern volatile uint32_t g_kt_last_entry, g_kt_last_target;
 #ifdef KESTREL_PROFILE
 #define KPROF(i) (g_kprof[(i)] = kcycles())
 #else
@@ -249,6 +257,9 @@ void k_alarm_isr(void)
     KPROF(0);
     uint64_t now = kt_now();
     KPROF(1);
+#ifdef KESTREL_PROFILE
+    bool released_ctl = false;
+#endif
     g_k.alarm_count++;
     if (g_k.started) {
         /* One pass: process due tasks and compute the next alarm. Tasks whose cached next_event is
@@ -260,6 +271,11 @@ void k_alarm_isr(void)
                 if (t->state != KS_UNUSED && t->state != KS_FAULTED) {
                     if (t->period != 0u && now >= t->next_release) {
                         k_release_locked(t, now);
+#ifdef KESTREL_PROFILE
+                        if (i == 0u) {
+                            released_ctl = true;
+                        }
+#endif
                     }
                     if (t->job_active && !t->deadline_flagged && now >= t->abs_deadline) {
                         t->deadline_flagged = true;
@@ -295,6 +311,24 @@ void k_alarm_isr(void)
         k_reschedule();
         KPROF(5);
     }
+#ifdef KESTREL_PROFILE
+    {
+        ktcb_t *c = &g_k.tcb[0];
+        if (released_ctl) {
+            uint32_t ideal = (uint32_t)c->release_ideal;
+            g_kpath[0] += g_kt_last_target - ideal;
+            g_kpath[1] += g_kt_last_entry - ideal;
+            g_kpath[2] += kt_now32() - ideal;
+            g_kstage[0] += (uint32_t)(now - c->release_ideal);
+            for (uint32_t k = 1; k < 6u; k++) {
+                g_kstage[k] += g_kprof[k] - g_kprof[0];
+            }
+            g_kstage[7]++;
+            uint32_t eb = (g_kt_last_entry - ideal) / 48u;
+            g_kentry_hist[eb < 40u ? eb : 39u]++;
+        }
+    }
+#endif
     kcrit_exit(s);
     uint32_t dt = kcycles() - c0;
     KPROF(6);
@@ -341,6 +375,11 @@ uint32_t *kestrel_sched_switch(uint32_t *old_sp)
     next->switched_in = c0;
     if (next->job_active && !next->job_started) {
         record_start(next, kt_now32());
+#ifdef KESTREL_PROFILE
+        if (next->id == 0u) {
+            g_kpath[3] += next->start_lat;
+        }
+#endif
     }
     kmpu_switch(next);
     g_k.current = next;

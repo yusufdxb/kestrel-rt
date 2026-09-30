@@ -254,8 +254,16 @@ static void command(const kframe_decoder_t *d)
 
 void bench_service(void)
 {
-    uint8_t b;
-    for (uint32_t i = 0; i < 256u && kq_spsc_pop(uart_rx_queue(), &b); i++) {
+    /* Re-arm the cycle counter: an SWD detach (e.g. the post-flash verification) clears TRCENA. */
+    if ((CoreDebug->DEMCR & CoreDebug_DEMCR_TRCENA_Msk) == 0u ||
+        (DWT->CTRL & DWT_CTRL_CYCCNTENA_Msk) == 0u) {
+        CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+        DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+    }
+    uint8_t rx[128];
+    uint32_t nrx = uart_rx_read(rx, sizeof(rx));
+    for (uint32_t i = 0; i < nrx; i++) {
+        uint8_t b = rx[i];
         if (kframe_decode_byte(&s_dec, b) == KFD_FRAME) {
             command(&s_dec);
         }
@@ -279,4 +287,14 @@ void bench_service(void)
     kcrit_t s = kcrit_enter();
     kick_locked();
     kcrit_exit(s);
+}
+
+/* The shared ICU dispatcher checks the kernel trace mask; baselines have no flight recorder, so the
+ * mask stays 0 and the dispatcher path is identical to Kestrel's with ISR tracing off. */
+uint32_t g_trace_mask = 0u;
+void trace_emit(uint8_t type, uint8_t id, uint16_t data)
+{
+    (void)type;
+    (void)id;
+    (void)data;
 }

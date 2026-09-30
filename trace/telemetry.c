@@ -170,7 +170,7 @@ static void send_status(uint64_t now)
     o = put_u32(p, o, us->rx_bytes);
     o = put_u32(p, o, us->rx_overrun + us->rx_framing);
     o = put_u32(p, o, us->tx_bytes);
-    o = put_u32(p, o, atomic_load(&uart_rx_queue()->rejected));
+    o = put_u32(p, o, 0u); /* RX is a DMA ring: no queue rejects (field kept for format) */
     o = put_u32(p, o, s_dec.frames_ok);
     o = put_u32(p, o, s_dec.err_crc + s_dec.err_len + s_dec.err_version);
     o = put_u32(p, o, g_k.dwt_rearms);
@@ -378,8 +378,10 @@ void telemetry_service(void)
 {
     uint64_t now = kt_now();
     /* 1. commands: bounded by the RX queue capacity (256 bytes per pass) */
-    uint8_t b;
-    for (uint32_t i = 0; i < 256u && kq_spsc_pop(uart_rx_queue(), &b); i++) {
+    uint8_t rx[128];
+    uint32_t nrx = uart_rx_read(rx, sizeof(rx));
+    for (uint32_t i = 0; i < nrx; i++) {
+        uint8_t b = rx[i];
         if (kframe_decode_byte(&s_dec, b) == KFD_FRAME) {
             handle_command(&s_dec, now);
         }

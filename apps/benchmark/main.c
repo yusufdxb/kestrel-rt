@@ -211,18 +211,36 @@ void kestrel_app_command(uint8_t cmd, const uint8_t *p, uint16_t len)
             kput32(&out[4u * i], d[i]);
         }
         (void)telemetry_send(KF_RESULT, out, 16u);
+#ifdef KESTREL_PROFILE
     } else if (cmd == 0x32u) { /* DIAG timer ISR stage stamps */
-        extern volatile uint32_t g_kprof[8];
-        uint8_t out[32];
-        for (uint32_t i = 0; i < 8u; i++) {
-            kput32(&out[4u * i], g_kprof[i] - g_kprof[0]);
+        extern volatile uint32_t g_kpath[6];
+        extern volatile uint32_t g_kstage[8];
+        uint8_t out[56];
+        for (uint32_t i = 0; i < 6u; i++) {
+            kput32(&out[4u * i], g_kpath[i]);
         }
-        (void)telemetry_send(KF_RESULT, out, 32u);
+        for (uint32_t i = 0; i < 8u; i++) {
+            kput32(&out[24u + 4u * i], g_kstage[i]);
+        }
+        (void)telemetry_send(KF_RESULT, out, 56u);
+        extern volatile uint32_t g_kentry_hist[40];
+        uint8_t h[160];
+        for (uint32_t i = 0; i < 40u; i++) {
+            kput32(&h[4u * i], g_kentry_hist[i]);
+        }
+        (void)telemetry_send(KF_RESULT, h, 160u);
+        extern volatile uint32_t g_crit_max, g_crit_max_pc, g_crit_over20us;
+        uint8_t c[12];
+        kput32(&c[0], g_crit_max);
+        kput32(&c[4], g_crit_max_pc);
+        kput32(&c[8], g_crit_over20us);
+        (void)telemetry_send(KF_RESULT, c, 12u);
     } else if (cmd == 0x23u && len >= 1u) { /* MPU on/off (experiments) */
         kmpu_set_enabled(p[0] != 0u);
     } else if (cmd == 0x33u && len >= 1u) { /* FCACHE on/off (experiments) */
         extern void kestrel_fcache(uint32_t on);
         kestrel_fcache(p[0]);
+#endif
     } else if (cmd == 0x21u) { /* APP_STATS */
         uint8_t out[40];
         uint32_t o = 0u;

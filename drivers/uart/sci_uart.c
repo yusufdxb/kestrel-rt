@@ -23,9 +23,15 @@
 #define MSTPB22_SCI9      (1u << 22)
 #define MSTPA22_DMAC      (1u << 22)
 
-#define UART_RX_CAPACITY 256u
-static uint8_t s_rx_storage[UART_RX_CAPACITY];
-static kq_spsc_t s_rx = {0, 0, UART_RX_CAPACITY - 1u, 1u, s_rx_storage, 0, 0};
+/* RX: DMAC1 in repeat mode writes every received byte into a circular buffer, triggered by SCI9
+ * RXI, with no CPU involvement per byte. An interrupt-driven receiver lost bytes (SSR.ORER)
+ * whenever the kernel timer ISR (higher priority) ran longer than one character time (21.7 us at
+ * 460800): measured on the board as host commands with bad CRC. The consumer reads the DMA write
+ * position from the remaining-count register (DMCRAL). */
+#define UART_RX_RING 512u
+static uint8_t s_rx_ring[UART_RX_RING] __attribute__((aligned(4)));
+static uint32_t s_rx_tail;           /* consumer index into s_rx_ring */
+static volatile uint32_t s_rx_rearm; /* repeat-count exhaustion re-arms (every 32 MB) */
 
 static uart_stats_t s_stats;
 static uart_tx_done_fn s_tx_done;
@@ -33,11 +39,26 @@ static volatile bool s_tx_busy;
 static volatile uint32_t s_tx_len;
 static volatile bool s_tx_stall;
 
-static void rxi_isr(void)
+static void rx_dma_arm(void)
 {
-    uint8_t b = R_SCI9->RDR;
-    s_stats.rx_bytes++;
-    (void)kq_spsc_push(&s_rx, &b);
+    R_DMAC1->DMCNT = 0u;
+    R_DMAC1->DMSAR = (uint32_t)&R_SCI9->RDR;
+    R_DMAC1->DMDAR = (uint32_t)s_rx_ring;
+    /* repeat mode, destination is the repeat area, byte transfers, peripheral trigger */
+    R_DMAC1->DMTMD = (uint16_t)(1u << 14 | 0u << 12 | 0u << 8 | 1u);
+    R_DMAC1->DMAMD = (uint16_t)(0u << 14 | 2u << 6);      /* src fixed (RDR), dst increment */
+    R_DMAC1->DMCRA = (UART_RX_RING << 16) | UART_RX_RING; /* repeat size | remaining count */
+    R_DMAC1->DMCRB = 0u;                                  /* 0 = 65536 repeats */
+    R_DMAC1->DMINT = (uint8_t)(1u << 4);                  /* DTIE: all repeats done */
+    s_rx_tail = 0u;
+    R_DMAC1->DMCNT = 1u;
+}
+
+static void rx_dma_end_isr(void)
+{
+    R_DMAC1->DMSTS = 0u;
+    s_rx_rearm++;
+    rx_dma_arm(); /* after 65536 * 512 bytes; the bytes in flight at this instant may be lost */
 }
 
 static void eri_isr(void)
@@ -118,8 +139,10 @@ uart_status_t uart_init(uint32_t baud, uart_tx_done_fn on_tx_done)
     R_DMAC0->DMDAR = (uint32_t)&R_SCI9->TDR;
     R_DMAC0->DMINT = (uint8_t)(1u << 4); /* DTIE */
     R_ICU->DELSR[0] = EVT_SCI9_TXI;
+    rx_dma_arm();
+    R_ICU->DELSR[1] = EVT_SCI9_RXI;
 
-    icu_route(IRQ_LINE_UART_RXI, EVT_SCI9_RXI, rxi_isr, KPRIO_DEVICE);
+    icu_route_mode(IRQ_LINE_UART_RXI, EVT_DMAC1_INT, rx_dma_end_isr, KPRIO_DEVICE, ICU_LEVEL);
     icu_route_mode(IRQ_LINE_UART_ERI, EVT_SCI9_ERI, eri_isr, KPRIO_DEVICE, ICU_LEVEL);
     icu_route_mode(IRQ_LINE_UART_TEI, EVT_SCI9_TEI, tei_isr, KPRIO_DEVICE, ICU_LEVEL);
     icu_route_mode(IRQ_LINE_DMA_TX, EVT_DMAC0_INT, dma_end_isr, KPRIO_DEVICE, ICU_LEVEL);
@@ -182,9 +205,17 @@ void uart_write_polled(const uint8_t *buf, uint32_t n)
     R_SCI9->SCR = (uint8_t)(R_SCI9->SCR & (uint8_t)~SCR_TE);
 }
 
-kq_spsc_t *uart_rx_queue(void)
+uint32_t uart_rx_read(uint8_t *buf, uint32_t max)
 {
-    return &s_rx;
+    uint32_t remaining = R_DMAC1->DMCRA & 0xFFFFu; /* DMCRAL: bytes left in this repeat */
+    uint32_t head = (UART_RX_RING - remaining) % UART_RX_RING;
+    uint32_t n = 0u;
+    while (s_rx_tail != head && n < max) {
+        buf[n++] = s_rx_ring[s_rx_tail];
+        s_rx_tail = (s_rx_tail + 1u) % UART_RX_RING;
+    }
+    s_stats.rx_bytes += n;
+    return n;
 }
 
 const uart_stats_t *uart_stats(void)

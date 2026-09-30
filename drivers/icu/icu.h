@@ -26,7 +26,7 @@
 enum kestrel_irq_line {
     IRQ_LINE_TIMER_CMP = 0, /* GPT0 compare A: releases, deadlines, timeouts, supervisor */
     IRQ_LINE_TIMER_OVF = 1, /* GPT0 overflow: 64-bit timebase extension */
-    IRQ_LINE_UART_RXI = 2,
+    IRQ_LINE_UART_RXI = 2,  /* DMAC1 transfer end (RX ring re-arm); RXI itself drives DMAC1 */
     IRQ_LINE_UART_TEI = 3,
     IRQ_LINE_UART_ERI = 4,
     IRQ_LINE_DMA_TX = 5, /* DMAC0 transfer end (telemetry TX) */

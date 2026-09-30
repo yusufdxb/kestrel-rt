@@ -73,6 +73,16 @@ def parse_hist_parts(parts):
     return h
 
 
+def parse_bstatus(p):
+    now, hi, dropped, irqmax = struct.unpack_from("<4I", p, 0)
+    tasks = []
+    for i in range(6):
+        j, m, w, ms, rlo, rhi = struct.unpack_from("<6I", p, 16 + 24 * i)
+        tasks.append({"jobs": j, "misses": m, "wcet_cyc": w, "max_start_ticks": ms, "run_cyc": rlo | rhi << 32})
+    return {"uptime_ticks": hi << 32 | now, "jobs_dropped": dropped, "irq_lat_max_ticks": irqmax, "tasks": tasks,
+            "name": p[16 + 144:].split(b"\0")[0].decode(errors="replace")}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("name")
@@ -151,7 +161,7 @@ def main():
     jobs = {}
     last_seq = {}
     lost = {}
-    statuses, hist_parts, app_stats, events = [], {}, None, []
+    statuses, hist_parts, app_stats, events, bstatuses = [], {}, None, [], []
     for idx, (ftype, seq, p) in enumerate(frames):
         if ftype == 0x03 and idx < n_capture:
             for task, flags, jseq, rl, sl, e16, r16 in kl.parse_jobs(p):
@@ -164,6 +174,8 @@ def main():
             statuses.append(kl.parse_status(p))
         elif ftype == 0x04:
             events += kl.parse_trace(p)
+        elif ftype == 0x09:
+            bstatuses.append(parse_bstatus(p))
         elif ftype == 0x08:
             if len(p) == 144 and p[0] < 4 and p[1] < 4:
                 hist_parts.setdefault(p[0], []).append(p)
@@ -196,6 +208,14 @@ def main():
             for t0, t1 in zip(s0["tasks"], s1["tasks"]):
                 util[inv.get(t1["id"], "idle" if t1["id"] == 8 else str(t1["id"]))] = (t1["run_cycles"] - t0["run_cycles"]) / (dt * 48e6) if dt > 0 else None
             summary["cpu_share"] = util
+    if len(bstatuses) >= 2:
+        b0, b1 = bstatuses[0], bstatuses[-1]
+        dt = (b1["uptime_ticks"] - b0["uptime_ticks"]) / 48e6
+        summary["system"] = b1["name"]
+        summary["baseline_status_last"] = b1
+        if dt > 0:
+            summary["cpu_share"] = {inv[i]: (b1["tasks"][i]["run_cyc"] - b0["tasks"][i]["run_cyc"]) / (dt * 48e6)
+                                    for i in range(6)}
     if app_stats:
         summary["app_stats"] = dict(zip(["violations", "stale_sensor", "stale_control", "mb_busy", "health_runs",
                                          "logger_loops", "adc_gaps", "mb_sensor_retries", "mb_ctrl_retries",

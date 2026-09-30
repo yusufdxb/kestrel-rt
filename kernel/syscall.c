@@ -158,6 +158,13 @@ void k_svc_dispatch(uint32_t *frame, uint32_t svc_num, uint32_t exc_return)
     case SVC_WAIT_PERIOD:
         if (frame[1] == 1u && t->job_active) {
             t->start_lat = frame[0] - (uint32_t)t->release_ideal; /* task-observed */
+#ifdef KESTREL_PROFILE
+            if (t->id == 0u) {
+                extern volatile uint32_t g_kpath[6];
+                g_kpath[4] += t->start_lat;
+                g_kpath[5]++;
+            }
+#endif
             t->start_observed = true;
         }
         k_job_end_locked(t, now);
