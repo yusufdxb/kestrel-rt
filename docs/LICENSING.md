@@ -42,7 +42,8 @@ fresh compile of the release sources gives `KestrelBridge.bin` sha256 `5133f810.
 `f1a96a1c...bdd4`. The validated image was read back from the board's app0 partition and compared:
 same length (949,936 bytes), and every byte identical except the app descriptor's embedded ELF SHA-256
 (offsets 0xb0-0xcf) and the image checksum and appended digest (last 33 bytes). The ESP32-S3 build is
-therefore not bit-reproducible, but its code and data are (`scripts/esp_image_compare.py`).
+therefore not bit-reproducible, but its code and data are (`scripts/esp_image_compare.py`; checked from
+a fresh clone of the release with the same `esp/secrets.env`, since the SoftAP password is compiled in).
 
 This is a conservative engineering choice, not a legal opinion. The `ed` script still encodes, by line
 number, where upstream code is kept or replaced, and the fork's comments describe upstream behavior. If

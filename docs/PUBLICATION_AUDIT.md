@@ -65,4 +65,11 @@ so the fork ships as an ed script, not source. Not legal advice.
 - `scripts/demo.sh` and `scripts/demo.sh --esp` ran on the board.
 
 ## Repository size
-See the release handoff (measured on the rewritten public clone with `git count-objects -vH`).
+Rewritten public history after `git gc --aggressive`: 814 objects, **1.43 MiB** packed (`git count-objects -vH`);
+the checked-out tree is about 5.4 MB, of which 1.33 MB is the vendored device header.
+
+## History rewrite record
+`git filter-repo --path esp/KestrelBridge/KestrelBridge.ino --invert-paths --replace-text` (MAC address
+and home Wi-Fi name, finding 2 and 3). The 13 Phase 1 commits and `phase1-go-2026-09-30` -> `1318e51` are
+unchanged. Every Phase 2 commit received a new ID; the private pre-rewrite history is kept by the author.
+Fresh clone of the rewritten history: `make APP=phase2` gives `14c04cb3...58cb`, host tests pass, lint clean.

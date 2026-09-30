@@ -31,7 +31,9 @@ KX_BRIDGE_REF=/path/to/uno-r4-wifi-usb-bridge esp/build.sh --show-diff  # readab
 The first run writes a random SoftAP password to the gitignored `esp/secrets.env`.
 The ESP32-S3 build is not bit-reproducible: a fresh compile changes the embedded ELF hash and the image
 digest (65 bytes) but no code or data byte. Compare a rebuild with the validated image
-(sha256 `f1a96a1c...bdd4`, read back from the board) using `scripts/esp_image_compare.py`.
+(sha256 `f1a96a1c...bdd4`, read back from the board) using `scripts/esp_image_compare.py`. The SoftAP
+password from `esp/secrets.env` is compiled in, so a build with a different password also differs in
+those bytes.
 These setup steps are upstream's procedure. The release was verified against an existing checkout
 prepared that way; a fresh clone-and-setup was not repeated for the release.
 
