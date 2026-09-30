@@ -1,0 +1,15 @@
+      60s ctl_jobs+59,900 ctl_miss 0 epoch 387265 crashes 0
+     120s ctl_jobs+119,900 ctl_miss 0 epoch 387265 crashes 0
+     180s ctl_jobs+179,900 ctl_miss 0 epoch 387265 crashes 0
+     240s ctl_jobs+239,900 ctl_miss 0 epoch 387265 crashes 0
+     301s ctl_jobs+299,900 ctl_miss 0 epoch 387265 crashes 0
+     360s ctl_jobs+359,900 ctl_miss 0 epoch 387265 crashes 0
+     420s ctl_jobs+419,900 ctl_miss 0 epoch 387265 crashes 0
+     480s ctl_jobs+479,900 ctl_miss 0 epoch 387265 crashes 0
+     541s ctl_jobs+539,900 ctl_miss 0 epoch 387265 crashes 0
+Traceback (most recent call last):
+  File "/home/yusuf/Projects/kestrel-rt/host/phase2_soak.py", line 112, in <module>
+    main()
+  File "/home/yusuf/Projects/kestrel-rt/host/phase2_soak.py", line 71, in main
+    d, _ = s.recvfrom(2048)
+KeyboardInterrupt

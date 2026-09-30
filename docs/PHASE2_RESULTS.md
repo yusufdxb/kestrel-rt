@@ -106,7 +106,9 @@ the F11 reruns, and the fork flashes before N1 and F11v3 (and the first two fork
    rerun (F11v3, final FF11).
 
 ## 5. G9 long soak
-Pending (running: >= 10,000,000 control periods, Wi-Fi telemetry, forced ESP crash every 15 min).
+Not yet run to completion. A first attempt was stopped on request after 541 s (539,900 control periods over
+Wi-Fi heartbeats, 0 misses, no forced crash reached yet; log `results/phase2/soak_p2_partial_stopped.log`).
+The full >= 10,000,000-period run is scheduled for the night of 2026-09-30. **G9 is open until then.**
 
 ## 6. Maximum rates (measured)
 - Mailbox link: 1,000,000 baud; F5 offered 5,580 valid frames/s (the UART limit for 18-byte frames).
