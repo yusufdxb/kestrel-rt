@@ -11,6 +11,9 @@ Everything below was measured on physical hardware. The evaluation platform is a
 board (RA4M1 + ESP32-S3); no Arduino core, FSP or vendor RTOS runs in the runtime. The code is about 4,500
 non-blank lines of C plus 125 of assembly for the runtime, and about 750 for the Phase 2 link.
 
+<p align="center"><a href="https://youtu.be/AfcJQIyyuUY"><img src="https://img.youtube.com/vi/AfcJQIyyuUY/maxresdefault.jpg" width="720" alt="Kestrel-RT demo video: the ESP32-S3 is crashed on the physical board while the Cortex-M4F control loop keeps its deadlines"></a></p>
+<p align="center"><sub>25 s video, with live screen recording from the physical board (<a href="docs/DEMO.md">demo script and full transcript</a>)</sub></p>
+
 | Headline (physical board) | Result |
 |---|---|
 | Phase 1 soak | **10,429,500** control periods (2.9 h), **0** deadline misses, 0 overruns, 0 faults, no reset |
