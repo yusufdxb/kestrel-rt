@@ -19,6 +19,31 @@ non-blank lines of C plus 125 of assembly for the runtime, and about 750 for the
 | Phase 2 cost | a fixed **+3.3 us** at control start-latency p99 (44.54 -> 47.88 us), whatever the ESP does |
 | Against FreeRTOS 11.1.0 | **FreeRTOS is faster**: control start p50 15.9 us vs Kestrel 24.6 us (details below) |
 
+**Written for this project, from the reset vector up:** startup code and linker script, clock and flash setup,
+the tickless fixed-priority scheduler and task model, PendSV context switching (FPU-aware), bounded IPC (SPSC
+queues, seqlock mailboxes, event flags), the priority-ceiling mutex, MPU isolation, the watchdog supervisor,
+fault capture and the crash log, binary tracing, register-level DMA drivers, the fault injector, the Phase 2
+RA4M1/ESP32-S3 mailbox protocol and link task, and the ESP32-S3 fault-containment changes (sessions, resync,
+task watchdog, RESET-glitch fix). Third-party code in the runtime: the CMSIS register headers only.
+
+**Same workload on the same board, control-task start latency (us):**
+
+| | Kestrel | FreeRTOS 11.1.0 | Zephyr 4.2.0 | Superloop |
+|---|---:|---:|---:|---:|
+| p50 / p99 | 24.6 / 44.9 | **15.9 / 18.7** | 32.7 / 44.6 | 32.0 / 54.7 |
+| at 7x overload | control at half rate, other tasks 0 misses | control misses every job, other tasks starve | not measured | every task misses |
+
+FreeRTOS is faster on this path. Kestrel was built for ownership, analyzability and defined fault and overload
+behavior, not to win the latency benchmark.
+
+**Limits, up front:** one board tested; not certified (RTOS, MISRA, SIL) and not formally verified; Phase 2 is
+fault isolation, not a security boundary (the ESP32-S3 still controls the RA4M1's reset and SWD lines); no motor
+was driven; the cause of the +3.3 us Phase 2 cost is not isolated. Full list below and in
+[docs/LIMITATIONS.md](docs/LIMITATIONS.md).
+
+**What went wrong on the way** (kept, with root causes and fixes): [docs/ENGINEERING_LOG.md](docs/ENGINEERING_LOG.md).
+**Live demo** on the board in about two minutes: [docs/DEMO.md](docs/DEMO.md).
+
 ## Architecture
 
 ![Phase 1 architecture](docs/figures/architecture.svg)
@@ -159,13 +184,15 @@ python3 host/phase2_soak.py soak_p2 --periods 10000000 --crash-every 900
 scripts/restore_stock_esp_bridge.sh official         # back to the official Arduino bridge
 ```
 
-## Quick demo (about 1 minute)
+## Quick demo (1 to 2 minutes)
 
 ```bash
-scripts/demo.sh          # board check, build, flash only if different, 8 s timing capture, one contained MPU fault
+scripts/demo.sh          # board check, build, flash only if different, timing capture, one contained MPU fault
 scripts/demo.sh --esp    # also crashes the ESP32-S3 and shows the RA4M1 kept running (Phase 2 fork required)
+scripts/demo_record.sh   # the --esp run for screen recording, with a transcript
 ```
-The demo is a walkthrough for readers, not evidence. The measured campaigns above are the evidence.
+Lines marked `[live]` come from the board during the run. The closing block quotes the recorded campaigns
+from their result files. The demo is a walkthrough, not evidence ([docs/DEMO.md](docs/DEMO.md)).
 
 ## Repository
 
@@ -179,6 +206,14 @@ The demo is a walkthrough for readers, not evidence. The measured campaigns abov
 | `host/ scripts/ tests/` | measurement tools, build/flash/recovery scripts, host tests |
 | `results/` | per-run JSON summaries and hashes of the raw captures (raw data kept outside Git) |
 | `docs/` | specification, design, results, limitations |
+
+## Status and future work
+
+v1.0 is complete; no further features are planned. Legitimate open questions, not scheduled:
+- reproduce the campaigns on a second board;
+- isolate the cause of the +3.3 us Phase 2 p99 shift;
+- evaluate the runtime on another Cortex-M target;
+- formal-verification experiments on the scheduler and IPC primitives.
 
 ## Documents
 
